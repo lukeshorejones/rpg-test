@@ -1,0 +1,13 @@
+# Edit these to change basic game settings. You'll need to restart your game after you change them.
+
+display width: 1280
+display height: 640
+fullscreen: False
+
+volume: 0.1
+
+# Edit these ID numbers to change your party (and the party of the second player in multiplayer games).
+# You can find the ID numbers of various characters, and add more characters, in chars.yml.
+
+blue party: [0, 1, 2]
+red party: [3, 4, 5]
