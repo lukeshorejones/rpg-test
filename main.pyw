@@ -5,6 +5,7 @@ from sprites import *
 from map import *
 
 def restore_all():
+
     restore_file('chars.yml')
     restore_file('weapons.yml')
 
@@ -41,9 +42,6 @@ def restore_all():
     restore_file('names/first_names_male.txt')
     restore_file('names/first_names_female.txt')
     restore_file('names/surnames.txt')
-
-    if not os.path.exists('content/README.txt'):
-        shutil.copy('basecontent/content_readme/README.txt', 'content')
 
     for file in os.listdir("basecontent/maps-singleplayer"):
         if file not in os.listdir("content/maps-singleplayer"):

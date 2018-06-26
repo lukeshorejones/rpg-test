@@ -1,0 +1,36 @@
+#All built-in weapons.
+0:
+    name: Spear
+    damage: 10
+    range: 1
+    stat: 0
+
+1:
+    name: Sword
+    damage: 11
+    range: 1
+    stat: 0
+
+2:
+    name: Axe
+    damage: 12
+    range: 1
+    stat: 0
+
+3:
+    name: Staff
+    damage: 9
+    range: 2
+    stat: 2
+
+4:
+    name: Spellsword
+    damage: 11
+    range: 1
+    stat: 2
+
+5:
+    name: Bow
+    damage: 9
+    range: 2
+    stat: 0

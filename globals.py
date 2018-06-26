@@ -11,6 +11,11 @@ HEALTH_BAR_LENGTH = 32
 MOVE_STEPS = 8
 MOVE_TIME = 0.02
 
+# Initialising settings and config
+
+if not os.path.exists('content'):
+    os.makedirs('content')
+
 if not os.path.exists('content/config.yml'):
     shutil.copy('basecontent/config.yml', 'content')
 if not os.path.exists('content/settings.yml'):

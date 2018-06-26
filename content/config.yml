@@ -1,0 +1,15 @@
+# Edit these to change various elements of the game. You'll need to restart your game after you change them.
+
+title: "RPG Test"
+font: "Arial"
+win text: "Victory"
+lose text: "Defeat"
+tie text: "Draw"
+
+fps: 60
+start screen speed: 5
+
+stat names: ['STR','CON','INT','RES','DEX','LCK']
+enemy stat spread: [1, 3, 5, 7, 9, 11]
+max hp: 64
+max distance: 3

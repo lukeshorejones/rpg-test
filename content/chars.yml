@@ -1,0 +1,81 @@
+# All built-in playable characters.
+# Images are ID numbers, 1-4. 0: wizard, 1: spearman, 2: spearman 2, 3: royalty, 4: peasant.
+# Weapons are also ID numbers, refer to weapons.yml for reference.
+
+0:
+    name: Gallus
+    gender: Male
+    img: 2
+    stats:
+        str: 12
+        con: 14
+        int: 4
+        res: 6
+        dex: 8
+        lck: 10
+    weapon: 0 # Spear
+
+1:
+    name: Natalie
+    gender: Female
+    img: 4
+    stats:
+        str: 14
+        con: 6
+        int: 4
+        res: 8
+        dex: 12
+        lck: 10
+    weapon: 2 # Axe
+
+2:
+    name: Aldous
+    gender: Male
+    img: 0
+    stats:
+        str: 4
+        con: 8
+        int: 14
+        res: 6
+        dex: 10
+        lck: 12
+    weapon: 3 # Staff
+
+3:
+    name: Tavon
+    gender: Male
+    img: 3
+    stats:
+        str: 4
+        con: 6
+        int: 12
+        res: 14
+        dex: 10
+        lck: 8
+    weapon: 4 # Spellsword
+
+4:
+    name: Azura
+    gender: Female
+    img: 1
+    stats:
+        str: 14
+        con: 8
+        int: 4
+        res: 6
+        dex: 10
+        lck: 12
+    weapon: 1 # Sword
+
+5:
+    name: Rosalyn
+    gender: Female
+    img: 4
+    stats:
+        str: 14
+        con: 6
+        int: 4
+        res: 8
+        dex: 12
+        lck: 10
+    weapon: 5 # Bow

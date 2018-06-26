@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="20" height="10" tilewidth="64" tileheight="64" infinite="0" nextobjectid="70">
+ <tileset firstgid="1" source="tilesheet.tsx"/>
+ <layer name="ground" width="20" height="10">
+  <data encoding="base64">
+   AgAAAAEAAAACAAAAAQAAAAIAAAACAAAAAQAAAAEAAAABAAAAAQAAAAEAAAACAAAAAQAAAAEAAAABAAAAAgAAAAEAAAABAAAAAQAAAAIAAAACAAAAAQAAAAEAAAACAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAACAAAAAgAAAAEAAAABAAAAAgAAAAIAAAACAAAAAQAAAAEAAAACAAAAAQAAAAEAAAABAAAAAQAAAAIAAAACAAAAAgAAAAEAAAABAAAAAQAAACkAAAAaAAAAAgAAAAEAAAACAAAAAgAAAAEAAAACAAAAAQAAAAIAAAABAAAAAgAAAAIAAAACAAAAAgAAAAEAAAACAAAAAQAAAAEAAAACAAAAAgAAACkAAAAIAADALAAAYAIAAAABAAAAAgAAAAEAAAABAAAAAQAAAAEAAAABAAAAAgAAAAEAAAACAAAAAgAAAAIAAAABAAAAAQAAAAEAAAACAAAAAgAAAAIAAAABAAAAAgAAAAIAAAACAAAAAQAAAAIAAAACAAAAAQAAAAEAAAACAAAAAQAAAAIAAAABAAAAAgAAAAEAAAACAAAAAgAAAAIAAAABAAAAAQAAAAEAAAABAAAAAQAAAAEAAAABAAAAAQAAAAIAAAACAAAAAgAAAAIAAAABAAAAAQAAAAEAAAACAAAAAQAAAAEAAAABAAAAAQAAAAEAAAACAAAAAgAAAAEAAAABAAAAAQAAAAIAAAABAAAAAQAAAAEAAAABAAAAAQAAAAIAAAACAAAAAQAAAAEAAAABAAAAAgAAAAEAAAABAAAAAgAAAAIAAAACAAAAAQAAAAIAAAABAAAAAQAAAAIAAAACAAAAAQAAAAIAAAACAAAAAQAAAAIAAAACAAAAAgAAAAEAAAABAAAAAgAAAAIAAAABAAAAAQAAAAEAAAABAAAAAgAAAAIAAAACAAAAAQAAAAIAAAACAAAAAQAAAAEAAAABAAAAAQAAAAEAAAACAAAAAQAAAAEAAAACAAAAAQAAAAEAAAABAAAAAgAAAAEAAAABAAAAAQAAAAEAAAA=
+  </data>
+ </layer>
+ <layer name="obstacles" width="20" height="10">
+  <data encoding="base64">
+   TAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAAAAAAAFAAAAByAAAAdAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAcwAAAHEAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABMAAAATAAAAEwAAABMAAAATAAAAAAAAAAAAAAAAAAAAEoAAABLAAAASQAAAEsAAABKAAAASQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABMAAAATAAAAEwAAAAAAAAAAAAAAE8AAABJAAAASwAAAEsAAABKAAAASwAAAEsAAABJAAAAAAAAAEsAAABKAAAASQAAAE8AAABNAAAAAAAAAAAAAABMAAAATAAAAAAAAAAAAAAAAAAAAE4AAABLAAAASQAAAEoAAABLAAAASwAAAAAAAAAAAAAASQAAAEsAAABKAAAASgAAAAAAAAAAAAAAAAAAAEwAAABMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABKAAAASwAAAEkAAAAAAAAAAAAAAAAAAAAAAAAASQAAAEsAAAAAAAAAAAAAAAAAAAAAAAAATAAAAEwAAABMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEwAAABMAAAATAAAAEwAAAACAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAABMAAAATAAAAEwAAAA=
+  </data>
+ </layer>
+ <objectgroup name="objects">
+  <object id="26" type="obstacle" x="64" y="0" width="1216" height="64"/>
+  <object id="29" type="obstacle" x="0" y="64" width="640" height="64"/>
+  <object id="30" type="obstacle" x="0" y="128" width="448" height="64"/>
+  <object id="31" type="obstacle" x="0" y="192" width="256" height="64"/>
+  <object id="32" type="obstacle" x="0" y="256" width="128" height="64"/>
+  <object id="33" type="obstacle" x="0" y="576" width="1280" height="64"/>
+  <object id="34" type="obstacle" x="0" y="512" width="128" height="64"/>
+  <object id="35" type="obstacle" x="1152" y="512" width="128" height="64"/>
+  <object id="36" type="obstacle" x="704" y="64" width="576" height="64"/>
+  <object id="37" type="obstacle" x="896" y="128" width="384" height="64"/>
+  <object id="38" type="obstacle" x="1088" y="192" width="192" height="64"/>
+  <object id="39" type="obstacle" x="1152" y="256" width="128" height="64"/>
+  <object id="40" type="obstacle" x="1216" y="320" width="64" height="192"/>
+  <object id="41" type="obstacle" x="0" y="320" width="64" height="192"/>
+  <object id="42" type="obstacle" x="576" y="192" width="64" height="64"/>
+  <object id="43" type="obstacle" x="320" y="256" width="384" height="64"/>
+  <object id="44" type="obstacle" x="192" y="320" width="512" height="64"/>
+  <object id="45" type="obstacle" x="256" y="384" width="384" height="64"/>
+  <object id="46" type="obstacle" x="384" y="448" width="192" height="64"/>
+  <object id="47" type="obstacle" x="768" y="320" width="320" height="64"/>
+  <object id="48" type="obstacle" x="768" y="384" width="256" height="64"/>
+  <object id="49" type="obstacle" x="832" y="448" width="128" height="64"/>
+  <object id="56" name="blueSpawn 0" type="blueSpawn" x="128" y="512" width="64" height="64"/>
+  <object id="57" name="blueSpawn 1" type="blueSpawn" x="192" y="512" width="64" height="64"/>
+  <object id="58" name="blueSpawn 2" type="blueSpawn" x="256" y="512" width="64" height="64"/>
+  <object id="59" name="redSpawn 0" type="redSpawn" x="128" y="320" width="64" height="64"/>
+  <object id="60" name="redSpawn 1" type="redSpawn" x="128" y="256" width="64" height="64"/>
+  <object id="61" name="redSpawn 2" type="redSpawn" x="640" y="448" width="64" height="64"/>
+  <object id="62" name="redSpawn 3" type="redSpawn" x="704" y="384" width="64" height="64"/>
+  <object id="63" name="redSpawn 4" type="redSpawn" x="1024" y="512" width="64" height="64"/>
+  <object id="64" name="redSpawn 5" type="redSpawn" x="1024" y="448" width="64" height="64"/>
+  <object id="65" name="redSpawn 6" type="redSpawn" x="576" y="128" width="64" height="64"/>
+  <object id="66" name="redSpawn 7" type="redSpawn" x="832" y="192" width="64" height="64"/>
+  <object id="67" name="redSpawn 9" type="redSpawn" x="960" y="192" width="64" height="64"/>
+  <object id="68" name="redSpawn 8" type="redSpawn" x="896" y="192" width="64" height="64"/>
+  <object id="69" name="blueCamera" type="blueCamera" x="0" y="0" width="64" height="64"/>
+ </objectgroup>
+</map>
