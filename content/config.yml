@@ -11,5 +11,5 @@ start screen speed: 5
 
 stat names: ['STR','CON','INT','RES','DEX','LCK']
 enemy stat spread: [1, 3, 5, 7, 9, 11]
-max hp: 64
+max hp: 50
 max distance: 3

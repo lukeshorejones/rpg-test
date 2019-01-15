@@ -1,122 +1,183 @@
-# Sprite classes
-import colorsys, copy, math, os, pygame as pg, shutil
+import colorsys, copy, math, pygame as pg, shutil
 from globals import *
 
-class EndScreenDialogue(pg.sprite.Sprite):
-    def __init__(self):
-        pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((256, 128))
+def hp_colour(unit):
+    hp_colour = list(colorsys.hsv_to_rgb(1/3.*unit.hp_fraction, 1, 1))
+    for i in range(3):
+        hp_colour[i] *= 255
+    return tuple(hp_colour)
+
+class StartScreenOverlay(pg.sprite.Sprite):
+    def __init__(self, scalar):
+        super().__init__()
+        self.image = pg.image.load("content/img/start_screen_overlay.png")
+        self.image = pg.transform.scale(self.image, (self.image.get_width(), DISPLAY_HEIGHT))
+
+    def update(self, g):
+        pass
+        g.screen.blit(self.image, (0, 0))
+
+class DialogueBox(pg.sprite.Sprite):
+    def __init__(self, dim, pos):
+        super().__init__()
+        self.pos = pos
+
+        self.image = pg.Surface(dim)
         self.image.fill(BLACK)
         self.image.set_alpha(204)
 
     def update(self, g):
-        g.screen.blit(self.image, ((DISPLAY_WIDTH-256)/2, (DISPLAY_HEIGHT-128)/2))
+        g.screen.blit(self.image, self.pos)
+
+class PreviewBox(pg.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pg.image.load("content/img/preview_box.png")
+        self.border = pg.Surface((DISPLAY_WIDTH, 128))
+        self.border.fill(BLACK)
+
+    def update(self, g):
+        if DISPLAY_WIDTH > 960:
+            g.screen.blit(self.border, (0, g.game_height))
+            g.screen.blit(self.image, (0, g.game_height))
+        else:
+            g.screen.blit(self.image, (0, g.game_height))
 
 class Fade(pg.sprite.Sprite):
     def __init__(self):
-        pg.sprite.Sprite.__init__(self)
+        super().__init__()
         self.image = pg.Surface((DISPLAY_WIDTH, DISPLAY_HEIGHT))
         self.image.fill(BLACK)
 
-    def start_fadeout(self, g):
+    def start_fade_out(self, g):
         for i in range(16):
             g.clock.tick(FPS)
             self.image.set_alpha(i*16)
 
-            g.screen.blit(g.startScreenMapImg, g.startScreenPos)
-            g.screen.blit(g.startScreenImg, (0,0))
-            g.titleText.update(g)
-            for i in range(len(g.titleOptions)):
-                g.titleOptions[i].update(g)
+            g.screen.blit(g.start_screen_map_img, g.start_screen_pos)
+            g.start_screen_overlay.update(g)
+            g.title_text.update(g)
+            for i in range(len(g.title_options)):
+                g.title_options[i].update(g)
 
             g.screen.blit(self.image, (0,0))
             pg.display.flip()
 
-    def end_fadeout(self, g):
+    def end_fade_out(self, g):
         for i in range(16):
             g.clock.tick(FPS)
             self.image.set_alpha(i*16)
 
             g.bg.update(g)
-            g.screen.blit(g.gameMapImg, (-g.camera.posx, -g.camera.posy))
-            for i in range(len(g.blueCharList)):
-                g.blueCharList[i].update(g)
-            for i in range(len(g.redCharList)):
-                g.redCharList[i].update(g)
+            g.screen.blit(g.map_img, (-g.cam.posx, -g.cam.posy))
+            for i in range(len(g.blues)):
+                g.blues[i].update(g)
+            for i in range(len(g.reds)):
+                g.reds[i].update(g)
+            g.preview_box.update(g)
+            g.turn_dialogue.update(g)
+            g.turn_text.update(g)
 
-            g.endScreenDialogue.update(g)
-            g.endText.update(g)
-            g.endSubText.update(g)
+            g.end_screen_dialogue.update(g)
+            g.end_text.update(g)
+            g.end_sub_text.update(g)
 
             g.screen.blit(self.image, (0,0))
             pg.display.flip()
 
-    def start_fadein(self, g):
+    def start_fade_in(self, g):
         for i in range(16):
             g.clock.tick(FPS)
             self.image.set_alpha(255-i*16)
 
             g.bg.update(g)
-            g.screen.blit(g.gameMapImg, (-g.camera.posx, -g.camera.posy))
-            for i in range(len(g.blueCharList)):
-                g.blueCharList[i].update(g)
-            for i in range(len(g.redCharList)):
-                g.redCharList[i].update(g)
-            g.turnText.update(g)
+            g.screen.blit(g.map_img, (-g.cam.posx, -g.cam.posy))
+            for i in range(len(g.blues)):
+                g.blues[i].update(g)
+            for i in range(len(g.reds)):
+                g.reds[i].update(g)
+            g.preview_box.update(g)
+            g.turn_dialogue.update(g)
+            g.turn_text.update(g)
 
             g.screen.blit(self.image, (0,0))
             pg.display.flip()
 
-    def end_fadein(self, g):
+    def end_fade_in(self, g):
         for i in range(16):
             g.clock.tick(FPS)
             self.image.set_alpha(255-i*16)
 
-            g.screen.blit(g.startScreenMapImg, g.startScreenPos)
-            g.screen.blit(g.startScreenImg, (0,0))
-            g.titleText.update(g)
-            for i in range(len(g.titleOptions)):
-                g.titleOptions[i].update(g)
+            g.screen.blit(g.start_screen_map_img, g.start_screen_pos)
+            g.start_screen_overlay.update(g)
+            g.title_text.update(g)
+            for i in range(len(g.title_options)):
+                g.title_options[i].update(g)
 
             g.screen.blit(self.image, (0,0))
             pg.display.flip()
 
 class Background(pg.sprite.Sprite):
     def __init__(self):
-        pg.sprite.Sprite.__init__(self)
-        if not os.path.exists('content/img/bg.png'):
-            shutil.copy('basecontent/img/bg.png','content/img')
-        self.image = pg.image.load("content/img/bg.png")
+        super().__init__()
 
     def update(self, g):
-        for y in range(int(DISPLAY_HEIGHT/HEIGHT)):
+        for y in range(int(g.game_height/HEIGHT)):
             for x in range(int(DISPLAY_WIDTH/WIDTH)):
-                if x*WIDTH not in range(int(-g.camera.posx), int(g.gameMap.width-g.camera.posx)) or y*HEIGHT not in range(int(-g.camera.posy), int(g.gameMap.height-g.camera.posy)):
+                if x*WIDTH not in range(int(-g.cam.posx), int(g.map.width-g.cam.posx)) or y*HEIGHT not in range(int(-g.cam.posy), int(g.map.height-g.cam.posy)):
                     g.screen.blit(self.image, (x*WIDTH, y*HEIGHT))
 
-    def mini_update(self, g):
-        for x in range(2):
-            g.screen.blit(self.image, (x*WIDTH, 0))
-
-def set_hp_colour(charObject):
-    charObject.healthColour = list(colorsys.hsv_to_rgb(1/3.*charObject.hpfraction, 1, 1))
-    for i in range(3):
-        charObject.healthColour[i] *= 255
-    charObject.hp_bar.image.fill(tuple(charObject.healthColour))
+    def turn_change_update(self, g):
+        for x in range(int(DISPLAY_WIDTH/WIDTH)):
+            if x*WIDTH not in range(int(-g.cam.posx), int(g.map.width-g.cam.posx)):
+                g.screen.blit(self.image, (x*WIDTH, 3*HEIGHT))
+                g.screen.blit(self.image, (x*WIDTH, 4*HEIGHT))
+                g.screen.blit(self.image, (x*WIDTH, 5*HEIGHT))
 
 class HPBar(pg.sprite.Sprite):
     def __init__(self):
-        pg.sprite.Sprite.__init__(self)
+        super().__init__()
 
 class HPBarBorder(pg.sprite.Sprite):
     def __init__(self):
-        pg.sprite.Sprite.__init__(self)
-        if not os.path.exists('content/img/hp_bar_border.png'):
-            shutil.copy('basecontent/img/hp_bar_border.png','content/img')
+        super().__init__()
         self.image = pg.image.load("content/img/hp_bar_border.png")
 
-class BlueChar(pg.sprite.Sprite):
-    def __init__(self, name, gender, img, stats, hp, weapon, pos, charTextContent):
+class PreviewHPBar(pg.sprite.Sprite):
+    def __init__(self, num):
+        super().__init__()
+        self.num = num
+
+    def set_img(self, g):
+        if g.preview_one != None and self.num == 1:
+            preview_hp_fraction = g.preview_one.hp / MAX_HP
+            preview_hp_length = math.ceil(preview_hp_fraction * 100)
+
+            self.image = pg.Surface((12, preview_hp_length))
+            self.image.fill(hp_colour(g.preview_one))
+
+        elif g.preview_two != None and self.num == 2:
+            preview_hp_fraction = g.preview_two.hp / MAX_HP
+            preview_hp_length = math.ceil(preview_hp_fraction * 100)
+
+            self.image = pg.Surface((12, preview_hp_length))
+            self.image.fill(hp_colour(g.preview_two))
+
+    def update(self, g):
+        if g.preview_one != None and self.num == 1:
+            preview_hp_fraction = g.preview_one.hp / MAX_HP
+            preview_hp_length = math.ceil(preview_hp_fraction * 100)
+            g.screen.blit(self.image, (126, g.game_height+114-preview_hp_length))
+
+        elif g.preview_two != None and self.num == 2:
+            preview_hp_fraction = g.preview_two.hp / MAX_HP
+            preview_hp_length = math.ceil(preview_hp_fraction * 100)
+            g.screen.blit(self.image, (604, g.game_height+114-preview_hp_length))
+
+class Blue(pg.sprite.Sprite):
+    def __init__(self, name, gender, img, stats, hp, weapon, pos):
+        super().__init__()
+        self.colour = 'blue'
         self.name = name
         self.gender = gender
         self.img = img
@@ -124,39 +185,46 @@ class BlueChar(pg.sprite.Sprite):
         self.hp = hp
         self.weapon = weapon
         self.pos = pos
-        self.gridPos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
-        self.charTextContent = charTextContent
+        self.grid_pos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
 
         self.image = pg.image.load('content/img/blue_' + self.gender + '/' + self.img + '.png')
 
         self.hp_bar_border = HPBarBorder()
         self.hp_bar = HPBar()
 
+        self.hp_fraction = self.hp / MAX_HP
+        self.hp_length = math.ceil(self.hp_fraction * HEALTH_BAR_LENGTH)
+
+        self.hp_bar.image = pg.Surface((self.hp_length, 2))
+        self.hp_bar.image.fill(hp_colour(self))
+
         self.active = True
 
-    def update(self, g):
+    def set_img(self, g):
         if self.active == True or g.turn % 2 == 0:
             self.image = pg.image.load('content/img/blue_' + self.gender + '/' + self.img + '.png')
         if self.active == False and g.turn % 2 != 0:
             self.image = pg.image.load('content/img/blue_' + self.gender + '/' + self.img + '-inactive.png')
 
-        self.gridPos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
-        g.screen.blit(self.image, (self.pos[0] - g.camera.posx, self.pos[1] - g.camera.posy))
-        g.screen.blit(self.hp_bar_border.image, (self.pos[0] - g.camera.posx, self.pos[1] - g.camera.posy))
+    def set_hp_img(self, g):
+        self.hp_fraction = self.hp / MAX_HP
+        self.hp_length = math.ceil(self.hp_fraction * HEALTH_BAR_LENGTH)
 
-        self.hpfraction = self.hp / MAX_HP
-        self.hplength = math.ceil(self.hpfraction * HEALTH_BAR_LENGTH)
+        self.hp_bar.image = pg.Surface((self.hp_length, 2))
+        self.hp_bar.image.fill(hp_colour(self))
 
-        self.hp_bar.image = pg.Surface((self.hplength, 2))
-        set_hp_colour(self)
-        g.screen.blit(self.hp_bar.image, (self.pos[0] - g.camera.posx + 16, self.pos[1] - g.camera.posy + 46))
+    def update(self, g):
+        self.grid_pos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
+        g.screen.blit(self.image, (self.pos[0] - g.cam.posx, self.pos[1] - g.cam.posy))
+        g.screen.blit(self.hp_bar_border.image, (self.pos[0] - g.cam.posx, self.pos[1] - g.cam.posy))
+        g.screen.blit(self.hp_bar.image, (self.pos[0] - g.cam.posx + 16, self.pos[1] - g.cam.posy + 46))
 
-    def get_range_loop(self, posy, posx, adjacentSquares):
+    def get_range_loop(self, posy, posx, adjacent_tiles):
         for i in range(4):
-            if self.distance < MAX_DISTANCE and self.moveRange[adjacentSquares[i][0]][adjacentSquares[i][1]] != 2:
+            if self.distance < MAX_DISTANCE and self.move_range[adjacent_tiles[i][0]][adjacent_tiles[i][1]] != 2:
                 self.distance += 1
-                posx, posy = adjacentSquares[i][1], adjacentSquares[i][0]
-                self.moveRange[posy][posx] = 1
+                posx, posy = adjacent_tiles[i][1], adjacent_tiles[i][0]
+                self.move_range[posy][posx] = 1
 
                 self.get_range_loop(posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
 
@@ -168,30 +236,24 @@ class BlueChar(pg.sprite.Sprite):
 
     def get_range(self, g):
         self.distance = 0
-        self.moveRange =  copy.deepcopy(g.gameMap.matrix)
-        self.moveRange[self.gridPos[1]][self.gridPos[0]] = 1
+        self.move_range = copy.deepcopy(g.map.matrix)
+        self.move_range[self.grid_pos[1]][self.grid_pos[0]] = 1
 
-        for y in range(len(self.moveRange)):
-            for x in range(len(self.moveRange[y])):
-                for i in range(len(g.redCharList)):
-                    if (x, y) == g.redCharList[i].gridPos:
-                        self.moveRange[y][x] = 2
+        for y in range(len(self.move_range)):
+            for x in range(len(self.move_range[y])):
+                for i in range(len(g.reds)):
+                    if (x, y) == g.reds[i].grid_pos:
+                        self.move_range[y][x] = 2
 
-        self.get_range_loop(self.gridPos[1], self.gridPos[0], [[self.gridPos[1], self.gridPos[0]+1], [self.gridPos[1]-1, self.gridPos[0]], [self.gridPos[1], self.gridPos[0]-1], [self.gridPos[1]+1, self.gridPos[0]]])
+        self.get_range_loop(self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
 
-        for y in range(len(self.moveRange)):
-            for x in range(len(self.moveRange[y])):
-                for i in range(len(g.blueCharList)):
-                    if (x, y) == g.blueCharList[i].gridPos and g.blueCharList[i] != self:
-                        self.moveRange[y][x] = 0
-
-    def get_atk_range_loop(self, g, posy, posx, adjacentSquares):
+    def get_atk_range_loop(self, g, posy, posx, adjacent_tiles):
         weaponRange = self.weapon.get('range')
         for i in range(4):
-            if self.distance < weaponRange and self.attackRange[adjacentSquares[i][0]][adjacentSquares[i][1]] != 2:
+            if self.distance < weaponRange and self.attack_range[adjacent_tiles[i][0]][adjacent_tiles[i][1]] != 2:
                 self.distance += 1
-                posx, posy = adjacentSquares[i][1], adjacentSquares[i][0]
-                self.attackRange[posy][posx] = 1
+                posx, posy = adjacent_tiles[i][1], adjacent_tiles[i][0]
+                self.attack_range[posy][posx] = 1
 
                 self.get_atk_range_loop(g, posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
 
@@ -203,12 +265,14 @@ class BlueChar(pg.sprite.Sprite):
 
     def get_atk_range(self, g):
         self.distance = 0
-        self.attackRange = copy.deepcopy(g.gameMap.matrix)
+        self.attack_range = copy.deepcopy(g.map.matrix)
 
-        self.get_atk_range_loop(g, self.gridPos[1], self.gridPos[0], [[self.gridPos[1], self.gridPos[0]+1], [self.gridPos[1]-1, self.gridPos[0]], [self.gridPos[1], self.gridPos[0]-1], [self.gridPos[1]+1, self.gridPos[0]]])
+        self.get_atk_range_loop(g, self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
 
-class RedChar(pg.sprite.Sprite):
-    def __init__(self, name, gender, img, stats, hp, weapon, pos, charTextContent):
+class Red(pg.sprite.Sprite):
+    def __init__(self, name, gender, img, stats, hp, weapon, pos):
+        super().__init__()
+        self.colour = 'red'
         self.name = name
         self.gender = gender
         self.img = img
@@ -216,39 +280,46 @@ class RedChar(pg.sprite.Sprite):
         self.hp = hp
         self.weapon = weapon
         self.pos = pos
-        self.gridPos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
-        self.charTextContent = charTextContent
+        self.grid_pos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
 
         self.image = pg.image.load('content/img/red_' + self.gender + '/' + self.img + '.png')
 
         self.hp_bar_border = HPBarBorder()
         self.hp_bar = HPBar()
 
+        self.hp_fraction = self.hp / MAX_HP
+        self.hp_length = math.ceil(self.hp_fraction * HEALTH_BAR_LENGTH)
+
+        self.hp_bar.image = pg.Surface((self.hp_length, 2))
+        self.hp_bar.image.fill(hp_colour(self))
+
         self.active = False
 
-    def update(self, g):
+    def set_img(self, g):
         if self.active == True or g.turn % 2 != 0:
             self.image = pg.image.load('content/img/red_' + self.gender + '/' + self.img + '.png')
         if self.active == False and g.turn % 2 == 0:
             self.image = pg.image.load('content/img/red_' + self.gender + '/' + self.img + '-inactive.png')
 
-        self.gridPos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
-        g.screen.blit(self.image, (self.pos[0] - g.camera.posx, self.pos[1] - g.camera.posy))
-        g.screen.blit(self.hp_bar_border.image, (self.pos[0] - g.camera.posx, self.pos[1] - g.camera.posy))
+    def set_hp_img(self, g):
+        self.hp_fraction = self.hp / MAX_HP
+        self.hp_length = math.ceil(self.hp_fraction * HEALTH_BAR_LENGTH)
 
-        self.hpfraction = self.hp / MAX_HP
-        self.hplength = math.ceil(self.hpfraction * HEALTH_BAR_LENGTH)
+        self.hp_bar.image = pg.Surface((self.hp_length, 2))
+        self.hp_bar.image.fill(hp_colour(self))
 
-        self.hp_bar.image = pg.Surface((self.hplength, 2))
-        set_hp_colour(self)
-        g.screen.blit(self.hp_bar.image, (self.pos[0] - g.camera.posx + 16, self.pos[1] - g.camera.posy + 46))
+    def update(self, g):
+        self.grid_pos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
+        g.screen.blit(self.image, (self.pos[0] - g.cam.posx, self.pos[1] - g.cam.posy))
+        g.screen.blit(self.hp_bar_border.image, (self.pos[0] - g.cam.posx, self.pos[1] - g.cam.posy))
+        g.screen.blit(self.hp_bar.image, (self.pos[0] - g.cam.posx + 16, self.pos[1] - g.cam.posy + 46))
 
-    def get_range_loop(self, posy, posx, adjacentSquares):
+    def get_range_loop(self, posy, posx, adjacent_tiles):
         for i in range(4):
-            if self.distance < MAX_DISTANCE and self.moveRange[adjacentSquares[i][0]][adjacentSquares[i][1]] != 2:
+            if self.distance < MAX_DISTANCE and self.move_range[adjacent_tiles[i][0]][adjacent_tiles[i][1]] != 2:
                 self.distance += 1
-                posx, posy = adjacentSquares[i][1], adjacentSquares[i][0]
-                self.moveRange[posy][posx] = 1
+                posx, posy = adjacent_tiles[i][1], adjacent_tiles[i][0]
+                self.move_range[posy][posx] = 1
 
                 self.get_range_loop(posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
 
@@ -260,30 +331,24 @@ class RedChar(pg.sprite.Sprite):
 
     def get_range(self, g):
         self.distance = 0
-        self.moveRange =  copy.deepcopy(g.gameMap.matrix)
-        self.moveRange[self.gridPos[1]][self.gridPos[0]] = 1
+        self.move_range = copy.deepcopy(g.map.matrix)
+        self.move_range[self.grid_pos[1]][self.grid_pos[0]] = 1
 
-        for y in range(len(self.moveRange)):
-            for x in range(len(self.moveRange[y])):
-                for i in range(len(g.blueCharList)):
-                    if (x, y) == g.blueCharList[i].gridPos:
-                        self.moveRange[y][x] = 2
+        for y in range(len(self.move_range)):
+            for x in range(len(self.move_range[y])):
+                for i in range(len(g.blues)):
+                    if (x, y) == g.blues[i].grid_pos:
+                        self.move_range[y][x] = 2
 
-        self.get_range_loop(self.gridPos[1], self.gridPos[0], [[self.gridPos[1], self.gridPos[0]+1], [self.gridPos[1]-1, self.gridPos[0]], [self.gridPos[1], self.gridPos[0]-1], [self.gridPos[1]+1, self.gridPos[0]]])
+        self.get_range_loop(self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
 
-        for y in range(len(self.moveRange)):
-            for x in range(len(self.moveRange[y])):
-                for i in range(len(g.redCharList)):
-                    if (x, y) == g.redCharList[i].gridPos and g.redCharList[i] != self:
-                        self.moveRange[y][x] = 0
-
-    def get_atk_range_loop(self, g, posy, posx, adjacentSquares):
+    def get_atk_range_loop(self, g, posy, posx, adjacent_tiles):
             weaponRange = self.weapon.get('range')
             for i in range(4):
-                if self.distance < weaponRange and self.attackRange[adjacentSquares[i][0]][adjacentSquares[i][1]] != 2:
+                if self.distance < weaponRange and self.attack_range[adjacent_tiles[i][0]][adjacent_tiles[i][1]] != 2:
                     self.distance += 1
-                    posx, posy = adjacentSquares[i][1], adjacentSquares[i][0]
-                    self.attackRange[posy][posx] = 1
+                    posx, posy = adjacent_tiles[i][1], adjacent_tiles[i][0]
+                    self.attack_range[posy][posx] = 1
 
                     self.get_atk_range_loop(g, posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
 
@@ -295,78 +360,69 @@ class RedChar(pg.sprite.Sprite):
 
     def get_atk_range(self, g):
             self.distance = 0
-            self.attackRange =  copy.deepcopy(g.gameMap.matrix)
+            self.attack_range =  copy.deepcopy(g.map.matrix)
 
-            self.get_atk_range_loop(g, self.gridPos[1], self.gridPos[0], [[self.gridPos[1], self.gridPos[0]+1], [self.gridPos[1]-1, self.gridPos[0]], [self.gridPos[1], self.gridPos[0]-1], [self.gridPos[1]+1, self.gridPos[0]]])
+            self.get_atk_range_loop(g, self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
 
 class PreMoveTile(pg.sprite.Sprite):
-    def __init__(self, gridPos, charColour, activeStatus):
-        self.gridPos = gridPos
-        self.charColour = charColour
-        self.activeStatus = activeStatus
+    def __init__(self, grid_pos, unit_colour, active_status):
+        super().__init__()
+        self.grid_pos = grid_pos
+        self.unit_colour = unit_colour
+        self.active_status = active_status
+        self.image = pg.image.load("content/img/pre_move_tile_inactive.png")
 
-        pg.sprite.Sprite.__init__(self)
-        if not os.path.exists('content/img/preMoveTileInactive.png'):
-            shutil.copy('basecontent/img/preMoveTileInactive.png','content/img')
-        self.image = pg.image.load("content/img/preMoveTileInactive.png")
-
-    def update(self, g):
-        if self.charColour == 'red':
-            if self.activeStatus == True or g.turn//2 != g.turn/2:
-                if not os.path.exists('content/img/preMoveTileRed.png'):
-                    shutil.copy('basecontent/img/preMoveTileRed.png','content/img')
-                self.image = pg.image.load("content/img/preMoveTileRed.png")
+    def set_img(self, g):
+        if self.unit_colour == 'red':
+            if self.active_status == True or g.turn//2 != g.turn/2:
+                self.image = pg.image.load("content/img/pre_move_tile_red.png")
             else:
-                if not os.path.exists('content/img/preMoveTileInactive.png'):
-                    shutil.copy('basecontent/img/preMoveTileInactive.png','content/img')
-                self.image = pg.image.load("content/img/preMoveTileInactive.png")
+                self.image = pg.image.load("content/img/pre_move_tile_inactive.png")
 
         else:
-            if self.activeStatus == True or g.turn//2 == g.turn/2:
-                if not os.path.exists('content/img/preMoveTileBlue.png'):
-                    shutil.copy('basecontent/img/preMoveTileBlue.png','content/img')
-                self.image = pg.image.load("content/img/preMoveTileBlue.png")
+            if self.active_status == True or g.turn//2 == g.turn/2:
+                self.image = pg.image.load("content/img/pre_move_tile_blue.png")
             else:
-                if not os.path.exists('content/img/preMoveTileInactive.png'):
-                    shutil.copy('basecontent/img/preMoveTileInactive.png','content/img')
-                self.image = pg.image.load("content/img/preMoveTileInactive.png")
+                self.image = pg.image.load("content/img/pre_move_tile_inactive.png")
 
-        g.screen.blit(self.image, (self.gridPos[0]*WIDTH - g.camera.posx, self.gridPos[1]*HEIGHT - g.camera.posy))
+    def update(self, g):
+        g.screen.blit(self.image, (self.grid_pos[0]*WIDTH - g.cam.posx, self.grid_pos[1]*HEIGHT - g.cam.posy))
 
 class MoveTile(pg.sprite.Sprite):
-    def __init__(self, gridPos, charColour):
-        self.gridPos = gridPos
-        self.colour = charColour
+    def __init__(self, grid_pos, unit_colour):
+        super().__init__()
+        self.grid_pos = grid_pos
+        self.colour = unit_colour
         if self.colour == 'blue':
-            if not os.path.exists('content/img/moveTileBlue.png'):
-                shutil.copy('basecontent/img/moveTileBlue.png','content/img')
-            self.image = pg.image.load("content/img/moveTileBlue.png")
+            self.image = pg.image.load("content/img/move_tile_blue.png")
 
         if self.colour == 'red':
-            if not os.path.exists('content/img/moveTileRed.png'):
-                shutil.copy('basecontent/img/moveTileRed.png','content/img')
-            self.image = pg.image.load("content/img/moveTileRed.png")
+            self.image = pg.image.load("content/img/move_tile_red.png")
 
     def update(self, g):
-        g.screen.blit(self.image, (self.gridPos[0]*WIDTH - g.camera.posx, self.gridPos[1]*HEIGHT - g.camera.posy))
+        g.screen.blit(self.image, (self.grid_pos[0]*WIDTH - g.cam.posx, self.grid_pos[1]*HEIGHT - g.cam.posy))
 
 class AttackTile(pg.sprite.Sprite):
-    def __init__(self, gridPos):
-        self.gridPos = gridPos
-
-        pg.sprite.Sprite.__init__(self)
-        if not os.path.exists('content/img/attackTile.png'):
-            shutil.copy('basecontent/img/attackTile.png','content/img')
-        self.image = pg.image.load("content/img/attackTile.png")
+    def __init__(self, grid_pos):
+        super().__init__()
+        self.grid_pos = grid_pos
+        self.image = pg.image.load("content/img/attack_tile.png")
 
     def update(self, g):
-        g.screen.blit(self.image, (self.gridPos[0]*WIDTH - g.camera.posx, self.gridPos[1]*HEIGHT - g.camera.posy))
+        g.screen.blit(self.image, (self.grid_pos[0]*WIDTH - g.cam.posx, self.grid_pos[1]*HEIGHT - g.cam.posy))
+
+class HealTile(pg.sprite.Sprite):
+    def __init__(self, grid_pos):
+        super().__init__()
+        self.grid_pos = grid_pos
+        self.image = pg.image.load("content/img/heal_tile.png")
+
+    def update(self, g):
+        g.screen.blit(self.image, (self.grid_pos[0]*WIDTH - g.cam.posx, self.grid_pos[1]*HEIGHT - g.cam.posy))
 
 class Cursor(pg.sprite.Sprite):
     def __init__(self):
-        pg.sprite.Sprite.__init__(self)
-        if not os.path.exists('content/img/cursor.png'):
-            shutil.copy('basecontent/img/cursor.png','content/img')
+        super().__init__()
         self.image = pg.image.load("content/img/cursor.png")
 
     def update(self, g):
@@ -374,47 +430,71 @@ class Cursor(pg.sprite.Sprite):
 
 class Text(pg.sprite.Sprite):
     def __init__(self, content, pos, size, colour):
-        self.content = content
+        super().__init__()
         self.pos = pos
         self.size = size
         self.colour = colour
 
         self.font = pg.font.SysFont(FONT, self.size, True)
+        self.image = self.font.render(content, True, self.colour)
 
-        pg.sprite.Sprite.__init__(self)
-        self.image = self.font.render(self.content, True, self.colour)
+    def set_content(self, content):
+        self.image = self.font.render(content, True, WHITE)
+    
+    def update(self, g):
+        g.screen.blit(self.image, self.pos)
+
+class MultiLineText(pg.sprite.Sprite):
+    def __init__(self, content, pos, size, colour):
+        super().__init__()
+        self.pos = pos
+        self.size = size
+        self.colour = colour
+        
+        self.images = []
+        self.font = pg.font.SysFont(FONT, self.size, True)
+        for line in content:
+            self.images.append(self.font.render(line, True, self.colour))
+
+    def set_content(self, content):
+        self.images = []
+        for line in content:
+            self.images.append(self.font.render(line, True, self.colour))
 
     def update(self, g):
-        self.image = self.font.render(self.content, True, WHITE)
-        g.screen.blit(self.image, self.pos)
+        for i in range(len(self.images)):
+            g.screen.blit(self.images[i], (self.pos[0], self.pos[1]+((self.size+2)*i)))
 
 class CenterText(pg.sprite.Sprite):
     def __init__(self, content, pos, size, colour):
-        self.content = content
+        super().__init__()
         self.pos = pos
         self.size = size
         self.colour = colour
 
         self.font = pg.font.SysFont(FONT, self.size, True)
+        self.image = self.font.render(content, True, self.colour)
 
-        pg.sprite.Sprite.__init__(self)
-        self.image = self.font.render(self.content, True, self.colour)
+    def set_content(self, content):
+        self.image = self.font.render(content, True, WHITE)
 
     def update(self, g):
-        self.image = self.font.render(self.content, True, WHITE)
         g.screen.blit(self.image, (self.pos[0]-self.image.get_width()/2, self.pos[1]-self.image.get_height()/2))
 
-class TitleOption(pg.sprite.Sprite):
-    def __init__(self, g, content, size, colour):
+class MenuOption(pg.sprite.Sprite):
+    def __init__(self, g, content, size, colour, pos, centre):
+        super().__init__()
         self.content = content
         self.size = size
         self.colour = colour
-        self.pos = (70, 170+50*len(g.titleOptions))
+        self.pos = pos
+        self.centre = centre
 
         self.font = pg.font.SysFont(FONT, self.size, True)
-
-        pg.sprite.Sprite.__init__(self)
         self.image = self.font.render(self.content, True, self.colour)
+
+        if self.centre == True:
+            self.pos = (self.pos[0] - self.image.get_width()/2, self.pos[1])
 
     def update(self, g):
         g.screen.blit(self.image, self.pos)
@@ -427,3 +507,43 @@ class TitleOption(pg.sprite.Sprite):
     def no_hover(self):
         self.colour = WHITE
         self.image = self.font.render(self.content, True, self.colour)
+
+class PreviewPortrait(pg.sprite.Sprite):
+    def __init__(self, num):
+        super().__init__()
+        self.num = num
+
+    def update(self, g):
+        if g.preview_one != None and self.num == 1:
+            self.colour = g.preview_one.colour
+            self.gender = g.preview_one.gender
+            self.img = g.preview_one.img
+
+            self.image = pg.image.load('content/img/' + self.colour + '_' + self.gender + '/' + str(self.img) + '.png')
+            self.image = pg.transform.scale2x(self.image)
+            g.screen.blit(self.image, (0, g.game_height))
+
+        elif g.preview_two != None and self.num == 2:
+            self.colour = g.preview_two.colour
+            self.gender = g.preview_two.gender
+            self.img = g.preview_two.img
+
+            self.image = pg.image.load('content/img/' + self.colour + '_' + self.gender + '/' + str(self.img) + '.png')
+            self.image = pg.transform.scale2x(self.image)
+            g.screen.blit(self.image, (478, g.game_height))
+
+class PreviewWeaponImg(pg.sprite.Sprite):
+    def __init__(self, num):
+        super().__init__()
+        self.num = num
+
+    def update(self, g):
+        if g.preview_one != None and self.num == 1:
+            self.img = g.preview_one.weapon.get('img')
+            self.image = pg.image.load('content/img/weapons/' + str(self.img) + '.png')
+            g.screen.blit(self.image, (258, g.game_height+16))
+
+        elif g.preview_two != None and self.num == 2:
+            self.img = g.preview_two.weapon.get('img')
+            self.image = pg.image.load('content/img/weapons/' + str(self.img) + '.png')
+            g.screen.blit(self.image, (736, g.game_height+16))

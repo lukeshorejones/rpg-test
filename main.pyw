@@ -4,776 +4,304 @@ from globals import *
 from sprites import *
 from map import *
 
-def restore_all():
+def set_preview_one(unit):
+    g.preview_one = unit
+    if unit != None:
+        g.preview_one_name.set_content(unit.name)
+        g.preview_one_str.set_content(str(unit.stats[0]))
+        g.preview_one_con.set_content(str(unit.stats[1]))
+        g.preview_one_int.set_content(str(unit.stats[2]))
+        g.preview_one_wis.set_content(str(unit.stats[3]))
+        g.preview_one_dex.set_content(str(unit.stats[4]))
+        g.preview_one_lck.set_content(str(unit.stats[5]))
+        g.preview_one_weapon_name.set_content(str(unit.weapon.get('name')))
+        if unit.weapon.get('power') == 0 and unit.weapon.get('heal') != 0:
+            g.preview_one_weapon_text.set_content(['Healing: ' + str(unit.weapon.get('healing')), 'Range: ' + str(unit.weapon.get('range')), 'Stat: ' + STAT_NAMES[unit.weapon.get('stat')]])
+        else:
+            g.preview_one_weapon_text.set_content(['Power: ' + str(unit.weapon.get('power')), 'Range: ' + str(unit.weapon.get('range')), 'Stat: ' + STAT_NAMES[unit.weapon.get('stat')]])
+        g.preview_one_hp_bar.set_img(g)
 
-    restore_file('chars.yml')
-    restore_file('weapons.yml')
+    else:
+        g.preview_one_name.set_content('')
+        g.preview_one_str.set_content('')
+        g.preview_one_con.set_content('')
+        g.preview_one_int.set_content('')
+        g.preview_one_wis.set_content('')
+        g.preview_one_dex.set_content('')
+        g.preview_one_lck.set_content('')
+        g.preview_one_weapon_name.set_content('')
+        g.preview_one_weapon_text.set_content([])
 
-    restore_dir('img')
-    restore_dir('music')
-    restore_dir('sounds')
-    restore_dir('names')
-    restore_dir('maps-singleplayer')
-    restore_dir('maps-multiplayer')
-    restore_dir('img/blue_male')
-    restore_dir('img/blue_female')
-    restore_dir('img/red_male')
-    restore_dir('img/red_female')
+def set_preview_two(unit):
+    g.preview_two = unit
+    if unit != None:
+        g.preview_two_name.set_content(unit.name)
+        g.preview_two_str.set_content(str(unit.stats[0]))
+        g.preview_two_con.set_content(str(unit.stats[1]))
+        g.preview_two_int.set_content(str(unit.stats[2]))
+        g.preview_two_wis.set_content(str(unit.stats[3]))
+        g.preview_two_dex.set_content(str(unit.stats[4]))
+        g.preview_two_lck.set_content(str(unit.stats[5]))
+        g.preview_two_weapon_name.set_content(str(unit.weapon.get('name')))
+        if unit.weapon.get('power') == 0 and unit.weapon.get('heal') != 0:
+            g.preview_two_weapon_text.set_content(['Healing: ' + str(unit.weapon.get('healing')), 'Range: ' + str(unit.weapon.get('range')), 'Stat: ' + STAT_NAMES[unit.weapon.get('stat')]])
+        else:
+            g.preview_two_weapon_text.set_content(['Power: ' + str(unit.weapon.get('power')), 'Range: ' + str(unit.weapon.get('range')), 'Stat: ' + STAT_NAMES[unit.weapon.get('stat')]])
+        g.preview_two_hp_bar.set_img(g)
 
-    restore_file('img/titlescreen.png')
-    restore_file('img/icon.png')
+    else:
+        g.preview_two_name.set_content('')
+        g.preview_two_str.set_content('')
+        g.preview_two_con.set_content('')
+        g.preview_two_int.set_content('')
+        g.preview_two_wis.set_content('')
+        g.preview_two_dex.set_content('')
+        g.preview_two_lck.set_content('')
+        g.preview_two_weapon_name.set_content('')
+        g.preview_two_weapon_text.set_content([])
 
-    restore_file('music/title_screen.ogg')
-    restore_file('music/game.ogg')
-    restore_file('music/win_intro.ogg')
-    restore_file('music/win_loop.ogg')
-    restore_file('music/lose_intro.ogg')
-    restore_file('music/lose_loop.ogg')
-
-    restore_file('sounds/step1.ogg')
-    restore_file('sounds/step2.ogg')
-    restore_file('sounds/step3.ogg')
-    restore_file('sounds/step4.ogg')
-    restore_file('sounds/hit.ogg')
-    restore_file('sounds/miss.ogg')
-    restore_file('sounds/crit.ogg')
-    restore_file('sounds/click.ogg')
-
-    restore_file('names/first_names_male.txt')
-    restore_file('names/first_names_female.txt')
-    restore_file('names/surnames.txt')
-
-    for file in os.listdir("basecontent/maps-singleplayer"):
-        if file not in os.listdir("content/maps-singleplayer"):
-            shutil.copy('basecontent/maps-singleplayer/' + file,'content/maps-singleplayer')
-
-    for file in os.listdir("basecontent/maps-multiplayer"):
-        if file not in os.listdir("content/maps-multiplayer"):
-            shutil.copy('basecontent/maps-multiplayer/' + file,'content/maps-multiplayer')
-
-    for file in os.listdir("basecontent/img/blue_male"):
-        if file not in os.listdir("content/img/blue_male"):
-            shutil.copy('basecontent/img/blue_male/' + file,'content/img/blue_male')
-
-    for file in os.listdir("basecontent/img/blue_female"):
-        if file not in os.listdir("content/img/blue_female"):
-            shutil.copy('basecontent/img/blue_female/' + file,'content/img/blue_female')
-
-    for file in os.listdir("basecontent/img/red_male"):
-        if file not in os.listdir("content/img/red_male"):
-            shutil.copy('basecontent/img/red_male/' + file,'content/img/red_male')
-
-    for file in os.listdir("basecontent/img/red_female"):
-        if file not in os.listdir("content/img/red_female"):
-            shutil.copy('basecontent/img/red_female/' + file,'content/img/red_female')
-
-def restore_file(path):
-    if not os.path.exists('content/' + path):
-        shutil.copy('basecontent/' + path, 'content/' + path)
-
-def restore_dir(path):
-    if not os.path.exists('content/' + path):
-        os.makedirs('content/' + path)
-
-def import_player_char(i, pos, playerColour):
+def import_unit(unit_id, pos, team):
     stats = []
-    duplicatePositions = []
 
-    name = g.charDict.get(i).get('name')
-    gender = g.charDict.get(i).get('gender')
-    img = str(g.charDict.get(i).get('img'))
+    name = g.unit_dict.get(unit_id).get('name')
+    gender = g.unit_dict.get(unit_id).get('gender')
+    img = str(g.unit_dict.get(unit_id).get('img'))
 
-    for j in range(len(STAT_NAMES)):
-        stats.append(g.charDict.get(i).get('stats').get(STAT_NAMES[j].lower()))
+    for stat_name in STAT_NAMES:
+        stats.append(g.unit_dict.get(unit_id).get('stats').get(stat_name.lower()))
     hp = MAX_HP
 
-    weapon = g.charDict.get(i).get('weapon')
-    weapon = g.weaponDict.get(weapon)
+    weapon = g.weapon_dict.get(g.unit_dict.get(unit_id).get('weapon'))
 
-    charTextContent = "Name: " + name + " | Gender: " + gender
-    for j in range(len(STAT_NAMES)):
-        charTextContent += " | " + STAT_NAMES[j] + ": " + str(stats[j])
-    charTextContent += " | Equipped: " + weapon.get('name')
+    if team == 'blue':
+        return Blue(name, gender, img, stats, hp, weapon, pos)
+    elif team == 'red':
+        return Red(name, gender, img, stats, hp, weapon, pos)
 
-    if playerColour == 'blue':
-        g.blueCharList.append(BlueChar(name, gender, img, stats, hp, weapon, pos, charTextContent))
-    elif playerColour == 'red':
-        g.redCharList.append(RedChar(name, gender, img, stats, hp, weapon, pos, charTextContent))
-
-def create_random_enemy(pos):
+def random_unit(pos, team):
     stats = []
-    duplicatePositions = []
-
     gender = random.choice(('Male', 'Female'))
 
     if gender == 'Male':
         name = random.choice(g.first_names_male)
     elif gender == 'Female':
         name = random.choice(g.first_names_female)
-    name = name + " " + random.choice(g.surnames)
 
     stats = copy.copy(ENEMY_STAT_SPREAD)
     random.shuffle(stats)
     hp = MAX_HP
 
-    weapon = random.randint(0,len(g.weaponDict)-1)
-    while g.weaponDict.get(weapon).get('stat') != stats.index(max(stats[0], stats[2])):
-        weapon = random.randint(0,len(g.weaponDict)-1)
+    weapons = list(range(len(g.weapon_dict)))
+    random.shuffle(weapons)
+    for w in weapons:
+        if g.weapon_dict.get(w).get('stat') == stats.index(max(stats[0], stats[2])):
+            weapon = w
+            break
 
-    if weapon == 0:
-        img = random.choice((1,2))
-    elif weapon == 1 or weapon == 4:
-        img = 3
-    elif weapon == 2 or weapon == 5:
-        img = 4
-    elif weapon == 3:
-        img = 0
-    weapon = g.weaponDict.get(weapon)
+    img = str(random.choice(g.weapon_dict.get(w).get('unit imgs')))
+    weapon = g.weapon_dict.get(weapon)
 
-    charTextContent = "Name: " + name + " | Gender: " + gender
-    for j in range(len(STAT_NAMES)):
-        charTextContent += " | " + STAT_NAMES[j] + ": " + str(stats[j])
-    charTextContent += " | Equipped: " + weapon.get('name')
-    g.redCharList.append(RedChar(name, gender, str(img), stats, hp, weapon, pos, charTextContent))
+    if team == 'blue':
+        return Blue(name, gender, img, stats, hp, weapon, pos)
+    elif team == 'red':
+        return Red(name, gender, img, stats, hp, weapon, pos)
 
-def animation_update():
+def get_pos_atk_range(red, posy, posx):
+    g.distance = 0
+    g.pos_attack_range = copy.deepcopy(g.map.matrix)
+    get_pos_atk_range_loop(red, posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
 
-    g.bg.mini_update(g)
-    g.screen.blit(g.gameMapImg, (-g.camera.posx,-g.camera.posy))
-    for j in range(len(g.blueCharList)):
-        g.blueCharList[j].update(g)
-    for j in range(len(g.redCharList)):
-        g.redCharList[j].update(g)
-    g.charText.update(g)
-    g.turnText.update(g)
-    pg.display.flip()
-
-def check_turn_end():
-    foundActive = 0
-
-    if g.mode == 'sp':
-        for i in range(len(g.blueCharList)):
-            if g.blueCharList[i].active == True:
-                foundActive = 1
-        if foundActive == 0:
-            enemy_turn()
-
-    elif g.mode == 'mp':
-        if g.turn//2 != g.turn/2:
-            for i in range(len(g.blueCharList)):
-                if g.blueCharList[i].active == True:
-                    foundActive = 1
-            if foundActive == 0:
-                red_turn()
-        elif g.turn//2 == g.turn/2:
-            for i in range(len(g.redCharList)):
-                if g.redCharList[i].active == True:
-                    foundActive = 1
-            if foundActive == 0:
-                blue_turn()
-
-def blue_turn():
-    g.turn += 1
-    g.turnText.content = "Turn " + str(g.turn) + " (Blue)"
-
-    g.currentCharList = g.blueCharList
-    g.enemyCharList = g.redCharList
-
-    for i in range(len(g.blueCharList)):
-        g.blueCharList[i].active = True
-        g.blueCharList[i].get_range(g)
-
-    g.camera = g.blueCamera
-    turn_change_animation('BLUE')
-
-def red_turn():
-    g.turn += 1
-    g.turnText.content = "Turn " + str(g.turn) + " (Red)"
-
-    g.currentCharList = g.redCharList
-    g.enemyCharList = g.blueCharList
-
-    for i in range(len(g.redCharList)):
-        g.redCharList[i].active = True
-        g.redCharList[i].get_range(g)
-
-    g.camera = g.redCamera
-    turn_change_animation('RED')
-
-def turn_change_animation(team):
-
-    g.turnChangeText.content = team + ' TURN'
-
-    g.bg.update(g)
-    g.screen.blit(g.gameMapImg, (-g.camera.posx,-g.camera.posy))
-    for j in range(len(g.blueCharList)):
-        g.blueCharList[j].update(g)
-    for j in range(len(g.redCharList)):
-        g.redCharList[j].update(g)
-
-    g.turnChangeText.update(g)
-    pg.display.flip()
-
-    time.sleep(1)
-
-def player_turn():
-    g.turn += 1
-    g.turnText.content = "Turn " + str(g.turn) + " (Player)"
-
-    for i in range(len(g.blueCharList)):
-        g.blueCharList[i].active = True
-        g.blueCharList[i].get_range(g)
-
-    turn_change_animation('PLAYER')
-
-def damage_calc(currentCharID, enemyCharID):
-    dexRoll = random.randint(1,100)
-    critRoll = random.randint(1,100)
-    dmg = g.currentCharList[currentCharID].stats[g.currentCharList[currentCharID].weapon.get('stat')] * g.currentCharList[currentCharID].weapon.get('damage')
-    defenceStat = g.currentCharList[currentCharID].weapon.get('stat') + 1
-
-    g.baseCurrentDamage = max(math.floor(dmg / g.enemyCharList[enemyCharID].stats[defenceStat]), 1)
-    g.currentDamage = random.randint(g.baseCurrentDamage-1, g.baseCurrentDamage+1)
-
-    if dexRoll <= 1.5 * g.enemyCharList[enemyCharID].stats[4]:
-        g.currentDamage = 0
-        g.currentHit = 'miss'
-    else:
-        g.currentDamage = g.baseCurrentDamage
-        g.currentHit = 'hit'
-        if critRoll <= 1.5 * g.currentCharList[currentCharID].stats[5]:
-            g.currentDamage *= 2
-            g.currentHit = 'crit'
-
-    dexRoll = random.randint(1,100)
-    critRoll = random.randint(1,100)
-    dmg = g.enemyCharList[enemyCharID].stats[g.enemyCharList[enemyCharID].weapon.get('stat')] * g.enemyCharList[enemyCharID].weapon.get('damage')
-    defenceStat = g.enemyCharList[enemyCharID].weapon.get('stat') + 1
-
-    g.baseEnemyDamage = max(math.floor(dmg / g.currentCharList[currentCharID].stats[defenceStat]),1)
-    g.enemyDamage = random.randint(g.baseEnemyDamage-1, g.baseEnemyDamage+1)
-
-    if dexRoll <= 1.5 * g.currentCharList[currentCharID].stats[4]:
-        g.enemyDamage = 0
-        g.enemyHit = 'miss'
-    else:
-        g.enemyDamage = g.baseEnemyDamage
-        g.enemyHit = 'hit'
-        if critRoll <= 1.5 * g.enemyCharList[enemyCharID].stats[5]:
-            g.enemyDamage *= 2
-            g.enemyHit = 'crit'
-
-def player_combat(currentCharID, enemyCharID):
-    damage_calc(currentCharID, enemyCharID)
-    if g.currentCharList[currentCharID].pos[0] > g.enemyCharList[enemyCharID].pos[0]:
-        dx = -8
-    elif g.currentCharList[currentCharID].pos[0] < g.enemyCharList[enemyCharID].pos[0]:
-        dx = 8
-    else:
-        dx = 0
-
-    if g.currentCharList[currentCharID].pos[1] > g.enemyCharList[enemyCharID].pos[1]:
-        dy = -8
-    elif g.currentCharList[currentCharID].pos[1] < g.enemyCharList[enemyCharID].pos[1]:
-        dy = 8
-    else:
-        dy = 0
-
+def get_pos_atk_range_loop(red, posy, posx, adjacent_tiles):
+    weapon_range = red.weapon.get('range')
     for i in range(4):
-        g.currentCharList[currentCharID].pos = (g.currentCharList[currentCharID].pos[0]+dx, g.currentCharList[currentCharID].pos[1]+dy)
-        animation_update()
-        time.sleep(MOVE_TIME)
-
-    if g.currentHit == 'hit':
-        pg.mixer.Sound.play(g.hit)
-    elif g.currentHit == 'crit':
-        pg.mixer.Sound.play(g.crit)
-    else:
-        pg.mixer.Sound.play(g.miss)
-
-    if g.enemyCharList[enemyCharID].hp <= g.currentDamage:
-        g.enemyCharList[enemyCharID].hp = 0
-        g.enemyCharList.remove(g.enemyCharList[enemyCharID])
-
-        for i in range(4):
-            g.currentCharList[currentCharID].pos = (g.currentCharList[currentCharID].pos[0]-dx, g.currentCharList[currentCharID].pos[1]-dy)
-            animation_update()
-            time.sleep(MOVE_TIME)
-
-        g.currentCharList[currentCharID].active = False
-
-    else:
-        g.enemyCharList[enemyCharID].hp -= g.currentDamage
-
-        for i in range(4):
-            g.currentCharList[currentCharID].pos = (g.currentCharList[currentCharID].pos[0]-dx, g.currentCharList[currentCharID].pos[1]-dy)
-            animation_update()
-            time.sleep(MOVE_TIME)
-
-        time.sleep(0.1)
-        g.enemyCharList[enemyCharID].get_atk_range(g)
-
-        if g.enemyCharList[enemyCharID].attackRange[g.currentCharList[currentCharID].gridPos[1]][g.currentCharList[currentCharID].gridPos[0]] == 1:
-            for i in range(4):
-                g.enemyCharList[enemyCharID].pos = (g.enemyCharList[enemyCharID].pos[0]-dx, g.enemyCharList[enemyCharID].pos[1]-dy)
-                animation_update()
-                time.sleep(MOVE_TIME)
-
-            if g.enemyHit == 'hit':
-                pg.mixer.Sound.play(g.hit)
-            elif g.enemyHit == 'crit':
-                pg.mixer.Sound.play(g.crit)
-            else:
-                pg.mixer.Sound.play(g.miss)
-
-            if g.currentCharList[currentCharID].hp <= g.enemyDamage:
-                g.currentCharList[currentCharID].hp = 0
-                g.currentCharList.remove(g.currentCharList[currentCharID])
-                for i in range(4):
-                    g.enemyCharList[enemyCharID].pos = (g.enemyCharList[enemyCharID].pos[0]+dx, g.enemyCharList[enemyCharID].pos[1]+dy)
-                    animation_update()
-                    time.sleep(MOVE_TIME)
-            else:
-                g.currentCharList[currentCharID].hp -= g.enemyDamage
-                for i in range(4):
-                    g.enemyCharList[enemyCharID].pos = (g.enemyCharList[enemyCharID].pos[0]+dx, g.enemyCharList[enemyCharID].pos[1]+dy)
-                    animation_update()
-                    time.sleep(MOVE_TIME)
-                g.currentCharList[currentCharID].active = False
-
-        else:
-            g.currentCharList[currentCharID].active = False
-
-    end_player_combat()
-
-def end_player_combat():
-    g.attackTileList = []
-    check_turn_end()
-
-def get_pos_atk_range_loop(redCharID, posy, posx, adjacentSquares):
-    weaponRange = g.redCharList[redCharID].weapon.get('range')
-    for i in range(4):
-        if g.distance < weaponRange and g.posAttackRange[adjacentSquares[i][0]][adjacentSquares[i][1]] != 2:
+        if g.distance < weapon_range and g.pos_attack_range[adjacent_tiles[i][0]][adjacent_tiles[i][1]] != 2:
             g.distance += 1
-            posx, posy = adjacentSquares[i][1], adjacentSquares[i][0]
-            g.posAttackRange[posy][posx] = 1
+            posx, posy = adjacent_tiles[i][1], adjacent_tiles[i][0]
+            g.pos_attack_range[posy][posx] = 1
 
-            get_pos_atk_range_loop(redCharID, posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
+            get_pos_atk_range_loop(red, posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
 
-        elif g.distance == weaponRange:
+        elif g.distance == weapon_range:
             g.distance -= 1
             return
 
     g.distance -= 1
 
-def get_pos_atk_range(redCharID, posy, posx):
-    g.distance = 0
-    g.posAttackRange = copy.deepcopy(g.gameMap.matrix)
-    get_pos_atk_range_loop(redCharID, posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
-
-def enemy_turn():
-    g.turn += 1
-    g.turnText.content = "Turn " + str(g.turn) + " (Enemy)"
-    trueCameraPosx, trueCameraPosy = g.camera.posx, g.camera.posy
-
-    for i in range(len(g.redCharList)):
-        g.redCharList[i].active = True
-
-    turn_change_animation('ENEMY')
-    animation_update()
-    time.sleep(0.5)
-
-    for i in range(len(g.redCharList)):
-        indices = []
-        moveOptions = []
-        attackMoveOptions = []
-        rangedAttackMoveOptions = []
-        attackOptions = []
-        rangedAttackOptions = []
-
-        g.redCharList[i].get_range(g)
-
-        for y in range(len(g.redCharList[i].moveRange)):
-            row = numpy.array(g.redCharList[i].moveRange[y])
-            indices = numpy.where(row == 1)[0]
-            for x in range(len(indices)):
-                moveOptions.append((indices[x], y))
-
-        for j in range(len(moveOptions)):
-            get_pos_atk_range(i, moveOptions[j][1], moveOptions[j][0])
-
-            for k in range(len(g.blueCharList)):
-                if g.posAttackRange[g.blueCharList[k].gridPos[1]][g.blueCharList[k].gridPos[0]] == 1 and moveOptions[j] not in attackMoveOptions:
-                    attackMoveOptions.append(moveOptions[j])
-
-                    adjacentSquares = [(moveOptions[j][1], moveOptions[j][0]+1),
-                                       (moveOptions[j][1]-1, moveOptions[j][0]),
-                                       (moveOptions[j][1], moveOptions[j][0]-1),
-                                       (moveOptions[j][1]+1, moveOptions[j][0])]
-
-                    if (g.blueCharList[k].gridPos[1], g.blueCharList[k].gridPos[0]) not in adjacentSquares:
-                        rangedAttackMoveOptions.append(moveOptions[j])
-
-        if rangedAttackMoveOptions != []:
-            chosenOption = random.choice(rangedAttackMoveOptions)
-        elif attackMoveOptions != []:
-            chosenOption = random.choice(attackMoveOptions)
-        else:
-            chosenOption = random.choice(moveOptions)
-
-        startPos = (g.redCharList[i].pos[0],g.redCharList[i].pos[1])
-        endPos = (chosenOption[0]*WIDTH,chosenOption[1]*HEIGHT)
-
-        dy = (endPos[1]-startPos[1])/MOVE_STEPS
-        dx = (endPos[0]-startPos[0])/MOVE_STEPS
-
-        if dx > 0 and g.redCharList[i].pos[0] < endPos[0]:
-            xMoveComplete = False
-        elif dx >= 0 and g.redCharList[i].pos[0] >= endPos[0]:
-            xMoveComplete = True
-        elif dx < 0 and g.redCharList[i].pos[0] > endPos[0]:
-            xMoveComplete = False
-        elif dx <= 0 and g.redCharList[i].pos[0] <= endPos[0]:
-            xMoveComplete = True
-
-        if dy > 0 and g.redCharList[i].pos[1] < endPos[1]:
-            yMoveComplete = False
-        elif dy >= 0 and g.redCharList[i].pos[1] >= endPos[1]:
-            yMoveComplete = True
-        elif dy < 0 and g.redCharList[i].pos[1] > endPos[1]:
-            yMoveComplete = False
-        elif dy <= 0 and g.redCharList[i].pos[1] <= endPos[1]:
-            yMoveComplete = True
-
-        while startPos[0]-g.camera.posx < 0:
-            g.camera.posx -= 64
-        while startPos[0]-g.camera.posx >= DISPLAY_WIDTH:
-            g.camera.posx += 64
-        while startPos[1]-g.camera.posy < 0:
-            g.camera.posy -= 64
-        while startPos[1]-g.camera.posy >= DISPLAY_HEIGHT:
-            g.camera.posy += 64
-
-        while endPos[0]-g.camera.posx < 0:
-            g.camera.posx -= 64
-        while endPos[0]-g.camera.posx >= DISPLAY_WIDTH:
-            g.camera.posx += 64
-        while endPos[1]-g.camera.posy < 0:
-            g.camera.posy -= 64
-        while endPos[1]-g.camera.posy >= DISPLAY_HEIGHT:
-            g.camera.posy += 64
-
-        g.charText.content = g.redCharList[i].charTextContent
-        animation_update()
-
-        while xMoveComplete == False or yMoveComplete == False:
-            g.redCharList[i].pos = (g.redCharList[i].pos[0]+dx, g.redCharList[i].pos[1]+dy)
-            g.charText.content = g.redCharList[i].charTextContent
-            animation_update()
-
-            if pg.mixer.get_busy() == False:
-                step = random.randint(0,3)
-                pg.mixer.Sound.play(g.steps[step])
-
-            if dx > 0 and g.redCharList[i].pos[0] < endPos[0]:
-                    xMoveComplete = False
-            elif dx >= 0 and g.redCharList[i].pos[0] >= endPos[0]:
-                    xMoveComplete = True
-            elif dx < 0 and g.redCharList[i].pos[0] > endPos[0]:
-                    xMoveComplete = False
-            elif dx <= 0 and g.redCharList[i].pos[0] <= endPos[0]:
-                    xMoveComplete = True
-
-            if dy > 0 and g.redCharList[i].pos[1] < endPos[1]:
-                    yMoveComplete = False
-            elif dy >= 0 and g.redCharList[i].pos[1] >= endPos[1]:
-                    yMoveComplete = True
-            elif dy < 0 and g.redCharList[i].pos[1] > endPos[1]:
-                    yMoveComplete = False
-            elif dy <= 0 and g.redCharList[i].pos[1] <= endPos[1]:
-                    yMoveComplete = True
-
-            time.sleep(MOVE_TIME)
-
-        g.redCharList[i].pos = (chosenOption[0]*WIDTH,chosenOption[1]*HEIGHT)
-
-        if attackMoveOptions != []:
-            g.redCharList[i].get_atk_range(g)
-
-            for j in range(len(g.blueCharList)):
-                if g.redCharList[i].attackRange[g.blueCharList[j].gridPos[1]][g.blueCharList[j].gridPos[0]] == 1:
-                    attackOptions.append(j)
-
-                    adjacentSquares = [(g.redCharList[i].gridPos[1], g.redCharList[i].gridPos[0]+1),
-                                       (g.redCharList[i].gridPos[1]-1, g.redCharList[i].gridPos[0]),
-                                       (g.redCharList[i].gridPos[1], g.redCharList[i].gridPos[0]-1),
-                                       (g.redCharList[i].gridPos[1]+1, g.redCharList[i].gridPos[0])]
-
-                    if (g.blueCharList[j].gridPos[1], g.blueCharList[j].gridPos[0]) not in adjacentSquares:
-                        rangedAttackOptions.append(j)
-
-            if rangedAttackOptions != []:
-                blueCharID = random.choice(rangedAttackOptions)
-            else:
-                blueCharID = random.choice(attackOptions)
-
-            damage_calc(blueCharID, i)
-
-            if g.blueCharList[blueCharID].pos[0] > g.redCharList[i].pos[0]:
-                dx = -8
-            elif g.blueCharList[blueCharID].pos[0] < g.redCharList[i].pos[0]:
-                dx = 8
-            else:
-                dx = 0
-
-            if g.blueCharList[blueCharID].pos[1] > g.redCharList[i].pos[1]:
-                dy = -8
-            elif g.blueCharList[blueCharID].pos[1] < g.redCharList[i].pos[1]:
-                dy = 8
-            else:
-                dy = 0
-
-            time.sleep(0.1)
-            g.blueCharList[blueCharID].get_atk_range(g)
-            if g.blueCharList[blueCharID].hp <= g.baseEnemyDamage or g.redCharList[i].hp > g.baseCurrentDamage or g.blueCharList[blueCharID].attackRange[g.redCharList[i].gridPos[1]][g.redCharList[i].gridPos[0]] == 0:
-
-                for j in range(4):
-                    g.redCharList[i].pos = (g.redCharList[i].pos[0]-dx, g.redCharList[i].pos[1]-dy)
-                    animation_update()
-                    time.sleep(MOVE_TIME)
-
-                if g.enemyHit == 'hit':
-                    pg.mixer.Sound.play(g.hit)
-                elif g.enemyHit == 'crit':
-                    pg.mixer.Sound.play(g.crit)
-                else:
-                    pg.mixer.Sound.play(g.miss)
-
-                if g.blueCharList[blueCharID].hp <= g.enemyDamage:
-                    g.blueCharList[blueCharID].hp = 0
-                    g.blueCharList.remove(g.blueCharList[blueCharID])
-
-                    for j in range(4):
-                        g.redCharList[i].pos = (g.redCharList[i].pos[0]+dx, g.redCharList[i].pos[1]+dy)
-                        animation_update()
-                        time.sleep(MOVE_TIME)
-
-                else:
-                    g.blueCharList[blueCharID].hp -= g.enemyDamage
-
-                    for j in range(4):
-                        g.redCharList[i].pos = (g.redCharList[i].pos[0]+dx, g.redCharList[i].pos[1]+dy)
-                        animation_update()
-                        time.sleep(MOVE_TIME)
-
-                    if g.blueCharList[blueCharID].attackRange[g.redCharList[i].gridPos[1]][g.redCharList[i].gridPos[0]] == 1:
-                        time.sleep(0.1)
-
-                        for j in range(4):
-                            g.blueCharList[blueCharID].pos = (g.blueCharList[blueCharID].pos[0]+dx, g.blueCharList[blueCharID].pos[1]+dy)
-                            animation_update()
-                            time.sleep(MOVE_TIME)
-
-                        if g.currentHit == 'hit':
-                            pg.mixer.Sound.play(g.hit)
-                        elif g.currentHit == 'crit':
-                            pg.mixer.Sound.play(g.crit)
-                        else:
-                            pg.mixer.Sound.play(g.miss)
-
-                        if g.redCharList[i].hp <= g.currentDamage:
-                            g.redCharList[i].hp = 0
-                            g.redCharList.remove(g.redCharList[i])
-                        else:
-                            g.redCharList[i].hp -= g.currentDamage
-
-                        for j in range(4):
-                            g.blueCharList[blueCharID].pos = (g.blueCharList[blueCharID].pos[0]-dx, g.blueCharList[blueCharID].pos[1]-dy)
-                            animation_update()
-                            time.sleep(MOVE_TIME)
-
-        g.redCharList[i].active = False
-
-        g.charText.content = g.redCharList[i].charTextContent
-        animation_update()
-        time.sleep(0.5)
-
-    g.camera.posx, g.camera.posy = trueCameraPosx, trueCameraPosy
-    animation_update()
-    player_turn()
-
-def mouse_hover():
-    anySelected = False
-
-    if g.attackTileList == []:
-        for i in range(len(g.blueCharList)):
-            if g.gridx == g.blueCharList[i].gridPos[0] and g.gridy == g.blueCharList[i].gridPos[1]:
-                anySelected = True
-                g.charText.content = g.blueCharList[i].charTextContent
-                g.blueCharList[i].get_range(g)
-
-                g.preMoveTileList = []
-                for row in range(len(g.blueCharList[i].moveRange)):
-                    for column in range(len(g.blueCharList[i].moveRange[row])):
-                        if g.blueCharList[i].moveRange[row][column] == 1 and g.moveTileList == []:
-                                g.preMoveTileList.append(PreMoveTile((column,row),'blue',g.blueCharList[i].active))
-
-        for i in range(len(g.redCharList)):
-            if g.gridx == g.redCharList[i].gridPos[0] and g.gridy == g.redCharList[i].gridPos[1]:
-                anySelected = True
-                g.charText.content = g.redCharList[i].charTextContent
-                g.redCharList[i].get_range(g)
-
-                g.preMoveTileList = []
-                for row in range(len(g.redCharList[i].moveRange)):
-                    for column in range(len(g.redCharList[i].moveRange[row])):
-                        if g.redCharList[i].moveRange[row][column] == 1 and g.moveTileList == []:
-                            g.preMoveTileList.append(PreMoveTile((column,row),'red',g.redCharList[i].active))
-
-    if anySelected == False:
-        g.charText.content = ""
-        g.preMoveTileList = []
-
 def mouse_down(button):
     if button == 1: #LEFT MOUSE BUTTON
-        for i in range(len(g.attackTileList)):
-            if g.gridx == g.attackTileList[i].gridPos[0] and g.gridy == g.attackTileList[i].gridPos[1]:
-                click_attack_tile(i)
+        for tile in g.attack_tiles:
+            if g.gridx == tile.grid_pos[0] and g.gridy == tile.grid_pos[1]:
+                click_attack_tile(tile)
                 return
 
-        if g.attackTileList == []:
-            for i in range(len(g.moveTileList)):
-                if g.gridx == g.moveTileList[i].gridPos[0] and g.gridy == g.moveTileList[i].gridPos[1]:
-                    click_move_tile(i)
-                    return
+        for tile in g.heal_tiles:
+            if g.gridx == tile.grid_pos[0] and g.gridy == tile.grid_pos[1]:
+                click_heal_tile(tile)
+                return
 
-            for i in range(len(g.blueCharList)):
-                if g.turn//2 != g.turn/2 and g.gridx == g.blueCharList[i].gridPos[0] and g.gridy == g.blueCharList[i].gridPos[1] and g.blueCharList[i].active == True:
+        if g.attack_tiles == [] and g.heal_tiles == []:
+            for tile in g.move_tiles:
+                if g.gridx == tile.grid_pos[0] and g.gridy == tile.grid_pos[1]:
+                    if g.turn % 2 == 0 and g.mode == 'mp':
+                        for red in g.reds:
+                            if tile.grid_pos == red.grid_pos and red != g.selected_unit:
+                                g.move_tiles = []
+                                g.selected_unit = None
+                                return
+                        click_move_tile(tile)
+                        return
+                    else:
+                        for blue in g.blues:
+                            if tile.grid_pos == blue.grid_pos and blue != g.selected_unit:
+                                g.move_tiles = []
+                                g.selected_unit = None
+                                return
+                        click_move_tile(tile)
+                        return
+
+            for blue in g.blues:
+                if g.turn % 2 == 1 and g.gridx == blue.grid_pos[0] and g.gridy == blue.grid_pos[1] and blue.active == True:
                     g.colour = 'blue'
-                    click_char(i)
+                    click_unit(blue)
                     return
 
-            for i in range(len(g.redCharList)):
-                if g.turn//2 == g.turn/2 and g.gridx == g.redCharList[i].gridPos[0] and g.gridy == g.redCharList[i].gridPos[1] and g.redCharList[i].active == True:
+            for red in g.reds:
+                if g.turn % 2 == 0 and g.gridx == red.grid_pos[0] and g.gridy == red.grid_pos[1] and red.active == True:
                     g.colour = 'red'
-                    click_char(i)
+                    click_unit(red)
                     return
 
-        g.moveTileList = []
+        g.move_tiles = []
 
     elif button == 3:
-        g.moveTileList = []
-        if g.attackTileList != []:
-            g.attackTileList = []
-            g.blueCharList[g.selectedCharID].active = False
-            check_turn_end()
+        g.move_tiles = []
+        if g.attack_tiles != [] or g.heal_tiles != []:
+            g.attack_tiles = []
+            g.heal_tiles = []
+            g.selected_unit.active = False
+            g.selected_unit.set_img(g)
+            g.selected_unit = None
 
-def click_char(i):
+        else:
+            g.selected_unit = None
 
-    g.selectedCharID = i
-    g.moveTileList = []
-    g.preMoveTileList = []
+def click_unit(unit):
+    g.selected_unit = unit
+
+    g.move_tiles = []
+    g.pre_move_tiles = []
     pg.mixer.Sound.play(g.click)
-    for row in range(len(g.currentCharList[i].moveRange)):
-        for column in range(len(g.currentCharList[i].moveRange[row])):
-            if g.currentCharList[i].moveRange[row][column] == 1:
-                g.moveTileList.append(MoveTile((column,row),g.colour))
+    for row in range(len(unit.move_range)):
+        for column in range(len(unit.move_range[row])):
+            if unit.move_range[row][column] == 1:
+                g.move_tiles.append(MoveTile((column,row),g.colour))
 
-def click_move_tile(i):
+def click_move_tile(tile):
+    g.start_pos = (g.selected_unit.pos[0],g.selected_unit.pos[1])
+    g.end_pos = (tile.grid_pos[0]*WIDTH,tile.grid_pos[1]*HEIGHT)
 
-    startPos = (g.currentCharList[g.selectedCharID].pos[0],g.currentCharList[g.selectedCharID].pos[1])
-    endPos = (g.moveTileList[i].gridPos[0]*WIDTH,g.moveTileList[i].gridPos[1]*HEIGHT)
+    g.dy = (g.end_pos[1]-g.start_pos[1])/MOVE_STEPS
+    g.dx = (g.end_pos[0]-g.start_pos[0])/MOVE_STEPS
 
-    dy = (endPos[1]-startPos[1])/MOVE_STEPS
-    dx = (endPos[0]-startPos[0])/MOVE_STEPS
+    g.state = 'animating'
+    g.animation = 'player move'
+    g.move_complete = False
 
-    if dx > 0 and g.currentCharList[g.selectedCharID].pos[0] < endPos[0]:
-        xMoveComplete = False
-    elif dx >= 0 and g.currentCharList[g.selectedCharID].pos[0] >= endPos[0]:
-        xMoveComplete = True
-    elif dx < 0 and g.currentCharList[g.selectedCharID].pos[0] > endPos[0]:
-        xMoveComplete = False
-    elif dx <= 0 and g.currentCharList[g.selectedCharID].pos[0] <= endPos[0]:
-        xMoveComplete = True
+def click_attack_tile(tile):
+    for defender in g.defenders:
+        if defender.grid_pos[0] == tile.grid_pos[0] and defender.grid_pos[1] == tile.grid_pos[1]:
+            g.attacker = (g.selected_unit)
+            g.defender = defender
+            g.state = 'combat'
+            g.stage = 'attacker attack'
+            break
 
-    if dy > 0 and g.currentCharList[g.selectedCharID].pos[1] < endPos[1]:
-        yMoveComplete = False
-    elif dy >= 0 and g.currentCharList[g.selectedCharID].pos[1] >= endPos[1]:
-        yMoveComplete = True
-    elif dy < 0 and g.currentCharList[g.selectedCharID].pos[1] > endPos[1]:
-        yMoveComplete = False
-    elif dy <= 0 and g.currentCharList[g.selectedCharID].pos[1] <= endPos[1]:
-        yMoveComplete = True
+def click_heal_tile(tile):
+    for attacker in g.attackers:
+        if attacker.grid_pos[0] == tile.grid_pos[0] and attacker.grid_pos[1] == tile.grid_pos[1]:
+            g.attacker = (g.selected_unit)
+            g.defender = attacker
+            g.state = 'combat'
+            g.stage = 'heal'
+            break
 
-    while xMoveComplete == False or yMoveComplete == False:
-        g.currentCharList[g.selectedCharID].pos = (g.currentCharList[g.selectedCharID].pos[0]+dx, g.currentCharList[g.selectedCharID].pos[1]+dy)
-        animation_update()
+def damage_calc(attacker, defender):
+    dex_roll = random.randint(1,100)
+    crit_roll = random.randint(1,100)
+    dmg = attacker.stats[attacker.weapon.get('stat')] * attacker.weapon.get('power')
+    defence_stat = attacker.weapon.get('stat') + 1
 
-        if pg.mixer.get_busy() == False:
-            step = random.randint(0,3)
-            pg.mixer.Sound.play(g.steps[step])
+    g.attacker_base_dmg = max(math.floor(dmg / defender.stats[defence_stat]), 1)
+    g.attacker_dmg = random.randint(g.attacker_base_dmg-1, g.attacker_base_dmg+1)
 
-        if dx > 0 and g.currentCharList[g.selectedCharID].pos[0] < endPos[0]:
-            xMoveComplete = False
-        elif dx >= 0 and g.currentCharList[g.selectedCharID].pos[0] >= endPos[0]:
-            xMoveComplete = True
-        elif dx < 0 and g.currentCharList[g.selectedCharID].pos[0] > endPos[0]:
-                xMoveComplete = False
-        elif dx <= 0 and g.currentCharList[g.selectedCharID].pos[0] <= endPos[0]:
-            xMoveComplete = True
+    if dex_roll <= 1.5 * defender.stats[4]:
+        g.attacker_dmg = 0
+        g.attacker_hit = 'miss'
+    else:
+        g.attacker_dmg = g.attacker_base_dmg
+        g.attacker_hit = 'hit'
+        if crit_roll <= 1.5 * attacker.stats[5]:
+            g.attacker_dmg *= 2
+            g.attacker_hit = 'crit'
 
-        if dy > 0 and g.currentCharList[g.selectedCharID].pos[1] < endPos[1]:
-            yMoveComplete = False
-        elif dy >= 0 and g.currentCharList[g.selectedCharID].pos[1] >= endPos[1]:
-            yMoveComplete = True
-        elif dy < 0 and g.currentCharList[g.selectedCharID].pos[1] > endPos[1]:
-            yMoveComplete = False
-        elif dy <= 0 and g.currentCharList[g.selectedCharID].pos[1] <= endPos[1]:
-            yMoveComplete = True
-        time.sleep(MOVE_TIME)
+    dex_roll = random.randint(1,100)
+    crit_roll = random.randint(1,100)
+    dmg = defender.stats[defender.weapon.get('stat')] * defender.weapon.get('power')
+    defence_stat = defender.weapon.get('stat') + 1
 
-    g.currentCharList[g.selectedCharID].pos = (g.moveTileList[i].gridPos[0]*WIDTH, g.moveTileList[i].gridPos[1]*HEIGHT)
-    g.moveTileList = []
+    g.defender_base_dmg = math.floor(dmg / attacker.stats[defence_stat])
+    g.defender_dmg = max(random.randint(g.defender_base_dmg-1, g.defender_base_dmg+1), 1)
 
-    g.currentCharList[g.selectedCharID].get_atk_range(g)
+    if dex_roll <= 1.5 * attacker.stats[4]:
+        g.defender_dmg = 0
+        g.defender_hit = 'miss'
+    else:
+        g.defender_dmg = g.defender_base_dmg
+        g.defender_hit = 'hit'
+        if crit_roll <= 1.5 * defender.stats[5]:
+            g.defender_dmg *= 2
+            g.defender_hit = 'crit'
 
-    for j in range(len(g.enemyCharList)):
-        if g.currentCharList[g.selectedCharID].attackRange[g.enemyCharList[j].gridPos[1]][g.enemyCharList[j].gridPos[0]] == 1:
-            g.attackTileList.append(AttackTile((g.enemyCharList[j].gridPos[0], g.enemyCharList[j].gridPos[1])))
+def heal_calc(attacker, defender):
+    crit_roll = random.randint(1,100)
 
-    if g.attackTileList == []:
-        g.currentCharList[g.selectedCharID].active = False
-        check_turn_end()
+    g.base_heal = math.floor(attacker.stats[attacker.weapon.get('stat')] * attacker.weapon.get('healing') / 6)
+    g.heal = min(random.randint(g.base_heal-1, g.base_heal+1), MAX_HP-defender.hp)
 
-def click_attack_tile(i):
-    for charID in range(len(g.enemyCharList)):
-        if g.enemyCharList[charID].gridPos[0] == g.attackTileList[i].gridPos[0] and g.enemyCharList[charID].gridPos[1] == g.attackTileList[i].gridPos[1]:
-            player_combat(g.selectedCharID, charID)
-            return
+    if crit_roll <= 1.5 * attacker.stats[5]:
+        g.heal = min(g.heal*2,  MAX_HP-defender.hp)
+        g.attacker_hit = 'crit'
+    else:
+        g.attacker_hit = 'hit'
+
+def turn_over():
+    found_active = 0
+
+    if g.mode == 'sp' or g.turn % 2 == 1:
+        for blue in g.blues:
+            if blue.active == True:
+                found_active = 1
+                break
+    else:
+        for red in g.reds:
+            if red.active == True:
+                found_active = 1
+                break
+
+    if found_active == 0:
+        return True
+    else:
+        return False
 
 class Game:
     def __init__(self):
         # initialise game window
         pg.init()
-        restore_all()
 
-        self.charDict = yaml.load(open('content/chars.yml'))
-        self.weaponDict = yaml.load(open('content/weapons.yml'))
+        self.unit_dict = yaml.load(open('content/units.yml'))
+        self.weapon_dict = yaml.load(open('content/weapons.yml'))
         self.first_names_male = open("content/names/first_names_male.txt", "r").read().split(', ')
         self.first_names_female = open("content/names/first_names_female.txt", "r").read().split(', ')
-        self.surnames = open("content/names/surnames.txt", "r").read().split(', ')
-
-        iconSurface = pg.image.load("content/img/icon.png")
-
-        pg.display.set_caption(TITLE)
-        pg.display.set_icon(iconSurface)
-
-        if FULLSCREEN == True:
-            self.screen = pg.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT),pg.FULLSCREEN)
-        else:
-            self.screen = pg.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
-
-        self.clock = pg.time.Clock()
 
         self.steps = []
         for i in range(4):
@@ -781,6 +309,8 @@ class Game:
         self.hit = pg.mixer.Sound('content/sounds/hit.ogg')
         self.miss = pg.mixer.Sound('content/sounds/miss.ogg')
         self.crit = pg.mixer.Sound('content/sounds/crit.ogg')
+        self.heal_hit = pg.mixer.Sound('content/sounds/heal_hit.ogg')
+        self.heal_crit = pg.mixer.Sound('content/sounds/heal_crit.ogg')
         self.click = pg.mixer.Sound('content/sounds/click.ogg')
 
         for i in range(4):
@@ -788,93 +318,155 @@ class Game:
         self.hit.set_volume(0.2*VOLUME)
         self.miss.set_volume(0.3*VOLUME)
         self.crit.set_volume(0.2*VOLUME)
+        self.heal_hit.set_volume(0.6*VOLUME)
+        self.heal_crit.set_volume(0.2*VOLUME)
         self.click.set_volume(0.5*VOLUME)
+
+        pg.display.set_caption(TITLE)
+        pg.display.set_icon(pg.image.load("content/img/icon.png"))
+
+        if FULLSCREEN == True:
+            self.screen = pg.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT),pg.FULLSCREEN)
+        else:
+            self.screen = pg.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
+
+        self.game_height = DISPLAY_HEIGHT - HEIGHT*2
+
+        self.clock = pg.time.Clock()
 
         self.fade = Fade()
         self.running = True
 
     def new(self):
-        self.blueCharList = []
-        self.redCharList = []
-        self.preMoveTileList = []
-        self.moveTileList = []
-        self.attackTileList = []
+        self.state = 'turn'
+        self.preview_one = None
+        self.preview_two = None
+        self.selected_unit = None
+
+        self.frame = 0
         self.turn = 1
 
-        self.bg = Background()
+        self.blues = []
+        self.reds = []
+        self.pre_move_tiles = []
+        self.move_tiles = []
+        self.attack_tiles = []
+        self.heal_tiles = []
 
-        g.currentCharList = g.blueCharList
-        g.enemyCharList = g.redCharList
+        self.bg = Background()
+        self.preview_box = PreviewBox()
+        self.cursor = Cursor()
+
+        self.previews = pg.sprite.Group()
+
+        self.previews.add(PreviewPortrait(1))
+        self.previews.add(PreviewWeaponImg(1))
+        self.previews.add(PreviewPortrait(2))
+        self.previews.add(PreviewWeaponImg(2))
+
+        self.preview_one_hp_bar = PreviewHPBar(1)
+        self.preview_two_hp_bar = PreviewHPBar(2)
+
+        self.preview_one_name = Text("", (148, self.game_height+15), 19, WHITE)
+        self.preview_one_str = Text("", (173, self.game_height+41), 19, WHITE)
+        self.preview_one_con = Text("", (224, self.game_height+41), 19, WHITE)
+        self.preview_one_int = Text("", (173, self.game_height+67), 19, WHITE)
+        self.preview_one_wis = Text("", (224, self.game_height+67), 19, WHITE)
+        self.preview_one_dex = Text("", (173, self.game_height+93), 19, WHITE)
+        self.preview_one_lck = Text("", (224, self.game_height+93), 19, WHITE)
+
+        self.preview_one_weapon_name = Text("", (281, self.game_height+15), 19, WHITE)
+        self.preview_one_weapon_text = MultiLineText([], (259, self.game_height+39), 17, WHITE)
+
+        self.preview_two_name = Text("", (626, self.game_height+15), 19, WHITE)
+        self.preview_two_str = Text("", (651, self.game_height+41), 19, WHITE)
+        self.preview_two_con = Text("", (702, self.game_height+41), 19, WHITE)
+        self.preview_two_int = Text("", (651, self.game_height+67), 19, WHITE)
+        self.preview_two_wis = Text("", (702, self.game_height+67), 19, WHITE)
+        self.preview_two_dex = Text("", (651, self.game_height+93), 19, WHITE)
+        self.preview_two_lck = Text("", (702, self.game_height+93), 19, WHITE)
+
+        self.preview_two_weapon_name = Text("", (759, self.game_height+15), 19, WHITE)
+        self.preview_two_weapon_text = MultiLineText([], (736, self.game_height+39), 17, WHITE)
+
+        self.previews.add(self.preview_one_hp_bar)
+        self.previews.add(self.preview_two_hp_bar)
+
+        self.previews.add(self.preview_one_name)
+        self.previews.add(self.preview_one_str)
+        self.previews.add(self.preview_one_con)
+        self.previews.add(self.preview_one_int)
+        self.previews.add(self.preview_one_wis)
+        self.previews.add(self.preview_one_dex)
+        self.previews.add(self.preview_one_lck)
+
+        self.previews.add(self.preview_one_weapon_name)
+        self.previews.add(self.preview_one_weapon_text)
+
+        self.previews.add(self.preview_two_name)
+        self.previews.add(self.preview_two_str)
+        self.previews.add(self.preview_two_con)
+        self.previews.add(self.preview_two_int)
+        self.previews.add(self.preview_two_wis)
+        self.previews.add(self.preview_two_dex)
+        self.previews.add(self.preview_two_lck)
+
+        self.previews.add(self.preview_two_weapon_name)
+        self.previews.add(self.preview_two_weapon_text)
+
+        self.turn_dialogue = DialogueBox((180, 32), (6, self.game_height-38))
+        self.turn_text = Text("", (12, self.game_height-36), 20, WHITE)
+
+        self.turn_change_dialogue = DialogueBox((DISPLAY_WIDTH, 80), (0, (self.game_height-10)/2))
+        self.turn_change_text = CenterText("", (DISPLAY_WIDTH/2, (self.game_height+70)/2), 70, WHITE)
+
+        self.end_screen_dialogue = DialogueBox((256, 128), ((DISPLAY_WIDTH-256)/2, (self.game_height-128)/2))
+        
+        self.pause_dialogue = DialogueBox((256, 256), ((DISPLAY_WIDTH-256)/2, (self.game_height-256)/2))
+        self.pause_title = CenterText("Game Paused", (DISPLAY_WIDTH/2, (self.game_height-186)/2), 40, WHITE)
+        
+        self.pause_options = []
+        self.pause_options.append(MenuOption(self, 'Resume', 30, WHITE, (DISPLAY_WIDTH/2, (self.game_height-126)/2), True))
+        self.pause_options.append(MenuOption(self, 'Surrender', 30, WHITE, (DISPLAY_WIDTH/2, (self.game_height-46)/2), True))
+
+        self.attackers = self.blues
+        self.defenders = self.reds
 
         if self.mode == 'sp':
-            self.new_sp()
-        elif self.mode == 'mp':
-            self.new_mp()
+            map_dir = random.choice(self.maps_sp)
+            self.map = Map(os.path.join(map_dir, "map.tmx"))
+            self.map_img = self.map.make_map()
+            self.bg.image = pg.image.load(os.path.join(map_dir, "bg.png"))
+            self.turn_text.set_content("Turn " + str(self.turn) + " (Player)")
 
-    def new_sp(self):
-        # start new game
+            for spawn in self.map.red_spawns:
+                self.reds.append(random_unit(spawn, 'red'))
+        else:
+            map_dir = random.choice(self.maps_mp)
+            self.map = Map(os.path.join(map_dir, "map.tmx"))
+            self.map_img = self.map.make_map()
+            self.bg.image = pg.image.load(os.path.join(map_dir, "bg.png"))
+            self.turn_text.set_content("Turn " + str(self.turn) + " (Blue)")
 
-        self.gameMap = Map(random.choice(self.maps_sp))
-        self.gameMapImg = self.gameMap.make_map()
+            for red_id, spawn in zip(RED_PARTY, self.map.red_spawns):
+                self.reds.append(import_unit(red_id, spawn, 'red'))
 
-        self.cursor = Cursor()
-        self.turnChangeText = CenterText("", (DISPLAY_WIDTH/2,DISPLAY_HEIGHT/2), 70, WHITE)
-        self.turnText = Text("Turn " + str(self.turn) + " (Player)", (10,10), 20, WHITE)
-        self.charText = Text("", (10,DISPLAY_HEIGHT-32), 20, WHITE)
+            self.red_cam = RedCamera(g)
 
-        for i in range(len(self.gameMap.blueSpawns)):
-            import_player_char(BLUE_PARTY[i], self.gameMap.blueSpawns[i], 'blue')
-            self.blueCharList[i].moveRange = []
+        self.blue_cam = BlueCamera(g)
+        self.cam = self.blue_cam
 
-        for i in range(len(self.gameMap.redSpawns)):
-            create_random_enemy(self.gameMap.redSpawns[i])
-            self.redCharList[i].moveRange = []
+        for blue_id, spawn in zip(BLUE_PARTY, self.map.blue_spawns):
+            self.blues.append(import_unit(blue_id, spawn, 'blue'))
 
-        for i in range(len(self.blueCharList)):
-            self.blueCharList[i].get_range(g)
-        for i in range(len(self.redCharList)):
-            self.redCharList[i].get_range(g)
+        for blue in self.blues:
+            blue.get_range(g)
+        for red in self.reds:
+            red.get_range(g)
 
-        self.blueCamera = BlueCamera(g)
-        self.camera = self.blueCamera
-
-        pg.mixer.music.load('content/music/game.ogg')
+        pg.mixer.music.load(os.path.join(map_dir, "music.ogg"))
         pg.mixer.music.play(-1)
-        self.fade.start_fadein(g)
-        self.run()
-
-    def new_mp(self):
-        # start new game
-
-        self.gameMap = Map(random.choice(self.maps_mp))
-        self.gameMapImg = self.gameMap.make_map()
-
-        self.cursor = Cursor()
-        self.turnChangeText = CenterText("", (DISPLAY_WIDTH/2,DISPLAY_HEIGHT/2), 70, WHITE)
-        self.turnText = Text("Turn " + str(self.turn) + " (Blue)", (10,10), 20, WHITE)
-        self.charText = Text("", (10,DISPLAY_HEIGHT-32), 20, WHITE)
-
-        for i in range(len(self.gameMap.blueSpawns)):
-            import_player_char(BLUE_PARTY[i], self.gameMap.blueSpawns[i], 'blue')
-            self.blueCharList[i].moveRange = []
-
-        for i in range(len(self.gameMap.redSpawns)):
-            import_player_char(RED_PARTY[i], self.gameMap.redSpawns[i], 'red')
-            self.redCharList[i].moveRange = []
-
-        for i in range(len(self.blueCharList)):
-            self.blueCharList[i].get_range(g)
-        for i in range(len(self.redCharList)):
-            self.redCharList[i].get_range(g)
-
-        self.blueCamera = BlueCamera(g)
-        self.redCamera = RedCamera(g)
-
-        self.camera = self.blueCamera
-
-        pg.mixer.music.load('content/music/game.ogg')
-        pg.mixer.music.play(-1)
-        self.fade.start_fadein(g)
+        self.fade.start_fade_in(g)
         self.run()
 
     def run(self):
@@ -885,154 +477,913 @@ class Game:
             self.events()
             self.update()
 
-    def update(self):
-        # game loop - update
-        self.bg.update(g)
-        self.screen.blit(self.gameMapImg, (-g.camera.posx,-g.camera.posy))
-
-        for i in range(len(self.preMoveTileList)):
-            self.preMoveTileList[i].update(g)
-        for i in range(len(self.moveTileList)):
-            self.moveTileList[i].update(g)
-        for i in range(len(self.attackTileList)):
-            self.attackTileList[i].update(g)
-        for i in range(len(self.blueCharList)):
-            self.blueCharList[i].update(g)
-        for i in range(len(self.redCharList)):
-            self.redCharList[i].update(g)
-
-        self.cursor.update(g)
-        self.charText.update(g)
-        self.turnText.update(g)
-        mouse_hover()
-
-        pg.display.flip()
-
-        if g.blueCharList == [] and g.redCharList == []:
-            self.result = "tie"
-            self.playing = False
-        elif g.redCharList == []:
-            self.result = "blue"
-            self.playing = False
-        elif g.blueCharList == []:
-            self.result = "red"
-            self.playing = False
-
     def events(self):
         # game loop - events
         self.x, self.y = pg.mouse.get_pos()
-        self.gridx, self.gridy = self.x//(WIDTH) + g.camera.posx//(WIDTH), self.y//(HEIGHT) + g.camera.posy//(HEIGHT)
-
         pressed = pg.key.get_pressed()
-        if (g.camera.posx > 0) and (pressed[pg.K_LEFT] or pressed[pg.K_a]):
-            g.camera.posx -= WIDTH
-        if (DISPLAY_WIDTH < g.gameMap.width-g.camera.posx) and (pressed[pg.K_RIGHT] or pressed[pg.K_d]):
-            g.camera.posx += WIDTH
-        if (g.camera.posy > 0) and (pressed[pg.K_UP] or pressed[pg.K_w]):
-            g.camera.posy -= HEIGHT
-        if (DISPLAY_HEIGHT < g.gameMap.height-g.camera.posy) and (pressed[pg.K_DOWN] or pressed[pg.K_s]):
-            g.camera.posy += HEIGHT
+        if self.state == 'paused':
+            for option in self.pause_options:
+                if option.rect.collidepoint((self.x, self.y)):
+                    option.hover()
+                else:
+                    option.no_hover()
+                    
+        elif self.state != 'paused' and self.state != 'animating':
+            self.gridx, self.gridy = self.x//(WIDTH) + self.cam.posx//(WIDTH), self.y//(HEIGHT) + self.cam.posy//(HEIGHT)
+
+            self.hovered_unit = None
+
+            if self.y < self.game_height:
+                pg.mouse.set_visible(False)
+            else:
+                pg.mouse.set_visible(True)
+
+            for blue in self.blues:
+                if self.gridx == blue.grid_pos[0] and self.gridy == blue.grid_pos[1]:
+                    self.hovered_unit = blue
+
+                    if self.attack_tiles == [] and self.heal_tiles == []:
+                        blue.get_range(g)
+                        self.pre_move_tiles = []
+                        for row in range(len(blue.move_range)):
+                            for column in range(len(blue.move_range[row])):
+                                if blue.move_range[row][column] == 1 and self.move_tiles == []:
+                                        self.pre_move_tiles.append(PreMoveTile((column,row),'blue',blue.active))
+                                        self.pre_move_tiles[-1].set_img(self)
+
+            for red in self. reds:
+                if self. gridx == red.grid_pos[0] and self.gridy == red.grid_pos[1]:
+                    self.hovered_unit = red
+
+                    if self.attack_tiles == [] and self.heal_tiles == []:
+                        red.get_range(g)
+                        self.pre_move_tiles = []
+                        for row in range(len(red.move_range)):
+                            for column in range(len(red.move_range[row])):
+                                if red.move_range[row][column] == 1 and self.move_tiles == []:
+                                    self.pre_move_tiles.append(PreMoveTile((column,row),'red',red.active))
+                                    self.pre_move_tiles[-1].set_img(self)
+
+            if self.hovered_unit == None:
+                self.pre_move_tiles = []
+
+            if (self.mode != 'sp' or self.turn % 2 == 1) and self.state != 'animating':
+                if self.selected_unit == None or self.selected_unit == self.hovered_unit:
+                    set_preview_one(self.hovered_unit)
+                    set_preview_two(None)
+                elif self.hovered_unit != self.selected_unit:
+                    set_preview_one(self.selected_unit)
+                    set_preview_two(self.hovered_unit)
+                else:
+                    set_preview_one(None)
+                    set_preview_two(None)
+
+            if (self.cam.posx > 0) and (pressed[pg.K_LEFT] or pressed[pg.K_a]):
+                self.cam.posx -= WIDTH
+            if (DISPLAY_WIDTH < self.map.width-self.cam.posx) and (pressed[pg.K_RIGHT] or pressed[pg.K_d]):
+                self.cam.posx += WIDTH
+            if (self.cam.posy > 0) and (pressed[pg.K_UP] or pressed[pg.K_w]):
+                self.cam.posy -= HEIGHT
+            if (self.game_height < self.map.height-self.cam.posy) and (pressed[pg.K_DOWN] or pressed[pg.K_s]):
+                self.cam.posy += HEIGHT
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 if self.playing:
                     self.playing = False
                 self.running = False
+
             elif event.type == pg.MOUSEBUTTONDOWN:
-                mouse_down(event.button)
+                if self.state != 'paused' and self.state != 'animating' :
+                    mouse_down(event.button)
+                elif self.state == 'paused':
+                    for option in self.pause_options:
+                        if option.rect.collidepoint((self.x, self.y)):
+                            if option.content == 'Resume':
+                                pg.mixer.Sound.play(self.click)
+                                self.state = self.old_state
+                                pg.mouse.set_visible(False)
+                                
+                            elif option.content == 'Surrender':
+                                pg.mixer.Sound.play(self.click)
+                                self.state = self.old_state
+                                if self.mode == 'sp' or self.turn % 2 != 0:
+                                    self.result = 'red'
+                                else:
+                                    self.result = 'blue'
+                                self.playing = False
 
-    def update_start_screen(self):
-        self.x, self.y = pg.mouse.get_pos()
+            elif event.type == pg.KEYUP:
+                if event.key == pg.K_ESCAPE and self.state != 'paused':
+                    pg.mixer.Sound.play(self.click)
+                    self.old_state = self.state
+                    self.state = 'paused'
+                    pg.mouse.set_visible(True)
 
-        self.screen.blit(self.startScreenMapImg, self.startScreenPos)
-        self.screen.blit(self.startScreenImg, (0,0))
-        self.titleText.update(g)
+                elif event.key == pg.K_ESCAPE:
+                    pg.mixer.Sound.play(self.click)
+                    self.state = self.old_state
+                    pg.mouse.set_visible(False)
+                    
 
-        for i in range(len(self.titleOptions)):
-            if self.titleOptions[i].rect.collidepoint((self.x, self.y)):
-                self.titleOptions[i].hover()
+    def update(self):
+        # game loop - update
+        if self.state == 'start screen':
+            self.x, self.y = pg.mouse.get_pos()
+
+            if self.start_screen_map.width*2 < DISPLAY_WIDTH or self.start_screen_map.height*2 < DISPLAY_HEIGHT:
+                start_x = (self.start_screen_pos[0] % (WIDTH*2)) - WIDTH*2
+                y = (self.start_screen_pos[1] % (HEIGHT*2)) - HEIGHT*2
+
+                while y < DISPLAY_HEIGHT:
+                    x = start_x
+                    while x < DISPLAY_WIDTH:
+                        if (
+                            (x < self.start_screen_pos[0])
+                            or (x >= self.start_screen_pos[0] + self.start_screen_map.width*2)
+                            or (y < self.start_screen_pos[1])
+                            or (y >= self.start_screen_pos[1] + self.start_screen_map.height*2)
+                        ):
+                            self.screen.blit(self.start_screen_bg, (x, y))
+                        x += WIDTH*2
+                    y += HEIGHT*2
+
+            self.screen.blit(self.start_screen_map_img, self.start_screen_pos)
+            self.start_screen_overlay.update(self)
+            self.title_text.update(self)
+
+            for option in self.title_options:
+                if option.rect.collidepoint((self.x, self.y)):
+                    option.hover()
+                else:
+                    option.no_hover()
+                option.update(self)
+
+            start_screen_pos = list(self.start_screen_pos)
+            if start_screen_pos[0] + self.start_screen_velx < self.start_screen_minx or start_screen_pos[0] + self.start_screen_velx > 0:
+                self.start_screen_velx *= -1
+            if start_screen_pos[1] + self.start_screen_vely < self.start_screen_miny or start_screen_pos[1] + self.start_screen_vely > 0:
+                self.start_screen_vely *= -1
+            start_screen_pos[0] += self.start_screen_velx
+            start_screen_pos[1] += self.start_screen_vely
+            self.start_screen_pos = tuple(start_screen_pos)
+
+        elif self.state == 'turn':
+            self.bg.update(self)
+            self.screen.blit(self.map_img, (-self.cam.posx,-self.cam.posy))
+
+            for tile in self.pre_move_tiles:
+                tile.update(self)
+            for tile in self.move_tiles:
+                tile.update(self)
+            for tile in self.attack_tiles:
+                tile.update(self)
+            for tile in self.heal_tiles:
+                tile.update(self)
+            for blue in self.blues:
+                blue.update(self)
+            for red in self.reds:
+                red.update(self)
+
+            self.cursor.update(self)
+            self.preview_box.update(self)
+            self.turn_dialogue.update(self)
+            self.turn_text.update(self)
+
+            self.previews.update(self)
+
+            if self.blues == [] and self.reds == []:
+                self.result = "tie"
+                self.playing = False
+            elif self.reds == []:
+                self.result = "blue"
+                self.playing = False
+            elif self.blues == []:
+                self.result = "red"
+                self.playing = False
+
+            if turn_over():
+                self.state = 'animating'
+                self.animation = 'turn end'
+
+        elif self.state == 'paused':
+            self.bg.update(self)
+            self.screen.blit(self.map_img, (-self.cam.posx,-self.cam.posy))
+
+            for tile in self.pre_move_tiles:
+                tile.update(self)
+            for tile in self.move_tiles:
+                tile.update(self)
+            for tile in self.attack_tiles:
+                tile.update(self)
+            for tile in self.heal_tiles:
+                tile.update(self)
+            for blue in self.blues:
+                blue.update(self)
+            for red in self.reds:
+                red.update(self)
+
+            self.preview_box.update(self)
+            self.turn_dialogue.update(self)
+            self.turn_text.update(self)
+
+            self.previews.update(self)
+
+            self.pause_dialogue.update(g)
+            self.pause_title.update(g)
+            for option in self.pause_options:
+                option.update(g)
+
+        elif self.state == 'combat':
+            if self.stage == 'heal':
+                heal_calc(self.attacker, self.defender)
+
+                if self.defender.pos[0] > self.attacker.pos[0]:
+                    self.dx = 8
+                elif self.defender.pos[0] < self.attacker.pos[0]:
+                    self.dx = -8
+                else:
+                    self.dx = 0
+
+                if self.defender.pos[1] > self.attacker.pos[1]:
+                    self.dy = 8
+                elif self.defender.pos[1] < self.attacker.pos[1]:
+                    self.dy = -8
+                else:
+                    self.dy = 0
+
+                self.state = 'animating'
+                self.animation = 'heal'
+
+            elif self.stage == 'heal return':
+                if self.attacker_hit == 'hit':
+                    pg.mixer.Sound.play(self.heal_hit)
+                else:
+                    pg.mixer.Sound.play(self.heal_crit)
+
+                self.defender.hp += self.heal
+                self.defender.set_hp_img(g)
+                self.preview_two_hp_bar.set_img(g)
+
+                self.state = 'animating'
+                self.animation = 'heal return'
+            
+            elif self.stage == 'attacker attack':
+                damage_calc(self.attacker, self.defender)
+
+                if self.defender.pos[0] > self.attacker.pos[0]:
+                    self.dx = 8
+                elif self.defender.pos[0] < self.attacker.pos[0]:
+                    self.dx = -8
+                else:
+                    self.dx = 0
+
+                if self.defender.pos[1] > self.attacker.pos[1]:
+                    self.dy = 8
+                elif self.defender.pos[1] < self.attacker.pos[1]:
+                    self.dy = -8
+                else:
+                    self.dy = 0
+
+                self.state = 'animating'
+                self.animation = 'attacker attack'
+
+            elif self.stage == 'attacker return':
+                if self.attacker_hit == 'hit':
+                    pg.mixer.Sound.play(self.hit)
+                elif self.attacker_hit == 'crit':
+                    pg.mixer.Sound.play(self.crit)
+                else:
+                    pg.mixer.Sound.play(self.miss)
+
+                if self.defender.hp <= self.attacker_dmg:
+                    self.defenders.remove(self.defender)
+
+                    self.state = 'animating'
+                    self.animation = 'attacker return'
+
+                else:
+                    self.defender.hp -= self.attacker_dmg
+                    self.defender.set_hp_img(g)
+                    self.preview_two_hp_bar.set_img(g)
+
+                    self.state = 'animating'
+                    self.animation = 'attacker return'
+
+            elif self.stage == 'defender attack':
+                if self.defender in self.reds:
+                    self.defender.get_atk_range(g)
+
+                    if self.defender.attack_range[self.attacker.grid_pos[1]][self.attacker.grid_pos[0]] == 1 and self.defender.weapon.get('power') != 0:
+                        self.state = 'animating'
+                        self.animation = 'defender attack'
+                    else:
+                        self.stage = 'end'
+                else:
+                    self.stage = 'end'
+
+            elif self.stage == 'defender return':
+                if self.defender_hit == 'hit':
+                    pg.mixer.Sound.play(self.hit)
+                elif self.defender_hit == 'crit':
+                    pg.mixer.Sound.play(self.crit)
+                else:
+                    pg.mixer.Sound.play(self.miss)
+
+                if self.attacker.hp <= self.defender_dmg:
+                    self.attackers.remove(self.attacker)
+
+                else:
+                    self.attacker.hp -= self.defender_dmg
+                    self.attacker.set_hp_img(g)
+                    self.preview_one_hp_bar.set_img(g)
+
+                self.state = 'animating'
+                self.animation = 'defender return'
+
+            elif self.stage == 'end':
+                self.attack_tiles = []
+                self.heal_tiles = []
+                
+                self.attacker.active = False
+                self.attacker.set_img(g)
+                self.selected_unit = None
+
+                self.state = 'turn'
+
+        elif self.state == 'enemy turn':
+            if self.stage == 'start':
+                self.frame += 1
+                if self.frame == 30:
+                    self.frame = 0
+                    self.state = 'enemy turn'
+                    self.stage = 'move'
+
+            elif self.stage == 'move':
+                self.attacker = None
+                for red_ in self.reds:
+                    if red_.active == True:
+                        self.attacker = red_
+                        break
+
+                if self.attacker == None:
+                    self.cam.posx, self.cam.posy = self.true_camera_posx, self.true_camera_posy
+
+                    self.state = 'animating'
+                    self.animation = 'turn end'
+
+                else:
+                    move_options = []
+                    self.attack_move_options = []
+                    self.ranged_attack_move_options = []
+                    self.heal_move_options = []
+
+                    self.attacker.get_range(g)
+
+                    for y in range(len(self.attacker.move_range)):
+                        bad_option = False
+                        row = numpy.array(self.attacker.move_range[y])
+                        indices = numpy.where(row == 1)[0]
+                        for i in indices:
+                            for red in self.reds:
+                                if (i, y) == red.grid_pos and red != self.attacker:
+                                    bad_option = True
+                                    break
+                            if not bad_option:
+                                move_options.append((i, y))
+
+                    self.can_heal_self = False
+                    for o in move_options:
+                        get_pos_atk_range(self.attacker, o[1], o[0])
+
+                        if self.attacker.weapon.get('power') > 0:
+                            for blue in self.blues:
+                                blue.get_atk_range(self)
+                                damage_calc(self.attacker, blue)
+                                if self.pos_attack_range[blue.grid_pos[1]][blue.grid_pos[0]] == 1 and (blue.hp <= self.attacker_base_dmg or self.attacker.hp > self.defender_base_dmg or blue.attack_range[self.attacker.grid_pos[1]][self.attacker.grid_pos[0]] == 0):
+                                    self.attack_move_options.append(o)
+                                    adjacent_tiles = [(o[1], o[0]+1), (o[1]-1, o[0]), (o[1], o[0]-1), (o[1]+1, o[0])]
+                                    if (blue.grid_pos[1], blue.grid_pos[0]) not in adjacent_tiles:
+                                        self.ranged_attack_move_options.append(o)
+
+                        if self.attacker.weapon.get('healing') > 0:
+                            for red in self.reds:
+                                if self.pos_attack_range[red.grid_pos[1]][red.grid_pos[0]] == 1 and red.hp < MAX_HP:
+                                    if red == self.attacker:
+                                        self.can_heal_self = True
+                                    else:
+                                        self.heal_move_options.append(o)
+
+                    if self.heal_move_options != []:
+                        chosen_option = random.choice(self.heal_move_options)
+                    elif self.can_heal_self:
+                        chosen_option = random.choice(move_options)
+                    elif self.ranged_attack_move_options != []:
+                        chosen_option = random.choice(self.ranged_attack_move_options)
+                    elif self.attack_move_options != []:
+                        chosen_option = random.choice(self.attack_move_options)
+                    else:
+                        chosen_option = random.choice(move_options)
+
+                    self.start_pos = (self.attacker.pos[0],self.attacker.pos[1])
+                    self.end_pos = (chosen_option[0]*WIDTH,chosen_option[1]*HEIGHT)
+
+                    self.dy = (self.end_pos[1]-self.start_pos[1])/MOVE_STEPS
+                    self.dx = (self.end_pos[0]-self.start_pos[0])/MOVE_STEPS
+
+                    if (
+                        self.start_pos[0]-self.cam.posx < 0
+                        or self.start_pos[0]-self.cam.posx >= DISPLAY_WIDTH
+                        or self.start_pos[1]-self.cam.posy < 0
+                        or self.start_pos[1]-self.cam.posy >= self.game_height
+                        or self.end_pos[0]-self.cam.posx < 0
+                        or self.end_pos[0]-self.cam.posx >= DISPLAY_WIDTH
+                        or self.end_pos[1]-self.cam.posy < 0
+                        or self.end_pos[1]-self.cam.posy >= self.game_height
+                    ):
+                        self.cam.posx = min(max(self.start_pos[0] - 448, 0), self.map.width - DISPLAY_WIDTH)
+                        self.cam.posy = min(max(self.start_pos[1] - 256, 0), self.map.height - self.game_height)
+
+                    while self.start_pos[0]-self.cam.posx < 0:
+                        self.cam.posx -= 64
+                    while self.start_pos[0]-self.cam.posx >= DISPLAY_WIDTH:
+                        self.cam.posx += 64
+                    while self.start_pos[1]-self.cam.posy < 0:
+                        self.cam.posy -= 64
+                    while self.start_pos[1]-self.cam.posy >= self.game_height:
+                        self.cam.posy += 64
+
+                    while self.end_pos[0]-self.cam.posx < 0:
+                        self.cam.posx -= 64
+                    while self.end_pos[0]-self.cam.posx >= DISPLAY_WIDTH:
+                        self.cam.posx += 64
+                    while self.end_pos[1]-self.cam.posy < 0:
+                        self.cam.posy -= 64
+                    while self.end_pos[1]-self.cam.posy >= self.game_height:
+                        self.cam.posy += 64
+
+                    set_preview_one(self.attacker)
+                    set_preview_two(None)
+
+                    self.moving = self.attacker
+                    self.state = 'animating'
+                    self.animation = 'enemy move'
+                    self.move_complete = False
+
+            elif self.stage == 'attacker attack':
+                attack_options = []
+                ranged_attack_options = []
+                heal_options = []
+
+                self.attacker.get_atk_range(self)
+                if self.heal_move_options != [] or self.can_heal_self:
+                    for red in self.reds:
+                        if self.attacker.attack_range[red.grid_pos[1]][red.grid_pos[0]] == 1 and red.hp < MAX_HP:
+                            heal_options.append(red)
+
+                    self.defender = random.choice(heal_options)
+                    heal_calc(self.attacker, self.defender)
+                    set_preview_two(self.defender)
+                    self.state = 'animating'
+                    self.animation = 'heal'
+                    
+                elif self.attack_move_options != []:
+                    for blue in self.blues:
+                        if self.attacker.attack_range[blue.grid_pos[1]][blue.grid_pos[0]] == 1:
+                            attack_options.append(blue)
+
+                            adjacent_tiles = [(self.attacker.grid_pos[1], self.attacker.grid_pos[0]+1),
+                                                (self.attacker.grid_pos[1]-1, self.attacker.grid_pos[0]),
+                                                (self.attacker.grid_pos[1], self.attacker.grid_pos[0]-1),
+                                                (self.attacker.grid_pos[1]+1, self.attacker.grid_pos[0])]
+
+                            if (blue.grid_pos[1], blue.grid_pos[0]) not in adjacent_tiles:
+                                ranged_attack_options.append(blue)
+
+                    if ranged_attack_options != []:
+                        self.defender = random.choice(ranged_attack_options)
+                        damage_calc(self.attacker, self.defender)
+                    else:
+                        self.defender = random.choice(attack_options)
+                        damage_calc(self.attacker, self.defender)
+
+                    set_preview_two(self.defender)
+                    self.state = 'animating'
+                    self.animation = 'attacker attack'
+
+
+                else:
+                    self.stage = 'end'
+
+                if self.stage != 'end':
+                    if self.defender.pos[0] > self.attacker.pos[0]:
+                        self.dx = 8
+                    elif self.defender.pos[0] < self.attacker.pos[0]:
+                        self.dx = -8
+                    else:
+                        self.dx = 0
+
+                    if self.defender.pos[1] > self.attacker.pos[1]:
+                        self.dy = 8
+                    elif self.defender.pos[1] < self.attacker.pos[1]:
+                        self.dy = -8
+                    else:
+                        self.dy = 0
+
+            elif self.stage == 'attacker return':
+                if self.attacker_hit == 'hit':
+                    pg.mixer.Sound.play(self.hit)
+                elif self.attacker_hit == 'crit':
+                    pg.mixer.Sound.play(self.crit)
+                else:
+                    pg.mixer.Sound.play(self.miss)
+
+                if self.defender.hp <= self.attacker_dmg:
+                    self.blues.remove(self.defender)
+
+                else:
+                    self.defender.hp -= self.attacker_dmg
+                    self.defender.set_hp_img(g)
+                    self.preview_two_hp_bar.set_img(g)
+
+                self.state = 'animating'
+                self.animation = 'attacker return'
+
+            elif self.stage == 'heal return':
+                if self.attacker_hit == 'hit':
+                    pg.mixer.Sound.play(self.heal_hit)
+                else:
+                    pg.mixer.Sound.play(self.heal_crit)
+
+                self.defender.hp += self.heal
+                self.defender.set_hp_img(g)
+                self.preview_two_hp_bar.set_img(g)
+
+                self.state = 'animating'
+                self.animation = 'heal return'
+
+            elif self.stage == 'defender attack':
+                if self.defender in self.blues and self.defender.attack_range[self.attacker.grid_pos[1]][self.attacker.grid_pos[0]] == 1 and self.defender.weapon.get('power') != 0:
+                    self.state = 'animating'
+                    self.animation = 'defender attack'
+
+                else:
+                    self.stage = 'end'
+
+            elif self.stage == 'defender return':
+                if self.defender_hit == 'hit':
+                    pg.mixer.Sound.play(self.hit)
+                elif self.defender_hit == 'crit':
+                    pg.mixer.Sound.play(self.crit)
+                else:
+                    pg.mixer.Sound.play(self.miss)
+
+                if self.attacker.hp <= self.defender_dmg:
+                    self.reds.remove(self.attacker)
+                else:
+                    self.attacker.hp -= self.defender_dmg
+                    self.attacker.set_hp_img(g)
+                    self.preview_one_hp_bar.set_img(g)
+
+                self.state = 'animating'
+                self.animation = 'defender return'
+
             else:
-                self.titleOptions[i].no_hover()
-            self.titleOptions[i].update(g)
+                self.attacker.active = False
+                self.state = 'animating'
+                self.animation = 'enemy move delay'
 
-        pg.display.flip()
+        elif self.state == 'animating':
+            self.screen.blit(self.map_img, (-self.cam.posx,-self.cam.posy))
 
-        startScreenPos = list(self.startScreenPos)
-        if startScreenPos[0] + self.startScreenVelX < self.startScreenMinX or startScreenPos[0] + self.startScreenVelX > 0:
-            self.startScreenVelX *= -1
-        if startScreenPos[1] + self.startScreenVelY < self.startScreenMinY or startScreenPos[1] + self.startScreenVelY > 0:
-            self.startScreenVelY *= -1
-        startScreenPos[0] += self.startScreenVelX
-        startScreenPos[1] += self.startScreenVelY
-        self.startScreenPos = tuple(startScreenPos)
+            for blue in self.blues:
+                blue.update(self)
+            for red in self.reds:
+                red.update(self)
+
+            self.preview_box.update(self)
+            self.turn_dialogue.update(self)
+            self.turn_text.update(self)
+
+            self.previews.update(self)
+
+            if self.animation == 'player move':
+                if self.move_complete == False:
+                    self.selected_unit.pos = (self.selected_unit.pos[0]+self.dx, self.selected_unit.pos[1]+self.dy)
+
+                    if pg.mixer.get_busy() == False:
+                        step = random.randint(0,3)
+                        pg.mixer.Sound.play(self.steps[step])
+
+                    self.move_complete = True
+                    if self.dx > 0 and self.selected_unit.pos[0] < self.end_pos[0]:
+                        self.move_complete = False
+                    elif self.dx < 0 and self.selected_unit.pos[0] > self.end_pos[0]:
+                        self.move_complete = False
+                    elif self.dy > 0 and self.selected_unit.pos[1] < self.end_pos[1]:
+                        self.move_complete = False
+                    elif self.dy < 0 and self.selected_unit.pos[1] > self.end_pos[1]:
+                        self.move_complete = False
+                    time.sleep(MOVE_TIME)
+
+                else:
+                    self.selected_unit.pos = self.end_pos
+                    self.move_tiles = []
+                    self.heal_tiles = []
+
+                    self.selected_unit.get_atk_range(g)
+
+                    if self.selected_unit.weapon.get('power') != 0:
+                        for j in range(len(self.defenders)):
+                            if self.selected_unit.attack_range[self.defenders[j].grid_pos[1]][self.defenders[j].grid_pos[0]] == 1:
+                                self.attack_tiles.append(AttackTile((self.defenders[j].grid_pos[0], self.defenders[j].grid_pos[1])))
+
+                    if self.selected_unit.weapon.get('healing') != 0:
+                        for j in range(len(self.attackers)):
+                            if self.selected_unit.attack_range[self.attackers[j].grid_pos[1]][self.attackers[j].grid_pos[0]] == 1 and self.attackers[j].hp < MAX_HP:
+                                self.heal_tiles.append(HealTile((self.attackers[j].grid_pos[0], self.attackers[j].grid_pos[1])))
+
+                    self.state = 'turn'
+                    if self.attack_tiles == [] and self.heal_tiles == []:
+                        self.selected_unit.active = False
+                        self.selected_unit.set_img(g)
+                        self.selected_unit = None
+
+            elif self.animation == 'enemy move':
+                if self.move_complete == False:
+                    self.moving.pos = (self.moving.pos[0]+self.dx, self.moving.pos[1]+self.dy)
+
+                    if pg.mixer.get_busy() == False:
+                        step = random.randint(0,3)
+                        pg.mixer.Sound.play(self.steps[step])
+
+                    self.move_complete = True
+                    if self.dx > 0 and self.moving.pos[0] < self.end_pos[0]:
+                        self.move_complete = False
+                    elif self.dx < 0 and self.moving.pos[0] > self.end_pos[0]:
+                        self.move_complete = False
+                    elif self.dy > 0 and self.moving.pos[1] < self.end_pos[1]:
+                        self.move_complete = False
+                    elif self.dy < 0 and self.moving.pos[1] > self.end_pos[1]:
+                        self.move_complete = False
+                    time.sleep(MOVE_TIME)
+
+                else:
+                    self.moving.pos = self.end_pos
+                    self.state = 'enemy turn'
+                    self.stage = 'attacker attack'
+
+            elif self.animation == 'heal':
+                self.attacker.pos = (self.attacker.pos[0]+self.dx, self.attacker.pos[1]+self.dy)
+                self.frame += 1
+                time.sleep(MOVE_TIME)
+
+                if self.frame == 4:
+                    self.frame = 0
+                    if self.mode == 'sp' and self.turn % 2 == 0:
+                        self.state = 'enemy turn'
+                    else:
+                        self.state = 'combat'
+                    self.stage = 'heal return'
+
+            elif self.animation == 'heal return':
+                self.attacker.pos = (self.attacker.pos[0]-self.dx, self.attacker.pos[1]-self.dy)
+                self.frame += 1
+                time.sleep(MOVE_TIME)
+
+                if self.frame == 4:
+                    self.frame = 0
+                    self.attacker.grid_pos = (int(self.attacker.pos[0]/WIDTH), int(self.attacker.pos[1]/HEIGHT))
+                    if self.mode == 'sp' and self.turn % 2 == 0:
+                        self.state = 'enemy turn'
+                    else:
+                        self.state = 'combat'
+                    self.stage = 'end'
+
+            elif self.animation == 'attacker attack':
+                self.attacker.pos = (self.attacker.pos[0]+self.dx, self.attacker.pos[1]+self.dy)
+                self.frame += 1
+                time.sleep(MOVE_TIME)
+
+                if self.frame == 4:
+                    self.frame = 0
+                    if self.mode == 'sp' and self.turn % 2 == 0:
+                        self.state = 'enemy turn'
+                    else:
+                        self.state = 'combat'
+                    self.stage = 'attacker return'
+
+            elif self.animation == 'attacker return':
+                self.attacker.pos = (self.attacker.pos[0]-self.dx, self.attacker.pos[1]-self.dy)
+                self.frame += 1
+                time.sleep(MOVE_TIME)
+
+                if self.frame == 4:
+                    self.frame = 0
+                    self.attacker.grid_pos = (int(self.attacker.pos[0]/WIDTH), int(self.attacker.pos[1]/HEIGHT))
+                    if self.mode == 'sp' and self.turn % 2 == 0:
+                        self.state = 'enemy turn'
+                    else:
+                        self.state = 'combat'
+                    self.stage = 'defender attack'
+
+            elif self.animation == 'defender attack':
+                self.defender.pos = (self.defender.pos[0]-self.dx, self.defender.pos[1]-self.dy)
+                self.frame += 1
+                time.sleep(MOVE_TIME)
+
+                if self.frame == 4:
+                    self.frame = 0
+                    if self.mode == 'sp' and self.turn % 2 == 0:
+                        self.state = 'enemy turn'
+                    else:
+                        self.state = 'combat'
+                    self.stage = 'defender return'
+
+            elif self.animation == 'defender return':
+                self.defender.pos = (self.defender.pos[0]+self.dx, self.defender.pos[1]+self.dy)
+                self.frame += 1
+                time.sleep(MOVE_TIME)
+
+                if self.frame == 4:
+                    self.frame = 0
+                    self.defender.grid_pos = (int(self.defender.pos[0]/WIDTH), int(self.defender.pos[1]/HEIGHT))
+                    if self.mode == 'sp' and self.turn % 2 == 0:
+                        self.state = 'enemy turn'
+                    else:
+                        self.state = 'combat'
+                    self.stage = 'end'
+
+            elif self.animation == 'enemy move delay':
+                self.frame += 1
+                if self.frame == 10:
+                    self.attacker.set_img(g)
+                if self.frame == 30:
+                    self.frame = 0
+                    self.state = 'enemy turn'
+                    self.stage = 'move'
+
+            elif self.animation == 'turn end':
+                set_preview_one(None)
+                set_preview_two(None)
+
+                self.turn += 1
+                if self.mode == 'sp' and self.turn % 2 == 0:
+                    self.turn_change_text.set_content('ENEMY TURN')
+                    self.turn_text.set_content("Turn " + str(self.turn) + " (Enemy)")
+                    self.true_camera_posx, self.true_camera_posy = self.cam.posx, self.cam.posy
+
+                    for red in self.reds:
+                        red.active = True
+                        red.set_img(g)
+                    for blue in self.blues:
+                        blue.set_img(g)
+                    
+                elif self.mode == 'sp':
+                    self.turn_change_text.set_content('PLAYER TURN')
+                    self.turn_text.set_content("Turn " + str(self.turn) + " (Player)")
+                    
+                    for blue in self.blues:
+                        blue.active = True
+                        blue.set_img(g)
+                        blue.get_range(g)
+                    for red in self.reds:
+                        red.set_img(g)
+                    
+                elif self.turn % 2 == 0:
+                    self.turn_change_text.set_content('RED TURN')
+                    self.turn_text.set_content("Turn " + str(self.turn) + " (Red)")
+                    self.attackers = self.reds
+                    self.defenders = self.blues
+                    self.cam = self.red_cam
+
+                    for unit in self.defenders:
+                        unit.set_img(g)
+                    for unit in self.attackers:
+                        unit.active = True
+                        unit.set_img(g)
+                        unit.get_range(g)
+        
+                else:
+                    self.turn_change_text.set_content('BLUE TURN')
+                    self.turn_text.set_content("Turn " + str(self.turn) + " (Blue)")
+                    self.attackers = self.blues
+                    self.defenders = self.reds
+                    self.cam = self.blue_cam
+
+                    for unit in self.defenders:
+                        unit.set_img(g)
+                    for unit in self.attackers:
+                        unit.active = True
+                        unit.set_img(g)
+                        unit.get_range(g)
+
+                self.animation = 'turn change'
+
+            elif self.animation == 'turn change':
+                self.frame += 1
+
+                if self.frame < 90:
+                    self.bg.turn_change_update(g)
+                    self.turn_change_dialogue.update(g)
+                    self.turn_change_text.update(g)
+                elif self.frame == 90:
+                    self.frame = 0
+                    self.bg.update(g)
+
+                    if self.mode == 'sp' and self.turn % 2 == 0:
+                        self.state = 'enemy turn'
+                        self.stage = 'start'
+                    else:
+                        self.state = 'turn'
+        
+        pg.display.update()
 
     def start_screen(self):
-        # show start screen
-        self.maps_sp = []
-        self.maps_mp = []
-        self.titleOptions = []
+            # show start screen
+            self.state = 'start screen'
 
-        for file in os.listdir("content/maps-singleplayer"):
-            if file.endswith(".tmx"):
-                self.maps_sp.append(os.path.join("content/maps-singleplayer", file))
-        for file in os.listdir("content/maps-multiplayer"):
-            if file.endswith(".tmx"):
-                self.maps_mp.append(os.path.join("content/maps-multiplayer", file))
-        self.maps = self.maps_sp + self.maps_mp
+            self.maps_sp = []
+            self.maps_mp = []
+            self.title_options = []
 
-        self.startScreenMap = Map(random.choice(self.maps))
-        self.startScreenMapImg = self.startScreenMap.make_map()
-        self.startScreenMapImg = pg.transform.scale(self.startScreenMapImg, (int(self.startScreenMap.width*2),int(self.startScreenMap.height*2)))
+            for dir in os.listdir("content/maps-singleplayer"):
+                self.maps_sp.append(os.path.join("content/maps-singleplayer", dir))
 
-        self.startScreenImg = pg.image.load('content/img/titlescreen.png')
-        self.titleText = Text(TITLE, (70,70), 50, WHITE)
+            for dir in os.listdir("content/maps-multiplayer"):
+                self.maps_mp.append(os.path.join("content/maps-multiplayer", dir))
 
-        self.titleOptions.append(TitleOption(g, 'Single Player', 30, WHITE))
-        self.titleOptions.append(TitleOption(g, 'Multiplayer', 30, WHITE))
-        self.titleOptions.append(TitleOption(g, 'Configure Game', 30, WHITE))
+            self.maps = self.maps_sp + self.maps_mp
+            start_screen_map = random.choice(self.maps)
 
-        self.startScreenMinX = DISPLAY_WIDTH-self.startScreenMap.width*2
-        self.startScreenMinY = DISPLAY_HEIGHT-self.startScreenMap.height*2
-        self.startScreenPos = (random.randint(self.startScreenMinX,0),random.randint(self.startScreenMinY,0))
-        self.startScreenVelX = random.randint(-int(START_SCREEN_SPEED),int(START_SCREEN_SPEED))/10
-        self.startScreenVelY = random.choice((math.sqrt((int(START_SCREEN_SPEED)/10)**2 - self.startScreenVelX**2),  -math.sqrt((int(START_SCREEN_SPEED)/10)**2 - self.startScreenVelX**2)))
+            self.start_screen_map = Map(os.path.join(start_screen_map, "map.tmx"))
+            self.start_screen_map_img = self.start_screen_map.make_map()
+            self.start_screen_map_img = pg.transform.scale2x(self.start_screen_map_img)
 
-        self.fade.end_fadein(g)
+            self.start_screen_bg = pg.image.load(os.path.join(start_screen_map, "bg.png"))
+            self.start_screen_bg = pg.transform.scale2x(self.start_screen_bg)
 
-        pg.mixer.music.load('content/music/title_screen.ogg')
-        pg.mixer.music.set_volume(0.4*VOLUME)
-        pg.mixer.music.play(-1)
+            self.start_screen_overlay = StartScreenOverlay(10)
+            self.title_text = Text(TITLE, (70,70), 50, WHITE)
 
-        waiting = True
-        while waiting:
-            self.clock.tick(FPS)
-            g.update_start_screen()
+            self.title_options.append(MenuOption(self, 'Single Player', 30, WHITE, (70, 170), False))
+            self.title_options.append(MenuOption(self, 'Multiplayer', 30, WHITE, (70, 220), False))
+            self.title_options.append(MenuOption(self, 'Configure Game', 30, WHITE, (70, 270), False))
 
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    waiting = False
-                    self.running = False
-                elif event.type == pg.MOUSEBUTTONDOWN:
-                    for i in range(len(self.titleOptions)):
+            self.start_screen_minx = min(0, DISPLAY_WIDTH-self.start_screen_map.width*2)
+            self.start_screen_miny = min(0, DISPLAY_HEIGHT-self.start_screen_map.height*2)
 
-                        if self.titleOptions[i].rect.collidepoint((self.x, self.y)):
-                            if i == 0:
-                                self.mode = 'sp'
-                                pg.mixer.music.stop()
-                                pg.mixer.Sound.play(g.click)
-                                pg.mouse.set_visible(False)
-                                self.fade.start_fadeout(g)
-                                waiting = False
-                            if i == 1:
-                                self.mode = 'mp'
-                                pg.mixer.music.stop()
-                                pg.mixer.Sound.play(g.click)
-                                pg.mouse.set_visible(False)
-                                self.fade.start_fadeout(g)
-                                waiting = False
-                            if i == 2:
-                                pg.mixer.Sound.play(g.click)
-                                os.startfile('content')
+            if self.start_screen_map.width*2 < DISPLAY_WIDTH:
+                start_screen_posx = DISPLAY_WIDTH - self.start_screen_map.width*2
+                self.start_screen_velx = 0
+            else:
+                start_screen_posx = random.randint(self.start_screen_minx,0)
+                self.start_screen_velx = random.randint(-int(START_SCREEN_SPEED), int(START_SCREEN_SPEED))/10
+
+            if self.start_screen_map.height*2 < DISPLAY_HEIGHT:
+                start_screen_posy = (DISPLAY_HEIGHT - self.start_screen_map.height*2)/2
+                self.start_screen_vely = 0
+            else:
+                start_screen_posy = random.randint(self.start_screen_miny,0)
+                self.start_screen_vely = random.choice((math.sqrt((START_SCREEN_SPEED/10)**2 - self.start_screen_velx**2), -math.sqrt((START_SCREEN_SPEED/10)**2 - self.start_screen_velx**2)))
+
+            self.start_screen_pos = (start_screen_posx, start_screen_posy)
+            self.fade.end_fade_in(self)
+
+            pg.mixer.music.load('content/music/title_screen.ogg')
+            pg.mixer.music.set_volume(0.4*VOLUME)
+            pg.mixer.music.play(-1)
+
+            waiting = True
+            while waiting:
+                self.clock.tick(FPS)
+                self.update()
+
+                for event in pg.event.get():
+                    if event.type == pg.QUIT:
+                        waiting = False
+                        self.running = False
+                    elif event.type == pg.MOUSEBUTTONDOWN:
+                        for option in self.title_options:
+
+                            if option.rect.collidepoint((self.x, self.y)):
+                                if option.content == 'Single Player':
+                                    self.mode = 'sp'
+                                    pg.mixer.music.stop()
+                                    pg.mixer.Sound.play(self.click)
+                                    pg.mouse.set_visible(False)
+                                    self.fade.start_fade_out(self)
+                                    waiting = False
+                                elif option.content == 'Multiplayer':
+                                    self.mode = 'mp'
+                                    pg.mixer.music.stop()
+                                    pg.mixer.Sound.play(self.click)
+                                    pg.mouse.set_visible(False)
+                                    self.fade.start_fade_out(self)
+                                    waiting = False
+                                elif option.content == 'Configure Game':
+                                    pg.mixer.Sound.play(self.click)
+                                    os.startfile('content')
 
     def end_screen(self):
         # show end screen (game over)
@@ -1040,33 +1391,36 @@ class Game:
             return
 
         pg.mouse.set_visible(True)
-        self.endScreenDialogue = EndScreenDialogue()
-
         if self.result == 'blue':
             if self.mode == 'sp':
-                self.endText = CenterText(WIN_TEXT, (DISPLAY_WIDTH/2,DISPLAY_HEIGHT/2-15), 40, WHITE)
+                self.end_text = CenterText(WIN_TEXT, (DISPLAY_WIDTH/2,self.game_height/2-15), 40, WHITE)
             else:
-                self.endText = CenterText("Blue Wins", (DISPLAY_WIDTH/2,DISPLAY_HEIGHT/2-15), 40, WHITE)
+                self.end_text = CenterText("Blue Wins", (DISPLAY_WIDTH/2,self.game_height/2-15), 40, WHITE)
 
         elif self.result == 'red':
             if self.mode == 'sp':
-                self.endText = CenterText(LOSE_TEXT, (DISPLAY_WIDTH/2,DISPLAY_HEIGHT/2-15), 40, WHITE)
+                self.end_text = CenterText(LOSE_TEXT, (DISPLAY_WIDTH/2,self.game_height/2-15), 40, WHITE)
             else:
-                self.endText = CenterText("Red Wins", (DISPLAY_WIDTH/2,DISPLAY_HEIGHT/2-15), 40, WHITE)
+                self.end_text = CenterText("Red Wins", (DISPLAY_WIDTH/2,self.game_height/2-15), 40, WHITE)
 
         elif self.result == 'tie':
-            self.endText = CenterText(TIE_TEXT, (DISPLAY_WIDTH/2,DISPLAY_HEIGHT/2-15), 40, WHITE)
-        self.endSubText = CenterText("Press any key", (DISPLAY_WIDTH/2,DISPLAY_HEIGHT/2+25 ), 20, WHITE)
+            self.end_text = CenterText(TIE_TEXT, (DISPLAY_WIDTH/2,self.game_height/2-15), 40, WHITE)
+        self.end_sub_text = CenterText("Press any key", (DISPLAY_WIDTH/2,self.game_height/2+25 ), 20, WHITE)
 
-        self.screen.blit(self.gameMapImg, (-g.camera.posx,-g.camera.posy))
-        for i in range(len(self.blueCharList)):
-            self.blueCharList[i].update(g)
-        for i in range(len(self.redCharList)):
-            self.redCharList[i].update(g)
+        self.screen.blit(self.map_img, (-self.cam.posx,-self.cam.posy))
 
-        self.endScreenDialogue.update(g)
-        self.endText.update(g)
-        self.endSubText.update(g)
+        for blue in self.blues:
+            blue.update(self)
+        for red in self.reds:
+            red.update(self)
+
+        self.preview_box.update(self)
+        self.turn_dialogue.update(self)
+        self.turn_text.update(self)
+        
+        self.end_screen_dialogue.update(self)
+        self.end_text.update(self)
+        self.end_sub_text.update(self)
 
         pg.display.flip()
 
@@ -1079,9 +1433,9 @@ class Game:
                     self.running = False
                 elif event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONDOWN:
                     pg.mixer.music.stop()
-                    self.fade.end_fadeout(g)
+                    self.fade.end_fade_out(self)
                     waiting = False
-                    g.start_screen()
+                    self.start_screen()
 
 g = Game()
 g.start_screen()

@@ -1,6 +1,6 @@
 # Edit these to change basic game settings. You'll need to restart your game after you change them.
 
-display width: 1280
+display width: 960
 display height: 640
 fullscreen: False
 

@@ -1,36 +1,45 @@
 #All built-in weapons.
 0:
-    name: Spear
-    damage: 10
+    name: Sword
+    img: 0
+    power: 9
+    healing: 0
     range: 1
     stat: 0
+    unit imgs: [2]
 
 1:
-    name: Sword
-    damage: 11
-    range: 1
+    name: Bow
+    img: 1
+    power: 7
+    healing: 0
+    range: 2
     stat: 0
+    unit imgs: [4]
 
 2:
-    name: Axe
-    damage: 12
+    name: M-Sword
+    img: 2
+    power: 9
+    healing: 0
     range: 1
-    stat: 0
+    stat: 2
+    unit imgs: [1]
 
 3:
     name: Staff
-    damage: 9
+    img: 3
+    power: 7
+    healing: 0
     range: 2
     stat: 2
+    unit imgs: [0]
 
 4:
-    name: Spellsword
-    damage: 11
-    range: 1
-    stat: 2
-
-5:
-    name: Bow
-    damage: 9
+    name: Tome
+    img: 4
+    power: 0
+    healing: 7
     range: 2
-    stat: 0
+    stat: 2
+    unit imgs: [3]

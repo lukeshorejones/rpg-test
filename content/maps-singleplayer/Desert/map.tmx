@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="18" height="20" tilewidth="64" tileheight="64" infinite="0" nextobjectid="180">
+ <tileset firstgid="1" source="tilesheet.tsx"/>
+ <layer name="ground" width="18" height="20">
+  <data encoding="base64">
+   AwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAADAAAABAAAAAQAAAADAAAABAAAAAMAAAAEAAAABAAAAAQAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAQAAAADAAAAAwAAAAMAAAADAAAABAAAAAQAAAAEAAAABAAAAAMAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAADAAAAAwAAAAMAAAADAAAABAAAAAMAAAADAAAAAwAAAAMAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAAEAAAABAAAAAMAAAAEAAAAAwAAAAQAAAAEAAAABAAAAAMAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAQAAAADAAAABAAAAAQAAAADAAAAAwAAAAQAAAAEAAAAAwAAAAMAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAQAAAAEAAAAAwAAAAQAAAADAAAAAwAAAAMAAAADAAAABAAAAAQAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAADAAAAAwAAAAQAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAADAAAAAwAAAAMAAAAEAAAABAAAAAMAAAADAAAAAwAAAAQAAAAEAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAAEAAAAAwAAAAQAAAADAAAABAAAAAMAAAADAAAABAAAAAMAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAQAAAAEAAAABAAAAAQAAAADAAAABAAAAAMAAAADAAAAAwAAAAMAAAAEAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAAEAAAAAwAAAAQAAAAEAAAABAAAAAMAAAAEAAAAAwAAAAQAAAAEAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAQAAAADAAAAAwAAAAMAAAADAAAAAwAAAAQAAAAEAAAAAwAAAAMAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAAEAAAABAAAAAMAAAAEAAAABAAAAAMAAAAEAAAAAwAAAAMAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAQAAAAEAAAAAwAAAAQAAAAEAAAABAAAAAQAAAAEAAAAAwAAAAQAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAADAAAAAwAAAAQAAAAEAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAADAAAABAAAAAQAAAAEAAAAAwAAAAQAAAAEAAAABAAAAAMAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAAEAAAABAAAAAQAAAAEAAAAAwAAAAMAAAADAAAABAAAAAQAAAAEAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAADAAAABAAAAAQAAAAEAAAAAwAAAAMAAAAEAAAAAwAAAAMAAAAEAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAADAAAAAwAAAAQAAAADAAAABAAAAAQAAAAEAAAABAAAAAQAAAADAAAAAwAAAAQAAAADAAAABAAAAAMAAAAEAAAAAwAAAAMAAAAEAAAABAAAAAQAAAAEAAAAAwAAAAMAAAADAAAAAwAAAAQAAAAEAAAA
+  </data>
+ </layer>
+ <layer name="obstacles" width="18" height="20">
+  <data encoding="base64">
+   YgAAAGIAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAABiAAAAAAAAAAAAAAAAAAAAYgAAAGIAAAAAAAAAAAAAAGIAAABiAAAAYQAAAGAAAAAAAAAAAAAAAGAAAABiAAAAYgAAAGIAAABiAAAAAAAAAAAAAAAAAAAAYgAAAGIAAAAAAAAAdAAAAHQAAABiAAAAYQAAAAAAAAAAAAAAAAAAAGIAAABiAAAAYgAAAGIAAAAAAAAAAAAAAAAAAABgAAAAYgAAAGIAAAAAAAAAAAAAAAAAAABgAAAAYgAAAAAAAAAAAAAAdAAAAAAAAABiAAAAYgAAAGIAAAAAAAAAYAAAAGAAAABhAAAAYAAAAGIAAAAAAAAAAAAAAAAAAAAAAAAAYgAAAGIAAAAAAAAAAAAAAAAAAABiAAAAYgAAAGIAAAAAAAAAYAAAAGEAAABiAAAAYQAAAGIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGIAAAAAAAAAAAAAAAAAAABiAAAAYgAAAGEAAAAAAAAAAAAAAGIAAABgAAAAAAAAAGIAAAAAAAAAAAAAAHQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAABiAAAAYgAAAGAAAAAAAAAAAAAAAGEAAABiAAAAAAAAAGIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABiAAAAYgAAAGEAAAAAAAAAAAAAAAAAAABiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHQAAAB0AAAAAAAAAAAAAABiAAAAYgAAAAAAAABgAAAAAAAAAAAAAABhAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABiAAAAYgAAAAAAAABfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYQAAAGIAAAAAAAAAAAAAAAAAAAAAAAAAYQAAAAAAAABiAAAAYgAAAAAAAAAAAAAAAAAAAGAAAABiAAAAAAAAAGIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABiAAAAYgAAAAAAAABiAAAAYgAAAAAAAAAAAAAAAAAAAAAAAABfAAAAAAAAAGIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABiAAAAAAAAAAAAAABiAAAAYgAAAGIAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAGIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABiAAAAYgAAAGIAAAAAAAAAAAAAAAAAAAAAAAAAYgAAAGIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABiAAAAYgAAAGIAAABgAAAAAAAAAGIAAAAAAAAAYgAAAGIAAAAAAAAAdAAAAHQAAAAAAAAAAAAAAHQAAAB0AAAAdAAAAAAAAABiAAAAYgAAAGIAAABgAAAAYgAAAAAAAAAAAAAAYgAAAGIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABiAAAAYgAAAGIAAABiAAAAYAAAAGAAAABiAAAAYgAAAGIAAAAAAAAAdAAAAHQAAAAAAAAAAAAAAHQAAAB0AAAAdAAAAAAAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAABiAAAAYgAAAGIAAABiAAAA
+  </data>
+ </layer>
+ <objectgroup name="objects">
+  <object id="72" type="obstacle" x="448" y="704" width="64" height="576"/>
+  <object id="73" type="obstacle" x="1088" y="0" width="64" height="1280"/>
+  <object id="79" type="obstacle" x="576" y="1088" width="128" height="64"/>
+  <object id="81" type="obstacle" x="832" y="1088" width="192" height="64"/>
+  <object id="89" name="1" type="blue_spawn" x="704" y="1024" width="64" height="64"/>
+  <object id="90" name="2" type="blue_spawn" x="768" y="1024" width="64" height="64"/>
+  <object id="91" name="3" type="blue_spawn" x="704" y="1088" width="64" height="64"/>
+  <object id="95" name="11" type="blue_cam" x="192" y="768" width="64" height="64"/>
+  <object id="101" type="obstacle" x="512" y="0" width="576" height="64"/>
+  <object id="102" type="obstacle" x="512" y="1216" width="576" height="64"/>
+  <object id="106" type="obstacle" x="832" y="960" width="192" height="64"/>
+  <object id="107" type="obstacle" x="576" y="960" width="128" height="64"/>
+  <object id="108" type="obstacle" x="576" y="640" width="128" height="64"/>
+  <object id="109" type="obstacle" x="896" y="704" width="64" height="128"/>
+  <object id="110" type="obstacle" x="960" y="640" width="64" height="128"/>
+  <object id="111" type="obstacle" x="640" y="576" width="64" height="64"/>
+  <object id="112" type="obstacle" x="1024" y="384" width="64" height="64"/>
+  <object id="113" type="obstacle" x="1024" y="64" width="64" height="128"/>
+  <object id="114" type="obstacle" x="768" y="64" width="64" height="256"/>
+  <object id="115" type="obstacle" x="704" y="64" width="64" height="192"/>
+  <object id="116" type="obstacle" x="640" y="64" width="64" height="64"/>
+  <object id="117" type="obstacle" x="832" y="64" width="64" height="64"/>
+  <object id="118" type="obstacle" x="832" y="256" width="64" height="128"/>
+  <object id="125" type="obstacle" x="640" y="384" width="64" height="64"/>
+  <object id="126" type="obstacle" x="576" y="128" width="128" height="64"/>
+  <object id="127" type="obstacle" x="832" y="512" width="128" height="64"/>
+  <object id="128" type="obstacle" x="960" y="192" width="64" height="64"/>
+  <object id="129" type="obstacle" x="448" y="0" width="64" height="512"/>
+  <object id="130" type="obstacle" x="0" y="0" width="64" height="1280"/>
+  <object id="131" type="obstacle" x="64" y="0" width="384" height="64"/>
+  <object id="137" type="obstacle" x="64" y="832" width="64" height="448"/>
+  <object id="138" type="obstacle" x="128" y="1088" width="320" height="192"/>
+  <object id="140" type="obstacle" x="384" y="896" width="64" height="192"/>
+  <object id="142" type="obstacle" x="64" y="64" width="64" height="512"/>
+  <object id="143" type="obstacle" x="320" y="384" width="64" height="256"/>
+  <object id="144" type="obstacle" x="256" y="384" width="64" height="128"/>
+  <object id="146" type="obstacle" x="128" y="576" width="64" height="128"/>
+  <object id="147" type="obstacle" x="192" y="832" width="64" height="64"/>
+  <object id="148" type="obstacle" x="128" y="960" width="64" height="128"/>
+  <object id="149" type="obstacle" x="256" y="960" width="64" height="64"/>
+  <object id="150" type="obstacle" x="192" y="1024" width="64" height="64"/>
+  <object id="151" type="obstacle" x="256" y="704" width="64" height="64"/>
+  <object id="153" type="obstacle" x="320" y="704" width="64" height="128"/>
+  <object id="159" type="obstacle" x="128" y="64" width="64" height="128"/>
+  <object id="160" type="obstacle" x="384" y="64" width="64" height="320"/>
+  <object id="161" type="obstacle" x="192" y="256" width="192" height="128"/>
+  <object id="162" type="obstacle" x="320" y="192" width="64" height="64"/>
+  <object id="164" name="1" type="red_spawn" x="512" y="1152" width="64" height="64"/>
+  <object id="165" name="2" type="red_spawn" x="1024" y="1152" width="64" height="64"/>
+  <object id="166" name="3" type="red_spawn" x="960" y="896" width="64" height="64"/>
+  <object id="167" name="4" type="red_spawn" x="640" y="768" width="64" height="64"/>
+  <object id="168" name="5" type="red_spawn" x="896" y="576" width="64" height="64"/>
+  <object id="169" name="6" type="red_spawn" x="640" y="448" width="64" height="64"/>
+  <object id="171" name="8" type="red_spawn" x="960" y="320" width="64" height="64"/>
+  <object id="172" name="9" type="red_spawn" x="960" y="128" width="64" height="64"/>
+  <object id="173" name="7" type="red_spawn" x="576" y="192" width="64" height="64"/>
+  <object id="174" name="15" type="red_spawn" x="384" y="512" width="64" height="64"/>
+  <object id="175" name="13" type="red_spawn" x="256" y="640" width="64" height="64"/>
+  <object id="176" name="12" type="red_spawn" x="64" y="704" width="64" height="64"/>
+  <object id="177" name="10" type="red_spawn" x="256" y="896" width="64" height="64"/>
+  <object id="178" name="14" type="red_spawn" x="192" y="512" width="64" height="64"/>
+  <object id="179" name="16" type="red_spawn" x="256" y="128" width="64" height="64"/>
+ </objectgroup>
+</map>

@@ -1,4 +1,4 @@
-import os, shutil, yaml
+import os, yaml
 # Don't change any of these!
 
 BLACK = (0,0,0)
@@ -12,14 +12,6 @@ MOVE_STEPS = 8
 MOVE_TIME = 0.02
 
 # Initialising settings and config
-
-if not os.path.exists('content'):
-    os.makedirs('content')
-
-if not os.path.exists('content/config.yml'):
-    shutil.copy('basecontent/config.yml', 'content')
-if not os.path.exists('content/settings.yml'):
-    shutil.copy('basecontent/settings.yml', 'content')
 
 config = yaml.load(open('content/config.yml'))
 settings = yaml.load(open('content/settings.yml'))
