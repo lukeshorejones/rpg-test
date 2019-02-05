@@ -6,8 +6,6 @@ Run the main file to play the game - pretty simple. See the Dependencies section
 
 You can then edit the files in the content folder to change settings and add your own custom content such as characters, weapons and maps.
 
-Do not edit the basecontent folder. This keeps a backup of the default content so that you can freely replace files in the content folder without breaking something by mistake. If you do tamper with basecontent, you might *actually* break something.
-
 # Dependencies
 You'll need Python 3, and the below modules. Add Python to PATH, then in command prompt type `pip install X`, once each for all of:
  - numpy
