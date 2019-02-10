@@ -1,8 +1,15 @@
-import math, numpy, os, pygame as pg, random, shutil, time, yaml
-
+import math
+import numpy
+import os
+import pygame as pg
+import random
+import shutil
+import time
+import yaml
 from globals import *
 from sprites import *
 from map import *
+
 
 def set_preview_one(unit):
     g.preview_one = unit
@@ -32,6 +39,7 @@ def set_preview_one(unit):
         g.preview_one_weapon_name.set_content('')
         g.preview_one_weapon_text.set_content([])
 
+
 def set_preview_two(unit):
     g.preview_two = unit
     if unit != None:
@@ -60,6 +68,7 @@ def set_preview_two(unit):
         g.preview_two_weapon_name.set_content('')
         g.preview_two_weapon_text.set_content([])
 
+
 def import_unit(unit_id, pos, team):
     stats = []
 
@@ -77,6 +86,7 @@ def import_unit(unit_id, pos, team):
         return Blue(name, gender, img, stats, hp, weapon, pos)
     elif team == 'red':
         return Red(name, gender, img, stats, hp, weapon, pos)
+
 
 def random_unit(pos, team):
     stats = []
@@ -106,10 +116,12 @@ def random_unit(pos, team):
     elif team == 'red':
         return Red(name, gender, img, stats, hp, weapon, pos)
 
+
 def get_pos_atk_range(red, posy, posx):
     g.distance = 0
     g.pos_attack_range = copy.deepcopy(g.map.matrix)
     get_pos_atk_range_loop(red, posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
+
 
 def get_pos_atk_range_loop(red, posy, posx, adjacent_tiles):
     weapon_range = red.weapon.get('range')
@@ -126,6 +138,7 @@ def get_pos_atk_range_loop(red, posy, posx, adjacent_tiles):
             return
 
     g.distance -= 1
+
 
 def mouse_down(button):
     if button == 1: #LEFT MOUSE BUTTON
@@ -185,6 +198,7 @@ def mouse_down(button):
         else:
             g.selected_unit = None
 
+
 def click_unit(unit):
     g.selected_unit = unit
 
@@ -195,6 +209,7 @@ def click_unit(unit):
         for column in range(len(unit.move_range[row])):
             if unit.move_range[row][column] == 1:
                 g.move_tiles.append(MoveTile((column,row),g.colour))
+
 
 def click_move_tile(tile):
     g.start_pos = (g.selected_unit.pos[0],g.selected_unit.pos[1])
@@ -207,6 +222,7 @@ def click_move_tile(tile):
     g.animation = 'player move'
     g.move_complete = False
 
+
 def click_attack_tile(tile):
     for defender in g.defenders:
         if defender.grid_pos[0] == tile.grid_pos[0] and defender.grid_pos[1] == tile.grid_pos[1]:
@@ -216,6 +232,7 @@ def click_attack_tile(tile):
             g.stage = 'attacker attack'
             break
 
+
 def click_heal_tile(tile):
     for attacker in g.attackers:
         if attacker.grid_pos[0] == tile.grid_pos[0] and attacker.grid_pos[1] == tile.grid_pos[1]:
@@ -224,6 +241,7 @@ def click_heal_tile(tile):
             g.state = 'combat'
             g.stage = 'heal'
             break
+
 
 def damage_calc(attacker, defender):
     dex_roll = random.randint(1,100)
@@ -262,6 +280,7 @@ def damage_calc(attacker, defender):
             g.defender_dmg *= 2
             g.defender_hit = 'crit'
 
+
 def heal_calc(attacker, defender):
     crit_roll = random.randint(1,100)
 
@@ -273,6 +292,7 @@ def heal_calc(attacker, defender):
         g.attacker_hit = 'crit'
     else:
         g.attacker_hit = 'hit'
+
 
 def turn_over():
     found_active = 0
@@ -292,6 +312,7 @@ def turn_over():
         return True
     else:
         return False
+
 
 class Game:
     def __init__(self):
@@ -421,31 +442,31 @@ class Game:
         self.turn_change_text = CenterText("", (DISPLAY_WIDTH/2, (self.game_height+70)/2), 70, WHITE)
 
         self.end_screen_dialogue = DialogueBox((256, 128), ((DISPLAY_WIDTH-256)/2, (self.game_height-128)/2))
-        
+
         self.pause_dialogue = DialogueBox((256, 256), ((DISPLAY_WIDTH-256)/2, (self.game_height-256)/2))
         self.pause_title = CenterText("Game Paused", (DISPLAY_WIDTH/2, (self.game_height-186)/2), 40, WHITE)
-        
+
         self.pause_options = []
-        self.pause_options.append(MenuOption(self, 'Resume', 30, WHITE, (DISPLAY_WIDTH/2, (self.game_height-126)/2), True))
-        self.pause_options.append(MenuOption(self, 'Surrender', 30, WHITE, (DISPLAY_WIDTH/2, (self.game_height-46)/2), True))
+        self.pause_options.append(MenuOption(self, 'Resume', 25, WHITE, (DISPLAY_WIDTH/2 - 108, (self.game_height-126)/2), 5, False))
+        self.pause_options.append(MenuOption(self, 'Surrender', 25, WHITE, (DISPLAY_WIDTH/2 - 108, (self.game_height-46)/2), 5, False))
 
         self.attackers = self.blues
         self.defenders = self.reds
 
         if self.mode == 'sp':
-            map_dir = random.choice(self.maps_sp)
-            self.map = Map(os.path.join(map_dir, "map.tmx"))
+            self.map = Map(os.path.join("content/maps-singleplayer", self.map_choice, "map.tmx"))
             self.map_img = self.map.make_map()
-            self.bg.image = pg.image.load(os.path.join(map_dir, "bg.png"))
+            self.bg.image = pg.image.load(os.path.join("content/maps-singleplayer", self.map_choice, "bg.png"))
+            pg.mixer.music.load(os.path.join("content/maps-singleplayer", self.map_choice, "music.ogg"))
             self.turn_text.set_content("Turn " + str(self.turn) + " (Player)")
 
             for spawn in self.map.red_spawns:
                 self.reds.append(random_unit(spawn, 'red'))
         else:
-            map_dir = random.choice(self.maps_mp)
-            self.map = Map(os.path.join(map_dir, "map.tmx"))
+            self.map = Map(os.path.join("content/maps-multiplayer", self.map_choice, "map.tmx"))
             self.map_img = self.map.make_map()
-            self.bg.image = pg.image.load(os.path.join(map_dir, "bg.png"))
+            self.bg.image = pg.image.load(os.path.join("content/maps-multiplayer", self.map_choice, "bg.png"))
+            pg.mixer.music.load(os.path.join("content/maps-multiplayer", self.map_choice, "music.ogg"))
             self.turn_text.set_content("Turn " + str(self.turn) + " (Blue)")
 
             for red_id, spawn in zip(RED_PARTY, self.map.red_spawns):
@@ -464,7 +485,6 @@ class Game:
         for red in self.reds:
             red.get_range(g)
 
-        pg.mixer.music.load(os.path.join(map_dir, "music.ogg"))
         pg.mixer.music.play(-1)
         self.fade.start_fade_in(g)
         self.run()
@@ -487,7 +507,7 @@ class Game:
                     option.hover()
                 else:
                     option.no_hover()
-                    
+
         elif self.state != 'paused' and self.state != 'animating':
             self.gridx, self.gridy = self.x//(WIDTH) + self.cam.posx//(WIDTH), self.y//(HEIGHT) + self.cam.posy//(HEIGHT)
 
@@ -556,14 +576,14 @@ class Game:
             elif event.type == pg.MOUSEBUTTONDOWN:
                 if self.state != 'paused' and self.state != 'animating' :
                     mouse_down(event.button)
-                elif self.state == 'paused':
+                elif self.state == 'paused' and event.button == 1:
                     for option in self.pause_options:
                         if option.rect.collidepoint((self.x, self.y)):
                             if option.content == 'Resume':
                                 pg.mixer.Sound.play(self.click)
                                 self.state = self.old_state
                                 pg.mouse.set_visible(False)
-                                
+
                             elif option.content == 'Surrender':
                                 pg.mixer.Sound.play(self.click)
                                 self.state = self.old_state
@@ -584,7 +604,7 @@ class Game:
                     pg.mixer.Sound.play(self.click)
                     self.state = self.old_state
                     pg.mouse.set_visible(False)
-                    
+
 
     def update(self):
         # game loop - update
@@ -610,14 +630,85 @@ class Game:
 
             self.screen.blit(self.start_screen_map_img, self.start_screen_pos)
             self.start_screen_overlay.update(self)
+
             self.title_text.update(self)
 
-            for option in self.title_options:
-                if option.rect.collidepoint((self.x, self.y)):
-                    option.hover()
+            if self.stage == 'root':
+                for option in self.title_options:
+                    if option.rect.collidepoint((self.x, self.y)):
+                        option.hover()
+                    else:
+                        option.no_hover()
+                    option.update(self)
+            elif self.stage == 'choose sp':
+                self.sp_title.update(self)
+                self.scrollbar_bg.update(self)
+                self.scrollbar.update(self)
+                self.back_option.update(self)
+
+                j = 0
+                for i in range(self.map_scroll_index, min(len(self.sp_options), self.map_scroll_index+self.map_list_size)):
+                    self.sp_options[i].pos = (self.sp_options[i].pos[0], 215 + j*40)
+                    self.sp_options[i].update(self)
+                    if self.sp_options[i].rect.collidepoint((self.x, self.y)):
+                        path = os.path.join(self.maps_sp[i][0], "preview.png")
+                        if os.path.exists(path):
+                            self.map_preview_img.set_img(path)
+                        else:
+                            self.map_preview_img.set_blank()
+                        self.map_preview_description.auto_set_lines(self.maps_sp[i][1].get('description'), 380)
+                        self.map_preview_creator.set_content("Creator: " + self.maps_sp[i][1].get('creator'))
+
+                        self.map_preview_box_1.update(self)
+                        self.map_preview_box_2.update(self)
+                        self.map_preview_img.update(self)
+                        self.map_preview_description.update(self)
+                        self.map_preview_creator.update(self)
+
+                        self.sp_options[i].hover()
+                    else:
+                        self.sp_options[i].no_hover()
+                    j += 1
+
+                if self.back_option.rect.collidepoint((self.x, self.y)):
+                    self.back_option.hover()
                 else:
-                    option.no_hover()
-                option.update(self)
+                    self.back_option.no_hover()
+
+            elif self.stage == 'choose mp':
+                self.mp_title.update(self)
+                self.scrollbar_bg.update(self)
+                self.scrollbar.update(self)
+                self.back_option.update(self)
+
+                j = 0
+                for i in range(self.map_scroll_index, min(len(self.mp_options), self.map_scroll_index + self.map_list_size)):
+                    self.mp_options[i].pos = (self.mp_options[i].pos[0], 215 + j * 40)
+                    self.mp_options[i].update(self)
+                    if self.mp_options[i].rect.collidepoint((self.x, self.y)):
+                        path = os.path.join(self.maps_mp[i][0], "preview.png")
+                        if os.path.exists(path):
+                            self.map_preview_img.set_img(path)
+                        else:
+                            self.map_preview_img.set_blank()
+                        self.map_preview_description.auto_set_lines(self.maps_mp[i][1].get('description'), 380)
+                        self.map_preview_creator.set_content("Creator: " + self.maps_mp[i][1].get('creator'))
+
+                        self.map_preview_box_1.update(self)
+                        self.map_preview_box_2.update(self)
+                        self.map_preview_img.update(self)
+                        self.map_preview_description.update(self)
+                        self.map_preview_creator.update(self)
+
+                        self.mp_options[i].hover()
+                    else:
+                        self.mp_options[i].no_hover()
+                    j += 1
+
+                if self.back_option.rect.collidepoint((self.x, self.y)):
+                    self.back_option.hover()
+                else:
+                    self.back_option.no_hover()
 
             start_screen_pos = list(self.start_screen_pos)
             if start_screen_pos[0] + self.start_screen_velx < self.start_screen_minx or start_screen_pos[0] + self.start_screen_velx > 0:
@@ -727,7 +818,7 @@ class Game:
 
                 self.state = 'animating'
                 self.animation = 'heal return'
-            
+
             elif self.stage == 'attacker attack':
                 damage_calc(self.attacker, self.defender)
 
@@ -804,7 +895,7 @@ class Game:
             elif self.stage == 'end':
                 self.attack_tiles = []
                 self.heal_tiles = []
-                
+
                 self.attacker.active = False
                 self.attacker.set_img(g)
                 self.selected_unit = None
@@ -946,7 +1037,7 @@ class Game:
                     set_preview_two(self.defender)
                     self.state = 'animating'
                     self.animation = 'heal'
-                    
+
                 elif self.attack_move_options != []:
                     for blue in self.blues:
                         if self.attacker.attack_range[blue.grid_pos[1]][blue.grid_pos[0]] == 1:
@@ -1238,18 +1329,18 @@ class Game:
                         red.set_img(g)
                     for blue in self.blues:
                         blue.set_img(g)
-                    
+
                 elif self.mode == 'sp':
                     self.turn_change_text.set_content('PLAYER TURN')
                     self.turn_text.set_content("Turn " + str(self.turn) + " (Player)")
-                    
+
                     for blue in self.blues:
                         blue.active = True
                         blue.set_img(g)
                         blue.get_range(g)
                     for red in self.reds:
                         red.set_img(g)
-                    
+
                 elif self.turn % 2 == 0:
                     self.turn_change_text.set_content('RED TURN')
                     self.turn_text.set_content("Turn " + str(self.turn) + " (Red)")
@@ -1263,7 +1354,7 @@ class Game:
                         unit.active = True
                         unit.set_img(g)
                         unit.get_range(g)
-        
+
                 else:
                     self.turn_change_text.set_content('BLUE TURN')
                     self.turn_text.set_content("Turn " + str(self.turn) + " (Blue)")
@@ -1296,39 +1387,67 @@ class Game:
                         self.stage = 'start'
                     else:
                         self.state = 'turn'
-        
+
         pg.display.update()
 
     def start_screen(self):
             # show start screen
             self.state = 'start screen'
+            self.stage = 'root'
 
             self.maps_sp = []
             self.maps_mp = []
             self.title_options = []
+            self.sp_options = []
+            self.mp_options = []
 
             for dir in os.listdir("content/maps-singleplayer"):
-                self.maps_sp.append(os.path.join("content/maps-singleplayer", dir))
+                full_dir = os.path.join("content/maps-singleplayer", dir)
+                self.maps_sp.append((full_dir, yaml.load(open(os.path.join(full_dir, "data.yml")))))
 
             for dir in os.listdir("content/maps-multiplayer"):
-                self.maps_mp.append(os.path.join("content/maps-multiplayer", dir))
+                full_dir = os.path.join("content/maps-multiplayer", dir)
+                self.maps_mp.append((full_dir, yaml.load(open(os.path.join(full_dir, "data.yml")))))
 
             self.maps = self.maps_sp + self.maps_mp
             start_screen_map = random.choice(self.maps)
 
-            self.start_screen_map = Map(os.path.join(start_screen_map, "map.tmx"))
+            self.start_screen_map = Map(os.path.join(start_screen_map[0], "map.tmx"))
             self.start_screen_map_img = self.start_screen_map.make_map()
             self.start_screen_map_img = pg.transform.scale2x(self.start_screen_map_img)
 
-            self.start_screen_bg = pg.image.load(os.path.join(start_screen_map, "bg.png"))
+            self.start_screen_bg = pg.image.load(os.path.join(start_screen_map[0], "bg.png"))
             self.start_screen_bg = pg.transform.scale2x(self.start_screen_bg)
 
             self.start_screen_overlay = StartScreenOverlay(10)
             self.title_text = Text(TITLE, (70,70), 50, WHITE)
 
-            self.title_options.append(MenuOption(self, 'Single Player', 30, WHITE, (70, 170), False))
-            self.title_options.append(MenuOption(self, 'Multiplayer', 30, WHITE, (70, 220), False))
-            self.title_options.append(MenuOption(self, 'Configure Game', 30, WHITE, (70, 270), False))
+            self.title_options.append(MenuOption(self, 'Single Player', 30, WHITE, (70, 170), 7, False))
+            self.title_options.append(MenuOption(self, 'Multiplayer', 30, WHITE, (70, 220), 7, False))
+            self.title_options.append(MenuOption(self, 'Configure Game', 30, WHITE, (70, 270), 7, False))
+
+            self.sp_title = Text('Single Player', (70, 170), 30, WHITE)
+            self.mp_title = Text('Multiplayer', (70, 170), 30, WHITE)
+
+            self.map_list_size = (DISPLAY_HEIGHT - 220) // 40 - 1
+            self.scrollbar_bg_length = 40 * self.map_list_size - 15
+            self.scrollbar_bg = ScrollbarBG((5, self.scrollbar_bg_length), DIMGREY, (70, 220))
+            self.scrollbar = Scrollbar((5, 0), WHITE, (70, 220))
+
+            for map, i in zip(self.maps_sp, range(len(self.maps_sp))):
+                self.sp_options.append(MenuOption(self, map[0].split('\\')[1], 25, WHITE, (90, 215 + i*40), 5, False))
+
+            for map, i in zip(self.maps_mp, range(len(self.maps_mp))):
+                self.mp_options.append(MenuOption(self, map[0].split('\\')[1], 25, WHITE, (90, 215 + i*40), 5,  False))
+
+            self.back_option = MenuOption(self, 'Back to Mode Select', 20, WHITE, (70, 215 + self.map_list_size * 40), 5, False)
+
+            self.map_preview_box_1 = DialogueBox((420, 420), (490, 40))
+            self.map_preview_img = MapPreviewImg((416, 416), self.map_preview_box_1)
+
+            self.map_preview_box_2 = DialogueBox((420, 130), (490, 470))
+            self.map_preview_description = MultiLineText([], (500, 476), 20, WHITE)
+            self.map_preview_creator = Text("", (500, 570), 20, LIGHTGREY)
 
             self.start_screen_minx = min(0, DISPLAY_WIDTH-self.start_screen_map.width*2)
             self.start_screen_miny = min(0, DISPLAY_HEIGHT-self.start_screen_map.height*2)
@@ -1364,26 +1483,67 @@ class Game:
                         waiting = False
                         self.running = False
                     elif event.type == pg.MOUSEBUTTONDOWN:
-                        for option in self.title_options:
+                        if event.button == 1:
+                            if self.stage == 'root':
+                                for option in self.title_options:
+                                    if option.rect.collidepoint((self.x, self.y)):
+                                        if option.content == 'Single Player':
+                                            pg.mixer.Sound.play(self.click)
+                                            self.stage = 'choose sp'
+                                            self.map_scroll_index = 0
+                                            self.max_map_scroll_index = max(len(self.maps_sp) - self.map_list_size, 0)
+                                            self.scrollbar.update_length(self.scrollbar_bg_length // (self.max_map_scroll_index + 1))
+                                        elif option.content == 'Multiplayer':
+                                            pg.mixer.Sound.play(self.click)
+                                            self.stage = 'choose mp'
+                                            self.map_scroll_index = 0
+                                            self.max_map_scroll_index = max(len(self.maps_mp) - self.map_list_size, 0)
+                                            self.scrollbar.update_length(self.scrollbar_bg_length // (self.max_map_scroll_index + 1))
+                                        elif option.content == 'Configure Game':
+                                            pg.mixer.Sound.play(self.click)
+                                            os.startfile('content')
 
-                            if option.rect.collidepoint((self.x, self.y)):
-                                if option.content == 'Single Player':
-                                    self.mode = 'sp'
-                                    pg.mixer.music.stop()
+                            elif self.stage == 'choose sp':
+                                for i in range(self.map_scroll_index, min(len(self.sp_options), self.map_scroll_index+self.map_list_size)):
+                                    if self.sp_options[i].rect.collidepoint((self.x, self.y)):
+                                        self.mode = 'sp'
+                                        self.map_choice = self.sp_options[i].content
+                                        pg.mixer.music.stop()
+                                        pg.mixer.Sound.play(self.click)
+                                        pg.mouse.set_visible(False)
+                                        self.fade.start_fade_out(self)
+                                        waiting = False
+
+                                if self.back_option.rect.collidepoint((self.x, self.y)):
                                     pg.mixer.Sound.play(self.click)
-                                    pg.mouse.set_visible(False)
-                                    self.fade.start_fade_out(self)
-                                    waiting = False
-                                elif option.content == 'Multiplayer':
-                                    self.mode = 'mp'
-                                    pg.mixer.music.stop()
+                                    self.stage = 'root'
+
+                            elif self.stage == 'choose mp':
+                                for i in range(self.map_scroll_index, min(len(self.mp_options), self.map_scroll_index+self.map_list_size)):
+                                    if self.mp_options[i].rect.collidepoint((self.x, self.y)):
+                                        self.mode = 'mp'
+                                        self.map_choice = self.mp_options[i].content
+                                        pg.mixer.music.stop()
+                                        pg.mixer.Sound.play(self.click)
+                                        pg.mouse.set_visible(False)
+                                        self.fade.start_fade_out(self)
+                                        waiting = False
+
+                                if self.back_option.rect.collidepoint((self.x, self.y)):
                                     pg.mixer.Sound.play(self.click)
-                                    pg.mouse.set_visible(False)
-                                    self.fade.start_fade_out(self)
-                                    waiting = False
-                                elif option.content == 'Configure Game':
-                                    pg.mixer.Sound.play(self.click)
-                                    os.startfile('content')
+                                    self.stage = 'root'
+
+                        elif self.stage == 'choose sp' or self.stage == 'choose mp':
+                            if event.button == 4 and self.map_scroll_index > 0:
+                                pg.mixer.Sound.play(self.click)
+                                self.map_scroll_index -= 1
+                            elif event.button == 5 and self.map_scroll_index < self.max_map_scroll_index:
+                                pg.mixer.Sound.play(self.click)
+                                self.map_scroll_index += 1
+
+                    elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE and (self.stage == 'choose sp' or self.stage == 'choose mp'):
+                        pg.mixer.Sound.play(self.click)
+                        self.stage = 'root'
 
     def end_screen(self):
         # show end screen (game over)
@@ -1417,7 +1577,7 @@ class Game:
         self.preview_box.update(self)
         self.turn_dialogue.update(self)
         self.turn_text.update(self)
-        
+
         self.end_screen_dialogue.update(self)
         self.end_text.update(self)
         self.end_sub_text.update(self)
@@ -1431,11 +1591,12 @@ class Game:
                 if event.type == pg.QUIT:
                     waiting = False
                     self.running = False
-                elif event.type == pg.KEYDOWN or event.type == pg.MOUSEBUTTONDOWN:
+                elif event.type == pg.KEYDOWN or (event.type == pg.MOUSEBUTTONDOWN and event.button != 4 and event.button != 5):
                     pg.mixer.music.stop()
                     self.fade.end_fade_out(self)
                     waiting = False
                     self.start_screen()
+
 
 g = Game()
 g.start_screen()

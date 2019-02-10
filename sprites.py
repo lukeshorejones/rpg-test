@@ -1,11 +1,58 @@
 import colorsys, copy, math, pygame as pg, shutil
 from globals import *
 
+
 def hp_colour(unit):
     hp_colour = list(colorsys.hsv_to_rgb(1/3.*unit.hp_fraction, 1, 1))
     for i in range(3):
         hp_colour[i] *= 255
     return tuple(hp_colour)
+
+
+class MapPreviewImg(pg.sprite.Sprite):
+    def __init__(self, dim, box):
+        self.dim = dim
+        self.pos = (box.pos[0] + (box.dim[0] - self.dim[0]) // 2, box.pos[1] + (box.dim[1] - self.dim[1]) // 2)
+
+    def set_img(self, path):
+        self.image = pg.image.load(path)
+
+    def set_blank(self):
+        self.image = pg.Surface(self.dim)
+        self.image.fill(BLACK)
+
+    def update(self, g):
+        g.screen.blit(self.image, self.pos)
+
+
+class ScrollbarBG(pg.sprite.Sprite):
+    def __init__(self, dim, colour, pos):
+        super().__init__()
+        self.pos = pos
+
+        self.image = pg.Surface(dim)
+        self.image.fill(colour)
+
+    def update(self, g):
+        g.screen.blit(self.image, self.pos)
+
+
+class Scrollbar(pg.sprite.Sprite):
+    def __init__(self, dim, colour, base_pos):
+        super().__init__()
+        self.dim = dim
+        self.colour = colour
+        self.base_pos = base_pos
+
+    def update_length(self, length):
+        self.dim = (self.dim[0], length)
+        self.image = pg.Surface(self.dim)
+        self.image.fill(self.colour)
+
+    def update(self, g):
+        pos = (self.base_pos[0], self.base_pos[1] + g.map_scroll_index * self.dim[1])
+        g.screen.blit(self.image, pos)
+
 
 class StartScreenOverlay(pg.sprite.Sprite):
     def __init__(self, scalar):
@@ -14,20 +61,22 @@ class StartScreenOverlay(pg.sprite.Sprite):
         self.image = pg.transform.scale(self.image, (self.image.get_width(), DISPLAY_HEIGHT))
 
     def update(self, g):
-        pass
         g.screen.blit(self.image, (0, 0))
+
 
 class DialogueBox(pg.sprite.Sprite):
     def __init__(self, dim, pos):
         super().__init__()
+        self.dim = dim
         self.pos = pos
 
-        self.image = pg.Surface(dim)
+        self.image = pg.Surface(self.dim)
         self.image.fill(BLACK)
         self.image.set_alpha(204)
 
     def update(self, g):
         g.screen.blit(self.image, self.pos)
+
 
 class PreviewBox(pg.sprite.Sprite):
     def __init__(self):
@@ -43,6 +92,7 @@ class PreviewBox(pg.sprite.Sprite):
         else:
             g.screen.blit(self.image, (0, g.game_height))
 
+
 class Fade(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -57,8 +107,6 @@ class Fade(pg.sprite.Sprite):
             g.screen.blit(g.start_screen_map_img, g.start_screen_pos)
             g.start_screen_overlay.update(g)
             g.title_text.update(g)
-            for i in range(len(g.title_options)):
-                g.title_options[i].update(g)
 
             g.screen.blit(self.image, (0,0))
             pg.display.flip()
@@ -117,6 +165,7 @@ class Fade(pg.sprite.Sprite):
             g.screen.blit(self.image, (0,0))
             pg.display.flip()
 
+
 class Background(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -134,14 +183,17 @@ class Background(pg.sprite.Sprite):
                 g.screen.blit(self.image, (x*WIDTH, 4*HEIGHT))
                 g.screen.blit(self.image, (x*WIDTH, 5*HEIGHT))
 
+
 class HPBar(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
+
 
 class HPBarBorder(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pg.image.load("content/img/hp_bar_border.png")
+
 
 class PreviewHPBar(pg.sprite.Sprite):
     def __init__(self, num):
@@ -149,14 +201,14 @@ class PreviewHPBar(pg.sprite.Sprite):
         self.num = num
 
     def set_img(self, g):
-        if g.preview_one != None and self.num == 1:
+        if g.preview_one is not None and self.num == 1:
             preview_hp_fraction = g.preview_one.hp / MAX_HP
             preview_hp_length = math.ceil(preview_hp_fraction * 100)
 
             self.image = pg.Surface((12, preview_hp_length))
             self.image.fill(hp_colour(g.preview_one))
 
-        elif g.preview_two != None and self.num == 2:
+        elif g.preview_two is not None and self.num == 2:
             preview_hp_fraction = g.preview_two.hp / MAX_HP
             preview_hp_length = math.ceil(preview_hp_fraction * 100)
 
@@ -164,15 +216,16 @@ class PreviewHPBar(pg.sprite.Sprite):
             self.image.fill(hp_colour(g.preview_two))
 
     def update(self, g):
-        if g.preview_one != None and self.num == 1:
+        if g.preview_one is not None and self.num == 1:
             preview_hp_fraction = g.preview_one.hp / MAX_HP
             preview_hp_length = math.ceil(preview_hp_fraction * 100)
             g.screen.blit(self.image, (126, g.game_height+114-preview_hp_length))
 
-        elif g.preview_two != None and self.num == 2:
+        elif g.preview_two is not None and self.num == 2:
             preview_hp_fraction = g.preview_two.hp / MAX_HP
             preview_hp_length = math.ceil(preview_hp_fraction * 100)
             g.screen.blit(self.image, (604, g.game_height+114-preview_hp_length))
+
 
 class Blue(pg.sprite.Sprite):
     def __init__(self, name, gender, img, stats, hp, weapon, pos):
@@ -201,9 +254,9 @@ class Blue(pg.sprite.Sprite):
         self.active = True
 
     def set_img(self, g):
-        if self.active == True or g.turn % 2 == 0:
+        if self.active or g.turn % 2 == 0:
             self.image = pg.image.load('content/img/blue_' + self.gender + '/' + self.img + '.png')
-        if self.active == False and g.turn % 2 != 0:
+        if not self.active and g.turn % 2 != 0:
             self.image = pg.image.load('content/img/blue_' + self.gender + '/' + self.img + '-inactive.png')
 
     def set_hp_img(self, g):
@@ -248,16 +301,16 @@ class Blue(pg.sprite.Sprite):
         self.get_range_loop(self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
 
     def get_atk_range_loop(self, g, posy, posx, adjacent_tiles):
-        weaponRange = self.weapon.get('range')
+        weapon_range = self.weapon.get('range')
         for i in range(4):
-            if self.distance < weaponRange and self.attack_range[adjacent_tiles[i][0]][adjacent_tiles[i][1]] != 2:
+            if self.distance < weapon_range and self.attack_range[adjacent_tiles[i][0]][adjacent_tiles[i][1]] != 2:
                 self.distance += 1
                 posx, posy = adjacent_tiles[i][1], adjacent_tiles[i][0]
                 self.attack_range[posy][posx] = 1
 
                 self.get_atk_range_loop(g, posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
 
-            elif self.distance == weaponRange:
+            elif self.distance == weapon_range:
                 self.distance -= 1
                 return
 
@@ -268,6 +321,7 @@ class Blue(pg.sprite.Sprite):
         self.attack_range = copy.deepcopy(g.map.matrix)
 
         self.get_atk_range_loop(g, self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
+
 
 class Red(pg.sprite.Sprite):
     def __init__(self, name, gender, img, stats, hp, weapon, pos):
@@ -296,9 +350,9 @@ class Red(pg.sprite.Sprite):
         self.active = False
 
     def set_img(self, g):
-        if self.active == True or g.turn % 2 != 0:
+        if self.active or g.turn % 2 != 0:
             self.image = pg.image.load('content/img/red_' + self.gender + '/' + self.img + '.png')
-        if self.active == False and g.turn % 2 == 0:
+        if not self.active and g.turn % 2 == 0:
             self.image = pg.image.load('content/img/red_' + self.gender + '/' + self.img + '-inactive.png')
 
     def set_hp_img(self, g):
@@ -343,16 +397,16 @@ class Red(pg.sprite.Sprite):
         self.get_range_loop(self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
 
     def get_atk_range_loop(self, g, posy, posx, adjacent_tiles):
-            weaponRange = self.weapon.get('range')
+            weapon_range = self.weapon.get('range')
             for i in range(4):
-                if self.distance < weaponRange and self.attack_range[adjacent_tiles[i][0]][adjacent_tiles[i][1]] != 2:
+                if self.distance < weapon_range and self.attack_range[adjacent_tiles[i][0]][adjacent_tiles[i][1]] != 2:
                     self.distance += 1
                     posx, posy = adjacent_tiles[i][1], adjacent_tiles[i][0]
                     self.attack_range[posy][posx] = 1
 
                     self.get_atk_range_loop(g, posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
 
-                elif self.distance == weaponRange:
+                elif self.distance == weapon_range:
                     self.distance -= 1
                     return
 
@@ -360,9 +414,10 @@ class Red(pg.sprite.Sprite):
 
     def get_atk_range(self, g):
             self.distance = 0
-            self.attack_range =  copy.deepcopy(g.map.matrix)
+            self.attack_range = copy.deepcopy(g.map.matrix)
 
             self.get_atk_range_loop(g, self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
+
 
 class PreMoveTile(pg.sprite.Sprite):
     def __init__(self, grid_pos, unit_colour, active_status):
@@ -374,19 +429,20 @@ class PreMoveTile(pg.sprite.Sprite):
 
     def set_img(self, g):
         if self.unit_colour == 'red':
-            if self.active_status == True or g.turn//2 != g.turn/2:
+            if self.active_status or g.turn//2 != g.turn/2:
                 self.image = pg.image.load("content/img/pre_move_tile_red.png")
             else:
                 self.image = pg.image.load("content/img/pre_move_tile_inactive.png")
 
         else:
-            if self.active_status == True or g.turn//2 == g.turn/2:
+            if self.active_status or g.turn//2 == g.turn/2:
                 self.image = pg.image.load("content/img/pre_move_tile_blue.png")
             else:
                 self.image = pg.image.load("content/img/pre_move_tile_inactive.png")
 
     def update(self, g):
         g.screen.blit(self.image, (self.grid_pos[0]*WIDTH - g.cam.posx, self.grid_pos[1]*HEIGHT - g.cam.posy))
+
 
 class MoveTile(pg.sprite.Sprite):
     def __init__(self, grid_pos, unit_colour):
@@ -402,6 +458,7 @@ class MoveTile(pg.sprite.Sprite):
     def update(self, g):
         g.screen.blit(self.image, (self.grid_pos[0]*WIDTH - g.cam.posx, self.grid_pos[1]*HEIGHT - g.cam.posy))
 
+
 class AttackTile(pg.sprite.Sprite):
     def __init__(self, grid_pos):
         super().__init__()
@@ -410,6 +467,7 @@ class AttackTile(pg.sprite.Sprite):
 
     def update(self, g):
         g.screen.blit(self.image, (self.grid_pos[0]*WIDTH - g.cam.posx, self.grid_pos[1]*HEIGHT - g.cam.posy))
+
 
 class HealTile(pg.sprite.Sprite):
     def __init__(self, grid_pos):
@@ -420,6 +478,7 @@ class HealTile(pg.sprite.Sprite):
     def update(self, g):
         g.screen.blit(self.image, (self.grid_pos[0]*WIDTH - g.cam.posx, self.grid_pos[1]*HEIGHT - g.cam.posy))
 
+
 class Cursor(pg.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -427,6 +486,7 @@ class Cursor(pg.sprite.Sprite):
 
     def update(self, g):
         g.screen.blit(self.image, ((g.x//WIDTH)*WIDTH, (g.y//HEIGHT)*HEIGHT))
+
 
 class Text(pg.sprite.Sprite):
     def __init__(self, content, pos, size, colour):
@@ -439,10 +499,11 @@ class Text(pg.sprite.Sprite):
         self.image = self.font.render(content, True, self.colour)
 
     def set_content(self, content):
-        self.image = self.font.render(content, True, WHITE)
-    
+        self.image = self.font.render(content, True, self.colour)
+
     def update(self, g):
         g.screen.blit(self.image, self.pos)
+
 
 class MultiLineText(pg.sprite.Sprite):
     def __init__(self, content, pos, size, colour):
@@ -450,7 +511,7 @@ class MultiLineText(pg.sprite.Sprite):
         self.pos = pos
         self.size = size
         self.colour = colour
-        
+
         self.images = []
         self.font = pg.font.SysFont(FONT, self.size, True)
         for line in content:
@@ -461,9 +522,23 @@ class MultiLineText(pg.sprite.Sprite):
         for line in content:
             self.images.append(self.font.render(line, True, self.colour))
 
+    def auto_set_lines(self, raw, length):
+        self.images = []
+        words = raw.split()
+
+        while words:
+            line = ""
+            i = 0
+            while i < len(words) and self.font.size(line + words[i])[0] <= length:
+                line = line + words[i] + " "
+                i += 1
+            words = words[len(line.split()):len(words)]
+            self.images.append(self.font.render(line, True, self.colour))
+
     def update(self, g):
         for i in range(len(self.images)):
             g.screen.blit(self.images[i], (self.pos[0], self.pos[1]+((self.size+2)*i)))
+
 
 class CenterText(pg.sprite.Sprite):
     def __init__(self, content, pos, size, colour):
@@ -481,32 +556,46 @@ class CenterText(pg.sprite.Sprite):
     def update(self, g):
         g.screen.blit(self.image, (self.pos[0]-self.image.get_width()/2, self.pos[1]-self.image.get_height()/2))
 
+
 class MenuOption(pg.sprite.Sprite):
-    def __init__(self, g, content, size, colour, pos, centre):
+    def __init__(self, g, content, size, colour, base_pos, rect_buffer, centre):
         super().__init__()
         self.content = content
         self.size = size
         self.colour = colour
-        self.pos = pos
+        self.base_pos = base_pos
         self.centre = centre
+
+        self.pos = base_pos
 
         self.font = pg.font.SysFont(FONT, self.size, True)
         self.image = self.font.render(self.content, True, self.colour)
 
-        if self.centre == True:
+        if self.centre:
             self.pos = (self.pos[0] - self.image.get_width()/2, self.pos[1])
+
+        self.base_rect = self.image.get_rect(topleft=self.pos)
+        self.base_rect = pg.Rect(self.base_rect.left-rect_buffer, self.base_rect.top-rect_buffer, self.base_rect.width+rect_buffer*2, self.base_rect.height+rect_buffer*2)
+        self.rect = self.base_rect
 
     def update(self, g):
         g.screen.blit(self.image, self.pos)
-        self.rect = self.image.get_rect(topleft=self.pos)
+        # pg.draw.rect(g.screen, WHITE, self.rect, 1)
 
     def hover(self):
+        if not self.centre:
+            self.pos = (self.base_pos[0] + 20, self.base_pos[1])
+            self.rect = pg.Rect(self.base_rect.left, self.base_rect.top, self.base_rect.width+20, self.base_rect.height)
         self.colour = LIGHTGREY
         self.image = self.font.render(self.content, True, self.colour)
 
     def no_hover(self):
+        if not self.centre:
+            self.pos = self.base_pos
+            self.rect = self.base_rect
         self.colour = WHITE
         self.image = self.font.render(self.content, True, self.colour)
+
 
 class PreviewPortrait(pg.sprite.Sprite):
     def __init__(self, num):
@@ -514,7 +603,7 @@ class PreviewPortrait(pg.sprite.Sprite):
         self.num = num
 
     def update(self, g):
-        if g.preview_one != None and self.num == 1:
+        if g.preview_one is not None and self.num == 1:
             self.colour = g.preview_one.colour
             self.gender = g.preview_one.gender
             self.img = g.preview_one.img
@@ -523,7 +612,7 @@ class PreviewPortrait(pg.sprite.Sprite):
             self.image = pg.transform.scale2x(self.image)
             g.screen.blit(self.image, (0, g.game_height))
 
-        elif g.preview_two != None and self.num == 2:
+        elif g.preview_two is not None and self.num == 2:
             self.colour = g.preview_two.colour
             self.gender = g.preview_two.gender
             self.img = g.preview_two.img
@@ -532,18 +621,19 @@ class PreviewPortrait(pg.sprite.Sprite):
             self.image = pg.transform.scale2x(self.image)
             g.screen.blit(self.image, (478, g.game_height))
 
+
 class PreviewWeaponImg(pg.sprite.Sprite):
     def __init__(self, num):
         super().__init__()
         self.num = num
 
     def update(self, g):
-        if g.preview_one != None and self.num == 1:
+        if g.preview_one is not None and self.num == 1:
             self.img = g.preview_one.weapon.get('img')
             self.image = pg.image.load('content/img/weapons/' + str(self.img) + '.png')
             g.screen.blit(self.image, (258, g.game_height+16))
 
-        elif g.preview_two != None and self.num == 2:
+        elif g.preview_two is not None and self.num == 2:
             self.img = g.preview_two.weapon.get('img')
             self.image = pg.image.load('content/img/weapons/' + str(self.img) + '.png')
             g.screen.blit(self.image, (736, g.game_height+16))
