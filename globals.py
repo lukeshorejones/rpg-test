@@ -1,4 +1,5 @@
-import os, yaml
+import os
+from ruamel.yaml import YAML
 # Don't change any of these!
 
 BLACK = (0,0,0)
@@ -14,8 +15,11 @@ MOVE_TIME = 0.02
 
 # Initialising settings and config
 
+yaml = YAML(typ='rt')
+yaml.default_flow_style = None
+
 config = yaml.load(open('content/config.yml'))
-settings = yaml.load(open('content/settings.yml'))
+settings = yaml.load(open('settings.yml'))
 
 TITLE = config.get('title')
 FONT = config.get('font')
@@ -32,6 +36,5 @@ MAX_DISTANCE = config.get('max distance')
 DISPLAY_WIDTH = settings.get('display width')
 DISPLAY_HEIGHT = settings.get('display height')
 FULLSCREEN = settings.get('fullscreen')
-VOLUME = settings.get('volume')
 BLUE_PARTY = settings.get('blue party')
 RED_PARTY = settings.get('red party')

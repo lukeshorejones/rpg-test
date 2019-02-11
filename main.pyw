@@ -5,11 +5,10 @@ import pygame as pg
 import random
 import shutil
 import time
-import yaml
+
 from globals import *
 from sprites import *
 from map import *
-
 
 def set_preview_one(unit):
     g.preview_one = unit
@@ -314,15 +313,43 @@ def turn_over():
         return False
 
 
+def write_settings():
+    g.settings['master volume'] = int(g.settings.get('master volume') * 200)
+    g.settings['sfx'] = int(g.settings.get('sfx') * 200)
+    g.settings['music'] = int(g.settings.get('music') * 200)
+    with open('settings.yml', 'w') as outfile:
+        print(g.settings)
+        yaml.dump(g.settings, outfile)
+
+def update_volumes():
+    for step in g.steps:
+        step.set_volume(g.settings.get('master volume') * g.settings.get('sfx'))
+    g.hit.set_volume(g.settings.get('master volume') * g.settings.get('sfx') * 0.2)
+    g.miss.set_volume(g.settings.get('master volume') * g.settings.get('sfx') * 0.3)
+    g.crit.set_volume(g.settings.get('master volume') * g.settings.get('sfx') * 0.2)
+    g.heal_hit.set_volume(g.settings.get('master volume') * g.settings.get('sfx') * 0.6)
+    g.heal_crit.set_volume(g.settings.get('master volume') * g.settings.get('sfx') * 0.2)
+    g.click.set_volume(g.settings.get('master volume') * g.settings.get('sfx') * 0.5)
+
+    pg.mixer.music.set_volume(g.settings.get('master volume') * g.settings.get('music') * 0.4)
+
+
 class Game:
     def __init__(self):
         # initialise game window
         pg.init()
 
+        self.selected_slider = None
+
         self.unit_dict = yaml.load(open('content/units.yml'))
         self.weapon_dict = yaml.load(open('content/weapons.yml'))
         self.first_names_male = open("content/names/first_names_male.txt", "r").read().split(', ')
         self.first_names_female = open("content/names/first_names_female.txt", "r").read().split(', ')
+
+        self.settings = yaml.load(open('settings.yml'))
+        self.settings['master volume'] = self.settings.get('master volume') / 200
+        self.settings['sfx'] = self.settings.get('sfx') / 200
+        self.settings['music'] = self.settings.get('music') / 200
 
         self.steps = []
         for i in range(4):
@@ -334,24 +361,39 @@ class Game:
         self.heal_crit = pg.mixer.Sound('content/sounds/heal_crit.ogg')
         self.click = pg.mixer.Sound('content/sounds/click.ogg')
 
-        for i in range(4):
-            self.steps[i].set_volume(1.2*VOLUME)
-        self.hit.set_volume(0.2*VOLUME)
-        self.miss.set_volume(0.3*VOLUME)
-        self.crit.set_volume(0.2*VOLUME)
-        self.heal_hit.set_volume(0.6*VOLUME)
-        self.heal_crit.set_volume(0.2*VOLUME)
-        self.click.set_volume(0.5*VOLUME)
+        for step in self.steps:
+            step.set_volume(self.settings.get('master volume') * self.settings.get('sfx'))
+        self.hit.set_volume(self.settings.get('master volume') * self.settings.get('sfx') * 0.2)
+        self.miss.set_volume(self.settings.get('master volume') * self.settings.get('sfx') * 0.3)
+        self.crit.set_volume(self.settings.get('master volume') * self.settings.get('sfx') * 0.2)
+        self.heal_hit.set_volume(self.settings.get('master volume') * self.settings.get('sfx') * 0.6)
+        self.heal_crit.set_volume(self.settings.get('master volume') * self.settings.get('sfx') * 0.2)
+        self.click.set_volume(self.settings.get('master volume') * self.settings.get('sfx') * 0.5)
 
         pg.display.set_caption(TITLE)
         pg.display.set_icon(pg.image.load("content/img/icon.png"))
+
+        self.game_height = DISPLAY_HEIGHT - HEIGHT * 2
+
+        self.options_dialogue_title = DialogueBox((DISPLAY_WIDTH, DISPLAY_HEIGHT), (0, 0))
+        self.options_dialogue_pause = DialogueBox((424, 256), ((DISPLAY_WIDTH - 424) / 2, (self.game_height - 256) / 2))
+        self.options_title = CenterText("Options", (DISPLAY_WIDTH / 2, (self.game_height - 186) / 2), 40, WHITE)
+        self.options_done = MenuOption(self, 'Done', 25, WHITE,((DISPLAY_WIDTH - 374) / 2, (self.game_height + 164) / 2), 5, False)
+
+        self.options_text = []
+        self.options_text.append(Text('Master Volume', ((DISPLAY_WIDTH - 374) / 2, (self.game_height - 126) / 2), 25, WHITE))
+        self.options_text.append(Text('SFX', ((DISPLAY_WIDTH - 374) / 2, (self.game_height - 46) / 2), 25, WHITE))
+        self.options_text.append(Text('Music', ((DISPLAY_WIDTH - 374) / 2, (self.game_height + 34) / 2), 25, WHITE))
+
+        self.sliders = []
+        self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 26) / 2, (self.game_height - 104) / 2), self.settings, 'master volume', DIMGREY, LIGHTGREY, self))
+        self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 26) / 2, (self.game_height - 24) / 2), self.settings, 'sfx', DIMGREY, LIGHTGREY, self))
+        self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 26) / 2, (self.game_height + 56) / 2), self.settings, 'music', DIMGREY, LIGHTGREY, self))
 
         if FULLSCREEN == True:
             self.screen = pg.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT),pg.FULLSCREEN)
         else:
             self.screen = pg.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
-
-        self.game_height = DISPLAY_HEIGHT - HEIGHT*2
 
         self.clock = pg.time.Clock()
 
@@ -447,8 +489,9 @@ class Game:
         self.pause_title = CenterText("Game Paused", (DISPLAY_WIDTH/2, (self.game_height-186)/2), 40, WHITE)
 
         self.pause_options = []
-        self.pause_options.append(MenuOption(self, 'Resume', 25, WHITE, (DISPLAY_WIDTH/2 - 108, (self.game_height-126)/2), 5, False))
-        self.pause_options.append(MenuOption(self, 'Surrender', 25, WHITE, (DISPLAY_WIDTH/2 - 108, (self.game_height-46)/2), 5, False))
+        self.pause_options.append(MenuOption(self, 'Resume', 25, WHITE, ((DISPLAY_WIDTH - 206) / 2, (self.game_height - 126) / 2), 5, False))
+        self.pause_options.append(MenuOption(self, 'Options', 25, WHITE, ((DISPLAY_WIDTH - 206) / 2, (self.game_height - 46) / 2), 5, False))
+        self.pause_options.append(MenuOption(self, 'Surrender', 25, WHITE, ((DISPLAY_WIDTH - 206) / 2, (self.game_height + 34) / 2), 5, False))
 
         self.attackers = self.blues
         self.defenders = self.reds
@@ -508,7 +551,32 @@ class Game:
                 else:
                     option.no_hover()
 
-        elif self.state != 'paused' and self.state != 'animating':
+        elif self.state == 'options':
+            if self.options_done.rect.collidepoint((self.x, self.y)):
+                self.options_done.hover()
+            else:
+                self.options_done.no_hover()
+
+        mouse_pressed = pg.mouse.get_pressed()
+        if self.state == 'options' and mouse_pressed[0] == 1:
+            if self.selected_slider is None:
+                for slider in self.sliders:
+                    if slider.bar.rect.collidepoint((self.x, self.y)):
+                        slider.set_selected_slider(g)
+
+            else:
+                self.volume_length = self.x - self.selected_slider.button.default_pos[0]
+                if self.volume_length >= 0 and self.volume_length <= 200:
+                    self.selected_slider.fill_bar.update_width(max(0, self.volume_length))
+                    self.selected_slider.button.update_pos((self.x - 7, self.selected_slider.button.pos[1]))
+
+                    self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
+                    update_volumes()
+
+        elif self.state == 'options' and self.selected_slider is not None:
+            self.selected_slider.unset_selected_slider(g)
+
+        elif self.state != 'paused' and self.state != 'options' and self.state != 'animating':
             self.gridx, self.gridy = self.x//(WIDTH) + self.cam.posx//(WIDTH), self.y//(HEIGHT) + self.cam.posy//(HEIGHT)
 
             self.hovered_unit = None
@@ -571,11 +639,13 @@ class Game:
             if event.type == pg.QUIT:
                 if self.playing:
                     self.playing = False
+                write_settings()
                 self.running = False
 
             elif event.type == pg.MOUSEBUTTONDOWN:
-                if self.state != 'paused' and self.state != 'animating' :
+                if self.state != 'paused' and self.state != 'options' and self.state != 'animating':
                     mouse_down(event.button)
+
                 elif self.state == 'paused' and event.button == 1:
                     for option in self.pause_options:
                         if option.rect.collidepoint((self.x, self.y)):
@@ -583,6 +653,11 @@ class Game:
                                 pg.mixer.Sound.play(self.click)
                                 self.state = self.old_state
                                 pg.mouse.set_visible(False)
+
+                            elif option.content == 'Options':
+                                option.no_hover()
+                                pg.mixer.Sound.play(self.click)
+                                self.state = 'options'
 
                             elif option.content == 'Surrender':
                                 pg.mixer.Sound.play(self.click)
@@ -593,17 +668,26 @@ class Game:
                                     self.result = 'blue'
                                 self.playing = False
 
-            elif event.type == pg.KEYUP:
-                if event.key == pg.K_ESCAPE and self.state != 'paused':
+                elif self.state == 'options' and event.button == 1 and self.options_done.rect.collidepoint((self.x, self.y)):
                     pg.mixer.Sound.play(self.click)
-                    self.old_state = self.state
                     self.state = 'paused'
-                    pg.mouse.set_visible(True)
 
-                elif event.key == pg.K_ESCAPE:
-                    pg.mixer.Sound.play(self.click)
-                    self.state = self.old_state
-                    pg.mouse.set_visible(False)
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    if self.state == 'options':
+                        pg.mixer.Sound.play(self.click)
+                        self.state = 'paused'
+
+                    elif self.state == 'paused':
+                        pg.mixer.Sound.play(self.click)
+                        self.state = self.old_state
+                        pg.mouse.set_visible(False)
+
+                    else:
+                        pg.mixer.Sound.play(self.click)
+                        self.old_state = self.state
+                        self.state = 'paused'
+                        pg.mouse.set_visible(True)
 
 
     def update(self):
@@ -640,6 +724,25 @@ class Game:
                     else:
                         option.no_hover()
                     option.update(self)
+
+            elif self.stage == 'options':
+                for option in self.title_options:
+                    option.update(self)
+
+                if self.options_done.rect.collidepoint((self.x, self.y)):
+                    self.options_done.hover()
+                else:
+                    self.options_done.no_hover()
+
+                self.options_dialogue_title.update(g)
+                self.options_title.update(g)
+                self.options_done.update(g)
+
+                for text in self.options_text:
+                    text.update(g)
+                for slider in self.sliders:
+                    slider.update(g)
+
             elif self.stage == 'choose sp':
                 self.sp_title.update(self)
                 self.scrollbar_bg.update(self)
@@ -757,7 +860,7 @@ class Game:
                 self.state = 'animating'
                 self.animation = 'turn end'
 
-        elif self.state == 'paused':
+        elif self.state == 'paused' or self.state == 'options':
             self.bg.update(self)
             self.screen.blit(self.map_img, (-self.cam.posx,-self.cam.posy))
 
@@ -780,10 +883,20 @@ class Game:
 
             self.previews.update(self)
 
-            self.pause_dialogue.update(g)
-            self.pause_title.update(g)
-            for option in self.pause_options:
-                option.update(g)
+            if self.state == 'paused':
+                self.pause_dialogue.update(g)
+                self.pause_title.update(g)
+                for option in self.pause_options:
+                    option.update(g)
+
+            elif self.state == 'options':
+                self.options_dialogue_pause.update(g)
+                self.options_title.update(g)
+                self.options_done.update(g)
+                for text in self.options_text:
+                    text.update(g)
+                for slider in self.sliders:
+                    slider.update(g)
 
         elif self.state == 'combat':
             if self.stage == 'heal':
@@ -1424,14 +1537,15 @@ class Game:
 
             self.title_options.append(MenuOption(self, 'Single Player', 30, WHITE, (70, 170), 7, False))
             self.title_options.append(MenuOption(self, 'Multiplayer', 30, WHITE, (70, 220), 7, False))
-            self.title_options.append(MenuOption(self, 'Configure Game', 30, WHITE, (70, 270), 7, False))
+            self.title_options.append(MenuOption(self, 'Options', 30, WHITE, (70, 270), 7, False))
+            self.title_options.append(MenuOption(self, 'Configure Game', 30, WHITE, (70, 320), 7, False))
 
             self.sp_title = Text('Single Player', (70, 170), 30, WHITE)
             self.mp_title = Text('Multiplayer', (70, 170), 30, WHITE)
 
             self.map_list_size = (DISPLAY_HEIGHT - 220) // 40 - 1
             self.scrollbar_bg_length = 40 * self.map_list_size - 15
-            self.scrollbar_bg = ScrollbarBG((5, self.scrollbar_bg_length), DIMGREY, (70, 220))
+            self.scrollbar_bg = Bar((5, self.scrollbar_bg_length), DIMGREY, (70, 220))
             self.scrollbar = Scrollbar((5, 0), WHITE, (70, 220))
 
             for map, i in zip(self.maps_sp, range(len(self.maps_sp))):
@@ -1470,7 +1584,7 @@ class Game:
             self.fade.end_fade_in(self)
 
             pg.mixer.music.load('content/music/title_screen.ogg')
-            pg.mixer.music.set_volume(0.4*VOLUME)
+            pg.mixer.music.set_volume(self.settings.get('master volume') * self.settings.get('music') * 0.4)
             pg.mixer.music.play(-1)
 
             waiting = True
@@ -1478,9 +1592,29 @@ class Game:
                 self.clock.tick(FPS)
                 self.update()
 
+                mouse_pressed = pg.mouse.get_pressed()
+                if self.stage == 'options' and mouse_pressed[0] == 1:
+                    if self.selected_slider is None:
+                        for slider in self.sliders:
+                            if slider.bar.rect.collidepoint((self.x, self.y)):
+                                slider.set_selected_slider(g)
+
+                    else:
+                        self.volume_length = self.x - self.selected_slider.button.default_pos[0]
+                        if self.volume_length >= 0 and self.volume_length <= 200:
+                            self.selected_slider.fill_bar.update_width(max(0, self.volume_length))
+                            self.selected_slider.button.update_pos((self.x - 7, self.selected_slider.button.pos[1]))
+
+                            self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
+                            update_volumes()
+
+                elif self.stage == 'options' and self.selected_slider is not None:
+                    self.selected_slider.unset_selected_slider(g)
+
                 for event in pg.event.get():
                     if event.type == pg.QUIT:
                         waiting = False
+                        write_settings()
                         self.running = False
                     elif event.type == pg.MOUSEBUTTONDOWN:
                         if event.button == 1:
@@ -1499,6 +1633,10 @@ class Game:
                                             self.map_scroll_index = 0
                                             self.max_map_scroll_index = max(len(self.maps_mp) - self.map_list_size, 0)
                                             self.scrollbar.update_length(self.scrollbar_bg_length // (self.max_map_scroll_index + 1))
+                                        elif option.content == 'Options':
+                                            option.no_hover()
+                                            pg.mixer.Sound.play(self.click)
+                                            self.stage = 'options'
                                         elif option.content == 'Configure Game':
                                             pg.mixer.Sound.play(self.click)
                                             os.startfile('content')
@@ -1533,6 +1671,11 @@ class Game:
                                     pg.mixer.Sound.play(self.click)
                                     self.stage = 'root'
 
+                            elif self.stage == 'options':
+                                if self.options_done.rect.collidepoint((self.x, self.y)):
+                                    pg.mixer.Sound.play(self.click)
+                                    self.stage = 'root'
+
                         elif self.stage == 'choose sp' or self.stage == 'choose mp':
                             if event.button == 4 and self.map_scroll_index > 0:
                                 pg.mixer.Sound.play(self.click)
@@ -1541,7 +1684,7 @@ class Game:
                                 pg.mixer.Sound.play(self.click)
                                 self.map_scroll_index += 1
 
-                    elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE and (self.stage == 'choose sp' or self.stage == 'choose mp'):
+                    elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE and (self.stage == 'choose sp' or self.stage == 'choose mp' or self.stage == 'options'):
                         pg.mixer.Sound.play(self.click)
                         self.stage = 'root'
 
@@ -1590,9 +1733,11 @@ class Game:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     waiting = False
+                    write_settings()
                     self.running = False
                 elif event.type == pg.KEYDOWN or (event.type == pg.MOUSEBUTTONDOWN and event.button != 4 and event.button != 5):
                     pg.mixer.music.stop()
+                    pg.mixer.Sound.play(self.click)
                     self.fade.end_fade_out(self)
                     waiting = False
                     self.start_screen()

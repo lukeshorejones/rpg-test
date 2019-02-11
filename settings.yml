@@ -1,0 +1,10 @@
+display width: 960
+display height: 640
+fullscreen: false
+
+master volume: 100
+music: 100
+sfx: 100
+
+blue party: [0, 1, 2]
+red party: [3, 4, 5]

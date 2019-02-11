@@ -25,13 +25,22 @@ class MapPreviewImg(pg.sprite.Sprite):
         g.screen.blit(self.image, self.pos)
 
 
-class ScrollbarBG(pg.sprite.Sprite):
+class Bar(pg.sprite.Sprite):
     def __init__(self, dim, colour, pos):
         super().__init__()
+        self.dim = dim
+        self.colour = colour
         self.pos = pos
 
-        self.image = pg.Surface(dim)
-        self.image.fill(colour)
+        self.image = pg.Surface(self.dim)
+        self.image.fill(self.colour)
+        self.rect = self.image.get_rect(topleft=self.pos)
+        self.rect = pg.Rect(self.rect.left - 5, self.rect.top - 5, self.rect.width + 10, self.rect.height + 10)
+
+    def update_width(self, width):
+        self.dim = (width, self.dim[1])
+        self.image = pg.Surface(self.dim)
+        self.image.fill(self.colour)
 
     def update(self, g):
         g.screen.blit(self.image, self.pos)
@@ -52,6 +61,41 @@ class Scrollbar(pg.sprite.Sprite):
     def update(self, g):
         pos = (self.base_pos[0], self.base_pos[1] + g.map_scroll_index * self.dim[1])
         g.screen.blit(self.image, pos)
+
+
+class Slider(pg.sprite.Sprite):
+    def __init__(self, dim, pos, settings, volume_type, bar_colour, fill_colour, g):
+        self.bar = Bar(dim, bar_colour, pos)
+        self.fill_bar = Bar((settings.get(volume_type) * dim[0], dim[1]), fill_colour, pos)
+        self.button = SliderButton(volume_type, (pos[0]-5, pos[1]-5), g)
+
+    def set_selected_slider(self, g):
+        g.selected_slider = self
+        self.button.image = pg.image.load("content/img/slider_selected.png")
+
+    def unset_selected_slider(self, g):
+        g.selected_slider = None
+        self.button.image = pg.image.load("content/img/slider.png")
+
+    def update(self, g):
+        self.bar.update(g)
+        self.fill_bar.update(g)
+        self.button.update(g)
+
+class SliderButton(pg.sprite.Sprite):
+    def __init__(self, volume_type, default_pos, g):
+        super().__init__()
+        self.volume_type = volume_type
+        self.default_pos = default_pos
+
+        self.image = pg.image.load("content/img/slider.png")
+        self.pos = (self.default_pos[0] + g.settings.get(volume_type)*200, self.default_pos[1])
+
+    def update_pos(self, pos):
+        self.pos = pos
+
+    def update(self, g):
+        g.screen.blit(self.image, self.pos)
 
 
 class StartScreenOverlay(pg.sprite.Sprite):
@@ -503,6 +547,7 @@ class Text(pg.sprite.Sprite):
 
     def update(self, g):
         g.screen.blit(self.image, self.pos)
+        #pg.draw.rect(g.screen, WHITE, self.image.get_rect(topleft=self.pos), 1)
 
 
 class MultiLineText(pg.sprite.Sprite):

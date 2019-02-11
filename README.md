@@ -13,12 +13,10 @@ You'll need Python 3, and the below modules. Add Python to PATH, then in command
  - pytmx
  - pyyaml
 
-# v2.1 Changelog
- - Added map selection, with a working scrollbar for if there are many maps in the content folder.
- - Added preview.png and data.yml to individual map folders. These files allow you to customise the previews of your custom maps on the map select screen.
- - Made menu items move when you hover over them, so that it's more clear which is being selected.
- - Made the pause menu look a little different.
- - Obligatory miscellaneous code tweaks. You don't care about these.
+# v2.2 Changelog
+ - Replaced volume in settings.yml with master volume, music and SFX.
+ - Moved settings.yml out of the content folder.
+ - Added an options menu to the pause menu and title screen.
 
 # Credits
  - Default unit images, tile images and click sound by Kenney (https://www.kenney.nl/)
