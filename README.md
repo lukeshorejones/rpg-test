@@ -11,7 +11,7 @@ You'll need Python 3, and the below modules. Add Python to PATH, then in command
  - numpy
  - pygame
  - pytmx
- - pyyaml
+ - ruamel.yaml
 
 # v2.2 Changelog
  - Replaced volume in settings.yml with master volume, music and SFX.
