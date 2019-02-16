@@ -18,13 +18,6 @@ You'll need Python 3, and the below modules. Add Python to PATH, then in command
  - Moved settings.yml out of the content folder.
  - Added an options menu to the pause menu and title screen.
 
-# Credits
- - Default unit images, tile images and click sound by Kenney (https://www.kenney.nl/)
- - Default stat and weapon icons - some have been edited - by Kyrise (https://kyrise.itch.io)
- - Default footsteps by HaelDB (https://opengameart.org/users/haeldb)
- - Default attack and healing sounds by Sound Effect Lab (http://en.soundeffect-lab.info/)
- - Default music by David Vitas (http://www.davidvitas.com)
-
 # What Did I Learn?
  - How games work!
  - Principles of object-oriented programming.
@@ -32,3 +25,10 @@ You'll need Python 3, and the below modules. Add Python to PATH, then in command
  - Designing algorithms, such as a recursive algorithm to determine the tiles a unit can move to.
  - Writing a convincing enemy AI which makes reasonable decisions.
  - Writing menus items, including sliders with non-linear volume scaling.
+
+# Credits
+ - Default unit images, tile images and click sound by Kenney (https://www.kenney.nl/)
+ - Default stat and weapon icons - some have been edited - by Kyrise (https://kyrise.itch.io)
+ - Default footsteps by HaelDB (https://opengameart.org/users/haeldb)
+ - Default attack and healing sounds by Sound Effect Lab (http://en.soundeffect-lab.info/)
+ - Default music by David Vitas (http://www.davidvitas.com)
