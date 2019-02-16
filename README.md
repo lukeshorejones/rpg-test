@@ -24,3 +24,11 @@ You'll need Python 3, and the below modules. Add Python to PATH, then in command
  - Default footsteps by HaelDB (https://opengameart.org/users/haeldb)
  - Default attack and healing sounds by Sound Effect Lab (http://en.soundeffect-lab.info/)
  - Default music by David Vitas (http://www.davidvitas.com)
+
+# What Did I Learn?
+ - How games work!
+ - Principles of object-oriented programming.
+ - Reading and writing to YAML files in Python.
+ - Designing algorithms, such as a recursive algorithm to determine the tiles a unit can move to.
+ - Writing a convincing enemy AI which makes reasonable decisions.
+ - Writing menus items, including sliders with non-linear volume scaling.
