@@ -314,9 +314,9 @@ def turn_over():
 
 
 def write_settings():
-    g.settings['master volume'] = int(g.settings.get('master volume') * 200)
-    g.settings['sfx'] = int(g.settings.get('sfx') * 200)
-    g.settings['music'] = int(g.settings.get('music') * 200)
+    g.settings['master volume'] = int(g.settings.get('master volume') * 100)
+    g.settings['sfx'] = int(g.settings.get('sfx') * 100)
+    g.settings['music'] = int(g.settings.get('music') * 100)
     with open('settings.yml', 'w') as outfile:
         print(g.settings)
         yaml.dump(g.settings, outfile)
@@ -347,9 +347,9 @@ class Game:
         self.first_names_female = open("content/names/first_names_female.txt", "r").read().split(', ')
 
         self.settings = yaml.load(open('settings.yml'))
-        self.settings['master volume'] = self.settings.get('master volume') / 200
-        self.settings['sfx'] = self.settings.get('sfx') / 200
-        self.settings['music'] = self.settings.get('music') / 200
+        self.settings['master volume'] = self.settings.get('master volume') / 100
+        self.settings['sfx'] = self.settings.get('sfx') / 100
+        self.settings['music'] = self.settings.get('music') / 100
 
         self.steps = []
         for i in range(4):
@@ -376,19 +376,19 @@ class Game:
         self.game_height = DISPLAY_HEIGHT - HEIGHT * 2
 
         self.options_dialogue_title = DialogueBox((DISPLAY_WIDTH, DISPLAY_HEIGHT), (0, 0))
-        self.options_dialogue_pause = DialogueBox((424, 256), ((DISPLAY_WIDTH - 424) / 2, (self.game_height - 256) / 2))
+        self.options_dialogue_pause = DialogueBox((469, 256), ((DISPLAY_WIDTH - 469) / 2, (self.game_height - 256) / 2))
         self.options_title = CenterText("Options", (DISPLAY_WIDTH / 2, (self.game_height - 186) / 2), 40, WHITE)
-        self.options_done = MenuOption(self, 'Done', 25, WHITE,((DISPLAY_WIDTH - 374) / 2, (self.game_height + 164) / 2), 5, False)
+        self.options_done = MenuOption(self, 'Done', 25, WHITE,((DISPLAY_WIDTH - 414) / 2, (self.game_height + 164) / 2), 5, False)
 
         self.options_text = []
-        self.options_text.append(Text('Master Volume', ((DISPLAY_WIDTH - 374) / 2, (self.game_height - 126) / 2), 25, WHITE))
-        self.options_text.append(Text('SFX', ((DISPLAY_WIDTH - 374) / 2, (self.game_height - 46) / 2), 25, WHITE))
-        self.options_text.append(Text('Music', ((DISPLAY_WIDTH - 374) / 2, (self.game_height + 34) / 2), 25, WHITE))
+        self.options_text.append(Text('Master Volume', ((DISPLAY_WIDTH - 414) / 2, (self.game_height - 126) / 2), 25, WHITE))
+        self.options_text.append(Text('SFX', ((DISPLAY_WIDTH - 414) / 2, (self.game_height - 46) / 2), 25, WHITE))
+        self.options_text.append(Text('Music', ((DISPLAY_WIDTH - 414) / 2, (self.game_height + 34) / 2), 25, WHITE))
 
         self.sliders = []
-        self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 26) / 2, (self.game_height - 104) / 2), self.settings, 'master volume', DIMGREY, LIGHTGREY, self))
-        self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 26) / 2, (self.game_height - 24) / 2), self.settings, 'sfx', DIMGREY, LIGHTGREY, self))
-        self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 26) / 2, (self.game_height + 56) / 2), self.settings, 'music', DIMGREY, LIGHTGREY, self))
+        self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 66) / 2, (self.game_height - 101) / 2), self.settings, 'master volume', DIMGREY, LIGHTGREY, WHITE, self))
+        self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 66) / 2, (self.game_height - 21) / 2), self.settings, 'sfx', DIMGREY, LIGHTGREY, WHITE, self))
+        self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 66) / 2, (self.game_height + 59) / 2), self.settings, 'music', DIMGREY, LIGHTGREY, WHITE, self))
 
         if FULLSCREEN == True:
             self.screen = pg.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT),pg.FULLSCREEN)
@@ -565,13 +565,15 @@ class Game:
                         slider.set_selected_slider(g)
 
             else:
-                self.volume_length = self.x - self.selected_slider.button.default_pos[0]
-                if self.volume_length >= 0 and self.volume_length <= 200:
-                    self.selected_slider.fill_bar.update_width(max(0, self.volume_length))
-                    self.selected_slider.button.update_pos((self.x - 7, self.selected_slider.button.pos[1]))
+                self.volume_length = max(0, min(self.x - self.selected_slider.bar.pos[0], 200))
+                self.volume_length = self.volume_length - self.volume_length % 2
+                print(self.volume_length)
 
-                    self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
-                    update_volumes()
+                self.selected_slider.fill_bar.update_width(max(0, self.volume_length))
+                self.selected_slider.button.update_pos((self.selected_slider.button.default_pos[0] + self.volume_length, self.selected_slider.button.pos[1]))
+
+                self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
+                update_volumes()
 
         elif self.state == 'options' and self.selected_slider is not None:
             self.selected_slider.unset_selected_slider(g)
@@ -1600,13 +1602,14 @@ class Game:
                                 slider.set_selected_slider(g)
 
                     else:
-                        self.volume_length = self.x - self.selected_slider.button.default_pos[0]
-                        if self.volume_length >= 0 and self.volume_length <= 200:
-                            self.selected_slider.fill_bar.update_width(max(0, self.volume_length))
-                            self.selected_slider.button.update_pos((self.x - 7, self.selected_slider.button.pos[1]))
+                        self.volume_length = max(0, min(self.x - self.selected_slider.bar.pos[0], 200))
+                        self.volume_length = self.volume_length - self.volume_length % 2
 
-                            self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
-                            update_volumes()
+                        self.selected_slider.fill_bar.update_width(max(0, self.volume_length))
+                        self.selected_slider.button.update_pos((self.selected_slider.button.default_pos[0] + self.volume_length, self.selected_slider.button.pos[1]))
+
+                        self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
+                        update_volumes()
 
                 elif self.stage == 'options' and self.selected_slider is not None:
                     self.selected_slider.unset_selected_slider(g)

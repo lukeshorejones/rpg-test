@@ -63,11 +63,14 @@ class Scrollbar(pg.sprite.Sprite):
         g.screen.blit(self.image, pos)
 
 
-class Slider(pg.sprite.Sprite):
-    def __init__(self, dim, pos, settings, volume_type, bar_colour, fill_colour, g):
+class Slider():
+    def __init__(self, dim, pos, settings, volume_type, bar_colour, fill_colour, text_colour, g):
+        self.volume_type = volume_type
+
         self.bar = Bar(dim, bar_colour, pos)
         self.fill_bar = Bar((settings.get(volume_type) * dim[0], dim[1]), fill_colour, pos)
-        self.button = SliderButton(volume_type, (pos[0]-5, pos[1]-5), g)
+        self.button = SliderButton(volume_type, (pos[0]-7, pos[1]-5), g)
+        self.text = Text("100", (pos[0] + 217, pos[1] - 10), 20, text_colour)
 
     def set_selected_slider(self, g):
         g.selected_slider = self
@@ -78,9 +81,13 @@ class Slider(pg.sprite.Sprite):
         self.button.image = pg.image.load("content/img/slider.png")
 
     def update(self, g):
+        volume = int(g.settings.get(self.volume_type)*100)
+        if int(self.text.content) != volume:
+            self.text.set_content(str(volume))
         self.bar.update(g)
         self.fill_bar.update(g)
         self.button.update(g)
+        self.text.update(g)
 
 class SliderButton(pg.sprite.Sprite):
     def __init__(self, volume_type, default_pos, g):
@@ -535,15 +542,17 @@ class Cursor(pg.sprite.Sprite):
 class Text(pg.sprite.Sprite):
     def __init__(self, content, pos, size, colour):
         super().__init__()
+        self.content = content
         self.pos = pos
         self.size = size
         self.colour = colour
 
         self.font = pg.font.SysFont(FONT, self.size, True)
-        self.image = self.font.render(content, True, self.colour)
+        self.image = self.font.render(self.content, True, self.colour)
 
     def set_content(self, content):
-        self.image = self.font.render(content, True, self.colour)
+        self.content = content
+        self.image = self.font.render(self.content, True, self.colour)
 
     def update(self, g):
         g.screen.blit(self.image, self.pos)
