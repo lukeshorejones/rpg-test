@@ -24,7 +24,7 @@ You'll need Python 3, and the below modules. Add Python to PATH, then in command
  - Reading and writing to YAML files in Python.
  - Designing algorithms, such as a recursive algorithm to determine the tiles a unit can move to.
  - Writing a convincing enemy AI which makes reasonable decisions.
- - Writing menus items, including sliders with non-linear volume scaling.
+ - Writing menu items, including sliders with non-linear volume scaling.
 
 # Credits
  - Default unit images, tile images and click sound by Kenney (https://www.kenney.nl/)
