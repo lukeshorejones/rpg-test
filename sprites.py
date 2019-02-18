@@ -618,6 +618,7 @@ class MenuOption(pg.sprite.Sprite):
         self.size = size
         self.colour = colour
         self.base_pos = base_pos
+        self.rect_buffer = rect_buffer
         self.centre = centre
 
         self.pos = base_pos
@@ -626,10 +627,16 @@ class MenuOption(pg.sprite.Sprite):
         self.image = self.font.render(self.content, True, self.colour)
 
         if self.centre:
-            self.pos = (self.pos[0] - self.image.get_width()/2, self.pos[1])
+            self.base_pos = (self.base_pos[0] - self.image.get_width()/2, self.base_pos[1])
 
         self.base_rect = self.image.get_rect(topleft=self.pos)
-        self.base_rect = pg.Rect(self.base_rect.left-rect_buffer, self.base_rect.top-rect_buffer, self.base_rect.width+rect_buffer*2, self.base_rect.height+rect_buffer*2)
+        self.base_rect = pg.Rect(self.base_rect.left - self.rect_buffer, self.base_rect.top - self.rect_buffer, self.base_rect.width + self.rect_buffer * 2, self.base_rect.height + self.rect_buffer * 2)
+        self.rect = self.base_rect
+
+    def update_base_pos_rect(self):
+        self.base_pos = (self.base_pos[0], self.pos[1])
+        self.base_rect = self.image.get_rect(topleft=self.pos)
+        self.base_rect = pg.Rect(self.base_rect.left - self.rect_buffer, self.base_rect.top - self.rect_buffer, self.base_rect.width + self.rect_buffer * 2, self.base_rect.height + self.rect_buffer * 2)
         self.rect = self.base_rect
 
     def update(self, g):

@@ -318,7 +318,6 @@ def write_settings():
     g.settings['sfx'] = int(g.settings.get('sfx') * 100)
     g.settings['music'] = int(g.settings.get('music') * 100)
     with open('settings.yml', 'w') as outfile:
-        print(g.settings)
         yaml.dump(g.settings, outfile)
 
 def update_volumes():
@@ -567,13 +566,14 @@ class Game:
             else:
                 self.volume_length = max(0, min(self.x - self.selected_slider.bar.pos[0], 200))
                 self.volume_length = self.volume_length - self.volume_length % 2
-                print(self.volume_length)
 
-                self.selected_slider.fill_bar.update_width(max(0, self.volume_length))
-                self.selected_slider.button.update_pos((self.selected_slider.button.default_pos[0] + self.volume_length, self.selected_slider.button.pos[1]))
+                if self.selected_slider.button.pos[0] != self.selected_slider.button.default_pos[0] + self.volume_length:
+                    self.selected_slider.fill_bar.update_width(max(0, self.volume_length))
+                    self.selected_slider.button.update_pos((self.selected_slider.button.default_pos[0] + self.volume_length, self.selected_slider.button.pos[1]))
 
-                self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
-                update_volumes()
+                    self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
+                    self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
+                    update_volumes()
 
         elif self.state == 'options' and self.selected_slider is not None:
             self.selected_slider.unset_selected_slider(g)
@@ -751,16 +751,16 @@ class Game:
                 self.scrollbar.update(self)
                 self.back_option.update(self)
 
-                j = 0
                 for i in range(self.map_scroll_index, min(len(self.sp_options), self.map_scroll_index+self.map_list_size)):
-                    self.sp_options[i].pos = (self.sp_options[i].pos[0], 215 + j*40)
                     self.sp_options[i].update(self)
+
                     if self.sp_options[i].rect.collidepoint((self.x, self.y)):
                         path = os.path.join(self.maps_sp[i][0], "preview.png")
                         if os.path.exists(path):
                             self.map_preview_img.set_img(path)
                         else:
                             self.map_preview_img.set_blank()
+
                         self.map_preview_description.auto_set_lines(self.maps_sp[i][1].get('description'), 380)
                         self.map_preview_creator.set_content("Creator: " + self.maps_sp[i][1].get('creator'))
 
@@ -769,11 +769,10 @@ class Game:
                         self.map_preview_img.update(self)
                         self.map_preview_description.update(self)
                         self.map_preview_creator.update(self)
-
                         self.sp_options[i].hover()
+
                     else:
                         self.sp_options[i].no_hover()
-                    j += 1
 
                 if self.back_option.rect.collidepoint((self.x, self.y)):
                     self.back_option.hover()
@@ -786,10 +785,9 @@ class Game:
                 self.scrollbar.update(self)
                 self.back_option.update(self)
 
-                j = 0
                 for i in range(self.map_scroll_index, min(len(self.mp_options), self.map_scroll_index + self.map_list_size)):
-                    self.mp_options[i].pos = (self.mp_options[i].pos[0], 215 + j * 40)
                     self.mp_options[i].update(self)
+
                     if self.mp_options[i].rect.collidepoint((self.x, self.y)):
                         path = os.path.join(self.maps_mp[i][0], "preview.png")
                         if os.path.exists(path):
@@ -808,7 +806,6 @@ class Game:
                         self.mp_options[i].hover()
                     else:
                         self.mp_options[i].no_hover()
-                    j += 1
 
                 if self.back_option.rect.collidepoint((self.x, self.y)):
                     self.back_option.hover()
@@ -1605,11 +1602,12 @@ class Game:
                         self.volume_length = max(0, min(self.x - self.selected_slider.bar.pos[0], 200))
                         self.volume_length = self.volume_length - self.volume_length % 2
 
-                        self.selected_slider.fill_bar.update_width(max(0, self.volume_length))
-                        self.selected_slider.button.update_pos((self.selected_slider.button.default_pos[0] + self.volume_length, self.selected_slider.button.pos[1]))
+                        if self.selected_slider.button.pos[0] != self.selected_slider.button.default_pos[0] + self.volume_length:
+                            self.selected_slider.fill_bar.update_width(max(0, self.volume_length))
+                            self.selected_slider.button.update_pos((self.selected_slider.button.default_pos[0] + self.volume_length, self.selected_slider.button.pos[1]))
 
-                        self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
-                        update_volumes()
+                            self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
+                            update_volumes()
 
                 elif self.stage == 'options' and self.selected_slider is not None:
                     self.selected_slider.unset_selected_slider(g)
@@ -1680,12 +1678,27 @@ class Game:
                                     self.stage = 'root'
 
                         elif self.stage == 'choose sp' or self.stage == 'choose mp':
+                            if self.stage == 'choose sp':
+                                options = self.sp_options
+                            else:
+                                options = self.mp_options
+
+                            j = 0
                             if event.button == 4 and self.map_scroll_index > 0:
                                 pg.mixer.Sound.play(self.click)
                                 self.map_scroll_index -= 1
+                                for i in range(self.map_scroll_index,min(len(options), self.map_scroll_index + self.map_list_size)):
+                                    options[i].pos = (options[i].pos[0], 215 + j * 40)
+                                    options[i].update_base_pos_rect()
+                                    j += 1
+
                             elif event.button == 5 and self.map_scroll_index < self.max_map_scroll_index:
                                 pg.mixer.Sound.play(self.click)
                                 self.map_scroll_index += 1
+                                for i in range(self.map_scroll_index, min(len(options), self.map_scroll_index + self.map_list_size)):
+                                    options[i].pos = (options[i].pos[0], 215 + j * 40)
+                                    options[i].update_base_pos_rect()
+                                    j += 1
 
                     elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE and (self.stage == 'choose sp' or self.stage == 'choose mp' or self.stage == 'options'):
                         pg.mixer.Sound.play(self.click)
