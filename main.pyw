@@ -752,8 +752,6 @@ class Game:
                 self.back_option.update(self)
 
                 for i in range(self.map_scroll_index, min(len(self.sp_options), self.map_scroll_index+self.map_list_size)):
-                    self.sp_options[i].update(self)
-
                     if self.sp_options[i].rect.collidepoint((self.x, self.y)):
                         path = os.path.join(self.maps_sp[i][0], "preview.png")
                         if os.path.exists(path):
@@ -773,6 +771,7 @@ class Game:
 
                     else:
                         self.sp_options[i].no_hover()
+                    self.sp_options[i].update(self)
 
                 if self.back_option.rect.collidepoint((self.x, self.y)):
                     self.back_option.hover()
@@ -786,8 +785,6 @@ class Game:
                 self.back_option.update(self)
 
                 for i in range(self.map_scroll_index, min(len(self.mp_options), self.map_scroll_index + self.map_list_size)):
-                    self.mp_options[i].update(self)
-
                     if self.mp_options[i].rect.collidepoint((self.x, self.y)):
                         path = os.path.join(self.maps_mp[i][0], "preview.png")
                         if os.path.exists(path):
@@ -806,6 +803,8 @@ class Game:
                         self.mp_options[i].hover()
                     else:
                         self.mp_options[i].no_hover()
+
+                    self.mp_options[i].update(self)
 
                 if self.back_option.rect.collidepoint((self.x, self.y)):
                     self.back_option.hover()
@@ -1628,12 +1627,16 @@ class Game:
                                             self.map_scroll_index = 0
                                             self.max_map_scroll_index = max(len(self.maps_sp) - self.map_list_size, 0)
                                             self.scrollbar.update_length(self.scrollbar_bg_length // (self.max_map_scroll_index + 1))
+                                            self.scrollbar.adjust_length(g)
+                                            self.scrollbar.set_pos(g)
                                         elif option.content == 'Multiplayer':
                                             pg.mixer.Sound.play(self.click)
                                             self.stage = 'choose mp'
                                             self.map_scroll_index = 0
                                             self.max_map_scroll_index = max(len(self.maps_mp) - self.map_list_size, 0)
                                             self.scrollbar.update_length(self.scrollbar_bg_length // (self.max_map_scroll_index + 1))
+                                            self.scrollbar.adjust_length(g)
+                                            self.scrollbar.set_pos(g)
                                         elif option.content == 'Options':
                                             option.no_hover()
                                             pg.mixer.Sound.play(self.click)
@@ -1687,6 +1690,8 @@ class Game:
                             if event.button == 4 and self.map_scroll_index > 0:
                                 pg.mixer.Sound.play(self.click)
                                 self.map_scroll_index -= 1
+                                self.scrollbar.adjust_length(g)
+                                self.scrollbar.set_pos(g)
                                 for i in range(self.map_scroll_index,min(len(options), self.map_scroll_index + self.map_list_size)):
                                     options[i].pos = (options[i].pos[0], 215 + j * 40)
                                     options[i].update_base_pos_rect()
@@ -1695,6 +1700,8 @@ class Game:
                             elif event.button == 5 and self.map_scroll_index < self.max_map_scroll_index:
                                 pg.mixer.Sound.play(self.click)
                                 self.map_scroll_index += 1
+                                self.scrollbar.adjust_length(g)
+                                self.scrollbar.set_pos(g)
                                 for i in range(self.map_scroll_index, min(len(options), self.map_scroll_index + self.map_list_size)):
                                     options[i].pos = (options[i].pos[0], 215 + j * 40)
                                     options[i].update_base_pos_rect()

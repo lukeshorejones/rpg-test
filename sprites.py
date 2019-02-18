@@ -52,15 +52,32 @@ class Scrollbar(pg.sprite.Sprite):
         self.dim = dim
         self.colour = colour
         self.base_pos = base_pos
+        self.remainder = 0
 
     def update_length(self, length):
         self.dim = (self.dim[0], length)
         self.image = pg.Surface(self.dim)
         self.image.fill(self.colour)
 
+    def adjust_length(self, g):
+        self.remainder = g.scrollbar_bg_length % self.dim[1]
+        if self.remainder == 0:
+            self.image = pg.Surface(self.dim)
+            self.image.fill(self.colour)
+        elif g.map_scroll_index > g.max_map_scroll_index - self.remainder:
+            dim = (self.dim[0], self.dim[1] + 1)
+            self.image = pg.Surface(dim)
+            self.image.fill(self.colour)
+
+    def set_pos(self, g):
+        buffer = g.map_scroll_index - g.max_map_scroll_index + self.remainder - 1
+        if buffer > 0:
+            self.pos = (self.base_pos[0], self.base_pos[1] + g.map_scroll_index * self.dim[1] + buffer)
+        else:
+            self.pos = (self.base_pos[0], self.base_pos[1] + g.map_scroll_index * self.dim[1])
+
     def update(self, g):
-        pos = (self.base_pos[0], self.base_pos[1] + g.map_scroll_index * self.dim[1])
-        g.screen.blit(self.image, pos)
+        g.screen.blit(self.image, self.pos)
 
 
 class Slider():
