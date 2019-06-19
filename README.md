@@ -1,27 +1,15 @@
 # RPG Test
-A tactical RPG made with Python and Pygame, based on games like Fire Emblem. The player controls a group of units on a variety of maps, the goal being to defeat all of the enemy units. You can play singleplayer against an AI opponent, or multiplayer against a friend. The game also supports custom units, weapons and maps without any coding knowledge required.
+A tactical RPG made with Python and Pygame, based on games like Fire Emblem. The player controls a group of units on a variety of maps, the goal being to defeat all of the enemy units. You can play singleplayer against an AI opponent, or multiplayer against a friend. The game also supports the implementation of custom units, weapons and maps without any coding knowledge required.
 
 # User Guide
-Run main.pyw to play the game. You will need to install some external modules, which are listed in the Dependencies section.
+This project requires Python 3 and pipenv. Once Python is installed (and added to PATH), install pipenv by running ``pip install pipenv``.
 
-You can then edit the files in the content folder to change some configuration options and add your own custom content such as characters, weapons and maps.
+Once Python and pipenv are installed, you can navigate to the game files and run ``pipenv install`` there to automatically install all other dependencies.  
 
-# Dependencies
-You'll need Python 3, and the below modules. Add Python to PATH, then in command prompt type `pip install X`, once each for all of:
- - numpy
- - pygame
- - pytmx
- - ruamel.yaml
+Finally, you can simply run run.bat to play the game (or run ``pipenv run python main.pyw`` directly). You can edit the files in the content folder to change some configuration options, change graphics and sounds, and add your own custom content such as new units, weapons and maps.
 
-# v2.3 Changelog
- - Added elite enemy units to single player mode, marked by crown icons.
- - Added traits - passive abilities with special effects, possessed by all player-controlled units and some enemy AI units.
- - Added three difficulty levels to single player: easy, normal and hard. Difficulty can be set in settings.yml. Enemy units' stats vary by mode. In easy mode, no enemy units have traits. In normal mode, elite enemy units have traits. In hard mode, all enemy units have traits.
- - Refactored some stuff. :)
-
-# v2.3 Bugfixes
- - In multiplayer, blue units did not counter red units' attacks.
- - The player could control the camera during the enemy's turn in single player mode.
+# v2.4 Changelog (WIP)
+ - Started using a virtual environment like a real programmer.
 
 # What Did I Learn?
  - How games work!
