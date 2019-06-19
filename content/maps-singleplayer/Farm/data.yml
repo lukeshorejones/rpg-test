@@ -1,2 +1,6 @@
 description: The farm is being raided by bandits, and the crops are being trampled!
 creator: RPG Test
+
+elites:
+ - 10
+ - 11

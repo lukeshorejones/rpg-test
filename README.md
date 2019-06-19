@@ -13,10 +13,15 @@ You'll need Python 3, and the below modules. Add Python to PATH, then in command
  - pytmx
  - ruamel.yaml
 
-# v2.2 Changelog
- - Replaced volume in settings.yml with master volume, music and SFX.
- - Moved settings.yml out of the content folder.
- - Added an options menu to the pause menu and title screen.
+# v2.3 Changelog
+ - Added elite enemy units to single player mode, marked by crown icons.
+ - Added traits - passive abilities with special effects, possessed by all player-controlled units and some enemy AI units.
+ - Added three difficulty levels to single player: easy, normal and hard. Difficulty can be set in settings.yml. Enemy units' stats vary by mode. In easy mode, no enemy units have traits. In normal mode, elite enemy units have traits. In hard mode, all enemy units have traits.
+ - Refactored some stuff. :)
+
+# v2.3 Bugfixes
+ - In multiplayer, blue units did not counter red units' attacks.
+ - The player could control the camera during the enemy's turn in single player mode.
 
 # What Did I Learn?
  - How games work!
@@ -28,7 +33,7 @@ You'll need Python 3, and the below modules. Add Python to PATH, then in command
 
 # Credits
  - Default unit images, tile images and click sound by Kenney (https://www.kenney.nl/)
- - Default stat and weapon icons - some have been edited - by Kyrise (https://kyrise.itch.io)
+ - Default stat, weapon and trait icons - some have been edited - by Kyrise (https://kyrise.itch.io)
  - Default footsteps by HaelDB (https://opengameart.org/users/haeldb)
  - Default attack and healing sounds by Sound Effect Lab (http://en.soundeffect-lab.info/)
  - Default music by David Vitas (http://www.davidvitas.com)

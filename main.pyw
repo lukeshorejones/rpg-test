@@ -20,11 +20,20 @@ def set_preview_one(unit):
         g.preview_one_wis.set_content(str(unit.stats[3]))
         g.preview_one_dex.set_content(str(unit.stats[4]))
         g.preview_one_lck.set_content(str(unit.stats[5]))
+
         g.preview_one_weapon_name.set_content(str(unit.weapon.get('name')))
         if unit.weapon.get('power') == 0 and unit.weapon.get('heal') != 0:
             g.preview_one_weapon_text.set_content(['Healing: ' + str(unit.weapon.get('healing')), 'Range: ' + str(unit.weapon.get('range')), 'Stat: ' + STAT_NAMES[unit.weapon.get('stat')]])
         else:
             g.preview_one_weapon_text.set_content(['Power: ' + str(unit.weapon.get('power')), 'Range: ' + str(unit.weapon.get('range')), 'Stat: ' + STAT_NAMES[unit.weapon.get('stat')]])
+
+        if unit.trait != {}:
+            g.preview_one_trait_name.set_content(unit.trait.get('name'))
+            g.preview_one_trait_text.auto_set_lines(unit.trait.get('desc'), 97)
+        else:
+            g.preview_one_trait_name.set_content('')
+            g.preview_one_trait_text.set_content([])
+
         g.preview_one_hp_bar.set_img(g)
 
     else:
@@ -35,8 +44,12 @@ def set_preview_one(unit):
         g.preview_one_wis.set_content('')
         g.preview_one_dex.set_content('')
         g.preview_one_lck.set_content('')
+
         g.preview_one_weapon_name.set_content('')
         g.preview_one_weapon_text.set_content([])
+
+        g.preview_one_trait_name.set_content('')
+        g.preview_one_trait_text.set_content([])
 
 
 def set_preview_two(unit):
@@ -49,11 +62,20 @@ def set_preview_two(unit):
         g.preview_two_wis.set_content(str(unit.stats[3]))
         g.preview_two_dex.set_content(str(unit.stats[4]))
         g.preview_two_lck.set_content(str(unit.stats[5]))
+
         g.preview_two_weapon_name.set_content(str(unit.weapon.get('name')))
         if unit.weapon.get('power') == 0 and unit.weapon.get('heal') != 0:
             g.preview_two_weapon_text.set_content(['Healing: ' + str(unit.weapon.get('healing')), 'Range: ' + str(unit.weapon.get('range')), 'Stat: ' + STAT_NAMES[unit.weapon.get('stat')]])
         else:
             g.preview_two_weapon_text.set_content(['Power: ' + str(unit.weapon.get('power')), 'Range: ' + str(unit.weapon.get('range')), 'Stat: ' + STAT_NAMES[unit.weapon.get('stat')]])
+
+        if unit.trait != {}:
+            g.preview_two_trait_name.set_content(unit.trait.get('name'))
+            g.preview_two_trait_text.auto_set_lines(unit.trait.get('desc'), 97)
+        else:
+            g.preview_two_trait_name.set_content('')
+            g.preview_two_trait_text.set_content([])
+
         g.preview_two_hp_bar.set_img(g)
 
     else:
@@ -64,8 +86,12 @@ def set_preview_two(unit):
         g.preview_two_wis.set_content('')
         g.preview_two_dex.set_content('')
         g.preview_two_lck.set_content('')
+
         g.preview_two_weapon_name.set_content('')
         g.preview_two_weapon_text.set_content([])
+
+        g.preview_two_trait_name.set_content('')
+        g.preview_two_trait_text.set_content([])
 
 
 def import_unit(unit_id, pos, team):
@@ -78,16 +104,13 @@ def import_unit(unit_id, pos, team):
     for stat_name in STAT_NAMES:
         stats.append(g.unit_dict.get(unit_id).get('stats').get(stat_name.lower()))
     hp = MAX_HP
-
     weapon = g.weapon_dict.get(g.unit_dict.get(unit_id).get('weapon'))
 
-    if team == 'blue':
-        return Blue(name, gender, img, stats, hp, weapon, pos)
-    elif team == 'red':
-        return Red(name, gender, img, stats, hp, weapon, pos)
+    trait = g.trait_dict.get(g.unit_dict.get(unit_id).get('trait'))
 
+    return Unit(team, False, name, gender, img, stats, hp, weapon, trait, pos)
 
-def random_unit(pos, team):
+def random_unit(pos, elite, team):
     stats = []
     gender = random.choice(('Male', 'Female'))
 
@@ -96,7 +119,22 @@ def random_unit(pos, team):
     elif gender == 'Female':
         name = random.choice(g.first_names_female)
 
-    stats = copy.copy(ENEMY_STAT_SPREAD)
+    if DIFFICULTY == 'easy':
+        if elite:
+            stats = copy.copy(EASY_ELITE_STAT_SPREAD)
+        else:
+            stats = copy.copy(EASY_STAT_SPREAD)
+    elif DIFFICULTY == 'hard':
+        if elite:
+            stats = copy.copy(HARD_ELITE_STAT_SPREAD)
+        else:
+            stats = copy.copy(HARD_STAT_SPREAD)
+    else:
+        if elite:
+            stats = copy.copy(NORMAL_ELITE_STAT_SPREAD)
+        else:
+            stats = copy.copy(NORMAL_STAT_SPREAD)
+
     random.shuffle(stats)
     hp = MAX_HP
 
@@ -110,10 +148,23 @@ def random_unit(pos, team):
     img = str(random.choice(g.weapon_dict.get(w).get('unit imgs')))
     weapon = g.weapon_dict.get(weapon)
 
-    if team == 'blue':
-        return Blue(name, gender, img, stats, hp, weapon, pos)
-    elif team == 'red':
-        return Red(name, gender, img, stats, hp, weapon, pos)
+    if (elite and DIFFICULTY == 'normal') or DIFFICULTY == 'hard':
+        traits = list(range(len(g.trait_dict)))
+        random.shuffle(traits)
+        for t in traits:
+            if g.trait_dict.get(t).get('type') == 'none':
+                trait = g.trait_dict.get(t)
+                break
+            elif g.trait_dict.get(t).get('type') == 'damage' and weapon.get('power') != 0:
+                trait = g.trait_dict.get(t)
+                break
+            elif g.trait_dict.get(t).get('type') == 'healing' and weapon.get('healing') != 0:
+                trait = g.trait_dict.get(t)
+                break
+    else:
+        trait = {}
+
+    return Unit(team, elite, name, gender, img, stats, hp, weapon, trait, pos)
 
 
 def get_pos_atk_range(red, posy, posx):
@@ -172,16 +223,18 @@ def mouse_down(button):
                         return
 
             for blue in g.blues:
-                if g.turn % 2 == 1 and g.gridx == blue.grid_pos[0] and g.gridy == blue.grid_pos[1] and blue.active == True:
+                if g.turn % 2 == 1 and g.gridx == blue.grid_pos[0] and g.gridy == blue.grid_pos[1] and blue.active:
                     g.colour = 'blue'
                     click_unit(blue)
                     return
 
             for red in g.reds:
-                if g.turn % 2 == 0 and g.gridx == red.grid_pos[0] and g.gridy == red.grid_pos[1] and red.active == True:
+                if g.turn % 2 == 0 and g.gridx == red.grid_pos[0] and g.gridy == red.grid_pos[1] and red.active:
                     g.colour = 'red'
                     click_unit(red)
                     return
+
+            g.selected_unit = None
 
         g.move_tiles = []
 
@@ -242,55 +295,69 @@ def click_heal_tile(tile):
             break
 
 
-def damage_calc(attacker, defender):
+def get_adjacent_trait(trait, defender, defenders):
+    for d in defenders:
+        distances = (d.grid_pos[0] - defender.grid_pos[0], d.grid_pos[1] - defender.grid_pos[1])
+        adjacent = (abs(distances[0]) == 0 and abs(distances[1]) == 1) or (abs(distances[0]) == 1 and abs(distances[1]) == 0)
+        if adjacent and d.trait.get('effect') == trait:
+            return d
+
+    return None
+
+
+def damage_calc(attacker, defender, attacker_2, defender_2):
     dex_roll = random.randint(1,100)
     crit_roll = random.randint(1,100)
     dmg = attacker.stats[attacker.weapon.get('stat')] * attacker.weapon.get('power')
     defence_stat = attacker.weapon.get('stat') + 1
 
-    g.attacker_base_dmg = max(math.floor(dmg / defender.stats[defence_stat]), 1)
-    g.attacker_dmg = random.randint(g.attacker_base_dmg-1, g.attacker_base_dmg+1)
+    attacker_base_dmg = max(math.floor(dmg / defender.stats[defence_stat]), 1)
+    attacker_dmg = random.randint(attacker_base_dmg-1, attacker_base_dmg+1)
 
     if dex_roll <= 1.5 * defender.stats[4]:
-        g.attacker_dmg = 0
-        g.attacker_hit = 'miss'
+        attacker_dmg = 0
+        attacker_hit = 'miss'
     else:
-        g.attacker_dmg = g.attacker_base_dmg
-        g.attacker_hit = 'hit'
+        attacker_dmg = attacker_base_dmg
+        attacker_hit = 'hit'
         if crit_roll <= 1.5 * attacker.stats[5]:
-            g.attacker_dmg *= 2
-            g.attacker_hit = 'crit'
+            attacker_dmg *= 2
+            attacker_hit = 'crit'
 
     dex_roll = random.randint(1,100)
     crit_roll = random.randint(1,100)
-    dmg = defender.stats[defender.weapon.get('stat')] * defender.weapon.get('power')
-    defence_stat = defender.weapon.get('stat') + 1
+    dmg = attacker_2.stats[attacker_2.weapon.get('stat')] * attacker_2.weapon.get('power')
+    defence_stat = attacker_2.weapon.get('stat') + 1
 
-    g.defender_base_dmg = math.floor(dmg / attacker.stats[defence_stat])
-    g.defender_dmg = max(random.randint(g.defender_base_dmg-1, g.defender_base_dmg+1), 1)
+    defender_base_dmg = math.floor(dmg / defender_2.stats[defence_stat])
+    defender_dmg = max(random.randint(defender_base_dmg-1, defender_base_dmg+1), 1)
 
-    if dex_roll <= 1.5 * attacker.stats[4]:
-        g.defender_dmg = 0
-        g.defender_hit = 'miss'
+    if dex_roll <= 1.5 * defender_2.stats[4]:
+        defender_dmg = 0
+        defender_hit = 'miss'
     else:
-        g.defender_dmg = g.defender_base_dmg
-        g.defender_hit = 'hit'
-        if crit_roll <= 1.5 * defender.stats[5]:
-            g.defender_dmg *= 2
-            g.defender_hit = 'crit'
+        defender_dmg = defender_base_dmg
+        defender_hit = 'hit'
+        if crit_roll <= 1.5 * attacker_2.stats[5]:
+            defender_dmg *= 2
+            defender_hit = 'crit'
+
+    return (attacker_base_dmg, attacker_dmg, attacker_hit, defender_base_dmg, defender_dmg, defender_hit)
 
 
 def heal_calc(attacker, defender):
     crit_roll = random.randint(1,100)
 
-    g.base_heal = math.floor(attacker.stats[attacker.weapon.get('stat')] * attacker.weapon.get('healing') / 6)
-    g.heal = min(random.randint(g.base_heal-1, g.base_heal+1), MAX_HP-defender.hp)
+    base_heal = math.floor(attacker.stats[attacker.weapon.get('stat')] * attacker.weapon.get('healing') / 6)
+    heal = min(random.randint(base_heal-1, base_heal+1), MAX_HP-defender.hp)
 
     if crit_roll <= 1.5 * attacker.stats[5]:
-        g.heal = min(g.heal*2,  MAX_HP-defender.hp)
-        g.attacker_hit = 'crit'
+        heal = min(heal*2,  MAX_HP-defender.hp)
+        hit = 'crit'
     else:
-        g.attacker_hit = 'hit'
+        hit = 'hit'
+
+    return (heal, hit)
 
 
 def turn_over():
@@ -298,12 +365,12 @@ def turn_over():
 
     if g.mode == 'sp' or g.turn % 2 == 1:
         for blue in g.blues:
-            if blue.active == True:
+            if blue.active:
                 found_active = 1
                 break
     else:
         for red in g.reds:
-            if red.active == True:
+            if red.active:
                 found_active = 1
                 break
 
@@ -320,6 +387,7 @@ def write_settings():
     with open('settings.yml', 'w') as outfile:
         yaml.dump(g.settings, outfile)
 
+
 def update_volumes():
     for step in g.steps:
         step.set_volume(g.settings.get('master volume') * g.settings.get('sfx'))
@@ -333,6 +401,153 @@ def update_volumes():
     pg.mixer.music.set_volume(g.settings.get('master volume') * g.settings.get('music') * 0.4)
 
 
+def move(moving, end_pos):
+    moving.pos = (moving.pos[0]+g.dx, moving.pos[1]+g.dy)
+
+    if not pg.mixer.get_busy():
+        step = random.randint(0,3)
+        pg.mixer.Sound.play(g.steps[step])
+
+    g.move_complete = True
+    if g.dx > 0 and moving.pos[0] < end_pos[0]:
+        g.move_complete = False
+    elif g.dx < 0 and moving.pos[0] > end_pos[0]:
+        g.move_complete = False
+    elif g.dy > 0 and moving.pos[1] < end_pos[1]:
+        g.move_complete = False
+    elif g.dy < 0 and moving.pos[1] > end_pos[1]:
+        g.move_complete = False
+
+    time.sleep(MOVE_TIME)
+
+
+def set_damage(attackers, defenders):
+    g.defender_guardian = get_adjacent_trait('guardian', g.defender, defenders)
+    g.attacker_guardian = get_adjacent_trait('guardian', g.attacker, attackers)
+
+    if g.defender_guardian is not None:
+        if g.attacker_guardian is not None:
+            (g.attacker_base_dmg, g.attacker_dmg, g.attacker_hit, g.defender_base_dmg, g.defender_dmg, g.defender_hit) = damage_calc(g.attacker, g.defender_guardian, g.defender, g.attacker_guardian)
+            g.attacker_base_dmg = math.floor(g.attacker_base_dmg * g.defender_guardian.trait.get('mod'))
+            g.attacker_dmg = max(math.floor(g.attacker_dmg * g.defender_guardian.trait.get('mod')), 1)
+            g.defender_base_dmg = math.floor(g.defender_base_dmg * g.attacker_guardian.trait.get('mod'))
+            g.defender_dmg = max(math.floor(g.defender_dmg * g.attacker_guardian.trait.get('mod')), 1)
+        else:
+            (g.attacker_base_dmg, g.attacker_dmg, g.attacker_hit, g.defender_base_dmg, g.defender_dmg, g.defender_hit) = damage_calc(g.attacker, g.defender_guardian, g.defender, g.attacker)
+            g.attacker_base_dmg = math.floor(g.attacker_base_dmg * g.defender_guardian.trait.get('mod'))
+            g.attacker_dmg = max(math.floor(g.attacker_dmg * g.defender_guardian.trait.get('mod')), 1)
+    else:
+        if g.attacker_guardian is not None:
+            (g.attacker_base_dmg, g.attacker_dmg, g.attacker_hit, g.defender_base_dmg, g.defender_dmg, g.defender_hit) = damage_calc(g.attacker, g.defender, g.defender, g.attacker_guardian)
+            g.defender_base_dmg = math.floor(g.defender_base_dmg * g.attacker_guardian.trait.get('mod'))
+            g.defender_dmg = max(math.floor(g.defender_dmg * g.attacker_guardian.trait.get('mod')), 1)
+        else:
+            (g.attacker_base_dmg, g.attacker_dmg, g.attacker_hit, g.defender_base_dmg, g.defender_dmg, g.defender_hit) = damage_calc(g.attacker, g.defender, g.defender, g.attacker)
+
+    g.attacker_birthright = get_adjacent_trait('battle cry', g.attacker, attackers)
+    g.defender_birthright = get_adjacent_trait('battle cry', g.defender, defenders)
+    if g.attacker_birthright is not None:
+        g.attacker_dmg *= g.attacker_birthright.trait.get('mod')
+    if g.defender_birthright is not None:
+        g.defender_dmg *= g.defender_birthright.trait.get('mod')
+
+    g.defender_blessing = get_adjacent_trait('blessing', g.defender, defenders)
+    g.attacker_blessing = get_adjacent_trait('blessing', g.attacker, attackers)
+    if g.defender_blessing is not None:
+        g.attacker_dmg *= g.defender_blessing.trait.get('mod')
+    if g.attacker_blessing is not None:
+        g.defender_dmg *= g.attacker_blessing.trait.get('mod')
+
+
+def set_healing():
+    (g.heal, g.attacker_hit) = heal_calc(g.attacker, g.defender)
+    if g.attacker.trait.get('effect') == 'miracle' and (g.defender.hp / MAX_HP) <= g.attacker.trait.get('health'):
+        g.attacker_hit = 'crit'
+
+
+def heal_return():
+    if g.attacker_hit == 'hit':
+        pg.mixer.Sound.play(g.heal_hit)
+    else:
+        pg.mixer.Sound.play(g.heal_crit)
+
+    g.defender.hp += g.heal
+    g.defender.set_hp_img(g)
+    g.preview_two_hp_bar.set_img(g)
+
+    g.state = 'animating'
+    g.animation = 'heal return'
+
+
+def attacker_return(defenders):
+    if g.attacker_hit == 'hit':
+        pg.mixer.Sound.play(g.hit)
+    elif g.attacker_hit == 'crit':
+        pg.mixer.Sound.play(g.crit)
+    else:
+        pg.mixer.Sound.play(g.miss)
+
+    if g.attacker.trait.get('effect') == 'wildfire':
+        count = 0
+        for d in defenders:
+            distances = (d.grid_pos[0] - g.defender.grid_pos[0], d.grid_pos[1] - g.defender.grid_pos[1])
+            if (abs(distances[0]) == 0 and abs(distances[1]) == 1) or (abs(distances[0]) == 1 and abs(distances[1]) == 0):
+                count += 1
+                (attacker_base_dmg, attacker_dmg, attacker_hit, defender_base_dmg, defender_dmg, defender_hit) = damage_calc(g.attacker, d, d, g.attacker)
+                dmg = max(math.floor(attacker_dmg * g.attacker.trait.get('mod')), 1)
+                if d.hp <= dmg:
+                    defenders.remove(d)
+                    if g.attacker.trait.get('effect') == 'warpath':
+                        g.warpath = True
+                else:
+                    d.hp -= dmg
+                    d.set_hp_img(g)
+                if count == 4:
+                    break
+
+    if g.defender_guardian is None:
+        defender = g.defender
+    else:
+        defender = g.defender_guardian
+
+    if defender.hp <= g.attacker_dmg:
+        defenders.remove(defender)
+        if g.attacker.trait.get('effect') == 'warpath':
+            g.warpath = True
+    else:
+        defender.hp -= g.attacker_dmg
+        defender.set_hp_img(g)
+        g.preview_two_hp_bar.set_img(g)
+
+    g.state = 'animating'
+    g.animation = 'attacker return'
+
+
+def defender_return(attackers):
+    if g.defender_hit == 'hit':
+        pg.mixer.Sound.play(g.hit)
+    elif g.defender_hit == 'crit':
+        pg.mixer.Sound.play(g.crit)
+    else:
+        pg.mixer.Sound.play(g.miss)
+
+    if g.attacker_guardian is None:
+        attacker = g.attacker
+    else:
+        attacker = g.attacker_guardian
+
+    if attacker.hp <= g.defender_dmg:
+        attackers.remove(attacker)
+
+    else:
+        attacker.hp -= g.defender_dmg
+        attacker.set_hp_img(g)
+        g.preview_one_hp_bar.set_img(g)
+
+    g.state = 'animating'
+    g.animation = 'defender return'
+
+
 class Game:
     def __init__(self):
         # initialise game window
@@ -342,6 +557,7 @@ class Game:
 
         self.unit_dict = yaml.load(open('content/units.yml'))
         self.weapon_dict = yaml.load(open('content/weapons.yml'))
+        self.trait_dict = yaml.load(open('content/traits.yml'))
         self.first_names_male = open("content/names/first_names_male.txt", "r").read().split(', ')
         self.first_names_female = open("content/names/first_names_female.txt", "r").read().split(', ')
 
@@ -389,7 +605,7 @@ class Game:
         self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 66) / 2, (self.game_height - 21) / 2), self.settings, 'sfx', DIMGREY, LIGHTGREY, WHITE, self))
         self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 66) / 2, (self.game_height + 59) / 2), self.settings, 'music', DIMGREY, LIGHTGREY, WHITE, self))
 
-        if FULLSCREEN == True:
+        if FULLSCREEN:
             self.screen = pg.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT),pg.FULLSCREEN)
         else:
             self.screen = pg.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
@@ -399,6 +615,7 @@ class Game:
         self.fade = Fade()
         self.running = True
 
+
     def new(self):
         self.state = 'turn'
         self.preview_one = None
@@ -406,6 +623,7 @@ class Game:
         self.selected_unit = None
 
         self.frame = 0
+        self.warpath = False
         self.turn = 1
 
         self.blues = []
@@ -423,8 +641,10 @@ class Game:
 
         self.previews.add(PreviewPortrait(1))
         self.previews.add(PreviewWeaponImg(1))
+        self.previews.add(PreviewTraitImg(1))
         self.previews.add(PreviewPortrait(2))
         self.previews.add(PreviewWeaponImg(2))
+        self.previews.add(PreviewTraitImg(2))
 
         self.preview_one_hp_bar = PreviewHPBar(1)
         self.preview_two_hp_bar = PreviewHPBar(2)
@@ -440,6 +660,9 @@ class Game:
         self.preview_one_weapon_name = Text("", (281, self.game_height+15), 19, WHITE)
         self.preview_one_weapon_text = MultiLineText([], (259, self.game_height+39), 17, WHITE)
 
+        self.preview_one_trait_name = Text("", (389, self.game_height+15), 19, WHITE)
+        self.preview_one_trait_text = MultiLineText([], (367, self.game_height+39), 15, WHITE)
+
         self.preview_two_name = Text("", (626, self.game_height+15), 19, WHITE)
         self.preview_two_str = Text("", (651, self.game_height+41), 19, WHITE)
         self.preview_two_con = Text("", (702, self.game_height+41), 19, WHITE)
@@ -450,6 +673,9 @@ class Game:
 
         self.preview_two_weapon_name = Text("", (759, self.game_height+15), 19, WHITE)
         self.preview_two_weapon_text = MultiLineText([], (736, self.game_height+39), 17, WHITE)
+
+        self.preview_two_trait_name = Text("", (867, self.game_height+15), 19, WHITE)
+        self.preview_two_trait_text = MultiLineText([], (845, self.game_height+39), 15, WHITE)
 
         self.previews.add(self.preview_one_hp_bar)
         self.previews.add(self.preview_two_hp_bar)
@@ -465,6 +691,9 @@ class Game:
         self.previews.add(self.preview_one_weapon_name)
         self.previews.add(self.preview_one_weapon_text)
 
+        self.previews.add(self.preview_one_trait_name)
+        self.previews.add(self.preview_one_trait_text)
+
         self.previews.add(self.preview_two_name)
         self.previews.add(self.preview_two_str)
         self.previews.add(self.preview_two_con)
@@ -475,6 +704,9 @@ class Game:
 
         self.previews.add(self.preview_two_weapon_name)
         self.previews.add(self.preview_two_weapon_text)
+
+        self.previews.add(self.preview_two_trait_name)
+        self.previews.add(self.preview_two_trait_text)
 
         self.turn_dialogue = DialogueBox((180, 32), (6, self.game_height-38))
         self.turn_text = Text("", (12, self.game_height-36), 20, WHITE)
@@ -497,22 +729,29 @@ class Game:
 
         if self.mode == 'sp':
             self.map = Map(os.path.join("content/maps-singleplayer", self.map_choice, "map.tmx"))
+            self.map.data = yaml.load(open(os.path.join("content/maps-singleplayer", self.map_choice, "data.yml")))
+
             self.map_img = self.map.make_map()
             self.bg.image = pg.image.load(os.path.join("content/maps-singleplayer", self.map_choice, "bg.png"))
             pg.mixer.music.load(os.path.join("content/maps-singleplayer", self.map_choice, "music.ogg"))
             self.turn_text.set_content("Turn " + str(self.turn) + " (Player)")
 
             for spawn in self.map.red_spawns:
-                self.reds.append(random_unit(spawn, 'red'))
+                pos = (spawn[1], spawn[2])
+                elite = spawn[0] in self.map.data.get('elites')
+                self.reds.append(random_unit(pos, elite, 'red'))
         else:
             self.map = Map(os.path.join("content/maps-multiplayer", self.map_choice, "map.tmx"))
+            self.map.data = yaml.load(open(os.path.join("content/maps-multiplayer", self.map_choice, "data.yml")))
+
             self.map_img = self.map.make_map()
             self.bg.image = pg.image.load(os.path.join("content/maps-multiplayer", self.map_choice, "bg.png"))
             pg.mixer.music.load(os.path.join("content/maps-multiplayer", self.map_choice, "music.ogg"))
             self.turn_text.set_content("Turn " + str(self.turn) + " (Blue)")
 
             for red_id, spawn in zip(RED_PARTY, self.map.red_spawns):
-                self.reds.append(import_unit(red_id, spawn, 'red'))
+                pos = (spawn[1], spawn[2])
+                self.reds.append(import_unit(red_id, pos, 'red'))
 
             self.red_cam = RedCamera(g)
 
@@ -520,7 +759,8 @@ class Game:
         self.cam = self.blue_cam
 
         for blue_id, spawn in zip(BLUE_PARTY, self.map.blue_spawns):
-            self.blues.append(import_unit(blue_id, spawn, 'blue'))
+            pos = (spawn[1], spawn[2])
+            self.blues.append(import_unit(blue_id, pos, 'blue'))
 
         for blue in self.blues:
             blue.get_range(g)
@@ -531,6 +771,7 @@ class Game:
         self.fade.start_fade_in(g)
         self.run()
 
+
     def run(self):
         # game loop
         self.playing = True
@@ -538,6 +779,7 @@ class Game:
             self.clock.tick(FPS)
             self.events()
             self.update()
+
 
     def events(self):
         # game loop - events
@@ -549,6 +791,7 @@ class Game:
                     option.hover()
                 else:
                     option.no_hover()
+
 
         elif self.state == 'options':
             if self.options_done.rect.collidepoint((self.x, self.y)):
@@ -574,6 +817,7 @@ class Game:
                     self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
                     self.settings[self.selected_slider.button.volume_type] = (math.e ** (self.volume_length / 200) - 1) / (math.e - 1)
                     update_volumes()
+
 
         elif self.state == 'options' and self.selected_slider is not None:
             self.selected_slider.unset_selected_slider(g)
@@ -617,7 +861,7 @@ class Game:
             if self.hovered_unit == None:
                 self.pre_move_tiles = []
 
-            if (self.mode != 'sp' or self.turn % 2 == 1) and self.state != 'animating':
+            if (self.mode != 'sp' or self.turn % 2 == 1):
                 if self.selected_unit == None or self.selected_unit == self.hovered_unit:
                     set_preview_one(self.hovered_unit)
                     set_preview_two(None)
@@ -628,14 +872,14 @@ class Game:
                     set_preview_one(None)
                     set_preview_two(None)
 
-            if (self.cam.posx > 0) and (pressed[pg.K_LEFT] or pressed[pg.K_a]):
-                self.cam.posx -= WIDTH
-            if (DISPLAY_WIDTH < self.map.width-self.cam.posx) and (pressed[pg.K_RIGHT] or pressed[pg.K_d]):
-                self.cam.posx += WIDTH
-            if (self.cam.posy > 0) and (pressed[pg.K_UP] or pressed[pg.K_w]):
-                self.cam.posy -= HEIGHT
-            if (self.game_height < self.map.height-self.cam.posy) and (pressed[pg.K_DOWN] or pressed[pg.K_s]):
-                self.cam.posy += HEIGHT
+                if (self.cam.posx > 0) and (pressed[pg.K_LEFT] or pressed[pg.K_a]):
+                    self.cam.posx -= WIDTH
+                if (DISPLAY_WIDTH < self.map.width-self.cam.posx) and (pressed[pg.K_RIGHT] or pressed[pg.K_d]):
+                    self.cam.posx += WIDTH
+                if (self.cam.posy > 0) and (pressed[pg.K_UP] or pressed[pg.K_w]):
+                    self.cam.posy -= HEIGHT
+                if (self.game_height < self.map.height-self.cam.posy) and (pressed[pg.K_DOWN] or pressed[pg.K_s]):
+                    self.cam.posy += HEIGHT
 
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -820,6 +1064,7 @@ class Game:
             start_screen_pos[1] += self.start_screen_vely
             self.start_screen_pos = tuple(start_screen_pos)
 
+
         elif self.state == 'turn':
             self.bg.update(self)
             self.screen.blit(self.map_img, (-self.cam.posx,-self.cam.posy))
@@ -898,8 +1143,7 @@ class Game:
 
         elif self.state == 'combat':
             if self.stage == 'heal':
-                heal_calc(self.attacker, self.defender)
-
+                set_healing()
                 if self.defender.pos[0] > self.attacker.pos[0]:
                     self.dx = 8
                 elif self.defender.pos[0] < self.attacker.pos[0]:
@@ -918,21 +1162,10 @@ class Game:
                 self.animation = 'heal'
 
             elif self.stage == 'heal return':
-                if self.attacker_hit == 'hit':
-                    pg.mixer.Sound.play(self.heal_hit)
-                else:
-                    pg.mixer.Sound.play(self.heal_crit)
-
-                self.defender.hp += self.heal
-                self.defender.set_hp_img(g)
-                self.preview_two_hp_bar.set_img(g)
-
-                self.state = 'animating'
-                self.animation = 'heal return'
+                heal_return()
 
             elif self.stage == 'attacker attack':
-                damage_calc(self.attacker, self.defender)
-
+                set_damage(self.attackers, self.defenders)
                 if self.defender.pos[0] > self.attacker.pos[0]:
                     self.dx = 8
                 elif self.defender.pos[0] < self.attacker.pos[0]:
@@ -951,29 +1184,10 @@ class Game:
                 self.animation = 'attacker attack'
 
             elif self.stage == 'attacker return':
-                if self.attacker_hit == 'hit':
-                    pg.mixer.Sound.play(self.hit)
-                elif self.attacker_hit == 'crit':
-                    pg.mixer.Sound.play(self.crit)
-                else:
-                    pg.mixer.Sound.play(self.miss)
-
-                if self.defender.hp <= self.attacker_dmg:
-                    self.defenders.remove(self.defender)
-
-                    self.state = 'animating'
-                    self.animation = 'attacker return'
-
-                else:
-                    self.defender.hp -= self.attacker_dmg
-                    self.defender.set_hp_img(g)
-                    self.preview_two_hp_bar.set_img(g)
-
-                    self.state = 'animating'
-                    self.animation = 'attacker return'
+                attacker_return(self.defenders)
 
             elif self.stage == 'defender attack':
-                if self.defender in self.reds:
+                if (self.mode == 'sp' and self.defender in self.reds) or (self.mode == 'mp' and self.defender in self.defenders):
                     self.defender.get_atk_range(g)
 
                     if self.defender.attack_range[self.attacker.grid_pos[1]][self.attacker.grid_pos[0]] == 1 and self.defender.weapon.get('power') != 0:
@@ -985,30 +1199,18 @@ class Game:
                     self.stage = 'end'
 
             elif self.stage == 'defender return':
-                if self.defender_hit == 'hit':
-                    pg.mixer.Sound.play(self.hit)
-                elif self.defender_hit == 'crit':
-                    pg.mixer.Sound.play(self.crit)
-                else:
-                    pg.mixer.Sound.play(self.miss)
+                defender_return(self.attackers)
 
-                if self.attacker.hp <= self.defender_dmg:
-                    self.attackers.remove(self.attacker)
-
-                else:
-                    self.attacker.hp -= self.defender_dmg
-                    self.attacker.set_hp_img(g)
-                    self.preview_one_hp_bar.set_img(g)
-
-                self.state = 'animating'
-                self.animation = 'defender return'
-
-            elif self.stage == 'end':
+            else:
                 self.attack_tiles = []
                 self.heal_tiles = []
 
-                self.attacker.active = False
-                self.attacker.set_img(g)
+                if not self.warpath:
+                    self.attacker.active = False
+                    self.attacker.set_img(g)
+                else:
+                    self.warpath = False
+
                 self.selected_unit = None
 
                 self.state = 'turn'
@@ -1024,7 +1226,7 @@ class Game:
             elif self.stage == 'move':
                 self.attacker = None
                 for red_ in self.reds:
-                    if red_.active == True:
+                    if red_.active:
                         self.attacker = red_
                         break
 
@@ -1061,7 +1263,7 @@ class Game:
                         if self.attacker.weapon.get('power') > 0:
                             for blue in self.blues:
                                 blue.get_atk_range(self)
-                                damage_calc(self.attacker, blue)
+                                (self.attacker_base_dmg, self.attacker_dmg, self.attacker_hit, self.defender_base_dmg, self.defender_dmg, self.defender_hit) = damage_calc(self.attacker, blue, blue, self.attacker)
                                 if self.pos_attack_range[blue.grid_pos[1]][blue.grid_pos[0]] == 1 and (blue.hp <= self.attacker_base_dmg or self.attacker.hp > self.defender_base_dmg or blue.attack_range[self.attacker.grid_pos[1]][self.attacker.grid_pos[0]] == 0):
                                     self.attack_move_options.append(o)
                                     adjacent_tiles = [(o[1], o[0]+1), (o[1]-1, o[0]), (o[1], o[0]-1), (o[1]+1, o[0])]
@@ -1087,11 +1289,11 @@ class Game:
                     else:
                         chosen_option = random.choice(move_options)
 
-                    self.start_pos = (self.attacker.pos[0],self.attacker.pos[1])
-                    self.end_pos = (chosen_option[0]*WIDTH,chosen_option[1]*HEIGHT)
+                    self.start_pos = (self.attacker.pos[0], self.attacker.pos[1])
+                    self.end_pos = (chosen_option[0]*WIDTH, chosen_option[1]*HEIGHT)
 
-                    self.dy = (self.end_pos[1]-self.start_pos[1])/MOVE_STEPS
-                    self.dx = (self.end_pos[0]-self.start_pos[0])/MOVE_STEPS
+                    self.dy = (self.end_pos[1] - self.start_pos[1]) / MOVE_STEPS
+                    self.dx = (self.end_pos[0] - self.start_pos[0]) / MOVE_STEPS
 
                     if (
                         self.start_pos[0]-self.cam.posx < 0
@@ -1132,7 +1334,7 @@ class Game:
                     self.animation = 'enemy move'
                     self.move_complete = False
 
-            elif self.stage == 'attacker attack':
+            elif self.stage == 'act':
                 attack_options = []
                 ranged_attack_options = []
                 heal_options = []
@@ -1144,7 +1346,7 @@ class Game:
                             heal_options.append(red)
 
                     self.defender = random.choice(heal_options)
-                    heal_calc(self.attacker, self.defender)
+                    set_healing()
                     set_preview_two(self.defender)
                     self.state = 'animating'
                     self.animation = 'heal'
@@ -1164,11 +1366,10 @@ class Game:
 
                     if ranged_attack_options != []:
                         self.defender = random.choice(ranged_attack_options)
-                        damage_calc(self.attacker, self.defender)
                     else:
                         self.defender = random.choice(attack_options)
-                        damage_calc(self.attacker, self.defender)
 
+                    set_damage(self.reds, self.blues)
                     set_preview_two(self.defender)
                     self.state = 'animating'
                     self.animation = 'attacker attack'
@@ -1192,68 +1393,29 @@ class Game:
                     else:
                         self.dy = 0
 
-            elif self.stage == 'attacker return':
-                if self.attacker_hit == 'hit':
-                    pg.mixer.Sound.play(self.hit)
-                elif self.attacker_hit == 'crit':
-                    pg.mixer.Sound.play(self.crit)
-                else:
-                    pg.mixer.Sound.play(self.miss)
-
-                if self.defender.hp <= self.attacker_dmg:
-                    self.blues.remove(self.defender)
-
-                else:
-                    self.defender.hp -= self.attacker_dmg
-                    self.defender.set_hp_img(g)
-                    self.preview_two_hp_bar.set_img(g)
-
-                self.state = 'animating'
-                self.animation = 'attacker return'
-
             elif self.stage == 'heal return':
-                if self.attacker_hit == 'hit':
-                    pg.mixer.Sound.play(self.heal_hit)
-                else:
-                    pg.mixer.Sound.play(self.heal_crit)
+                heal_return()
 
-                self.defender.hp += self.heal
-                self.defender.set_hp_img(g)
-                self.preview_two_hp_bar.set_img(g)
-
-                self.state = 'animating'
-                self.animation = 'heal return'
+            elif self.stage == 'attacker return':
+                attacker_return(self.blues)
 
             elif self.stage == 'defender attack':
                 if self.defender in self.blues and self.defender.attack_range[self.attacker.grid_pos[1]][self.attacker.grid_pos[0]] == 1 and self.defender.weapon.get('power') != 0:
                     self.state = 'animating'
                     self.animation = 'defender attack'
-
                 else:
                     self.stage = 'end'
 
             elif self.stage == 'defender return':
-                if self.defender_hit == 'hit':
-                    pg.mixer.Sound.play(self.hit)
-                elif self.defender_hit == 'crit':
-                    pg.mixer.Sound.play(self.crit)
-                else:
-                    pg.mixer.Sound.play(self.miss)
-
-                if self.attacker.hp <= self.defender_dmg:
-                    self.reds.remove(self.attacker)
-                else:
-                    self.attacker.hp -= self.defender_dmg
-                    self.attacker.set_hp_img(g)
-                    self.preview_one_hp_bar.set_img(g)
-
-                self.state = 'animating'
-                self.animation = 'defender return'
+                defender_return(self.reds)
 
             else:
-                self.attacker.active = False
                 self.state = 'animating'
-                self.animation = 'enemy move delay'
+                if not self.warpath:
+                    self.animation = 'enemy set inactive'
+                else:
+                    self.animation = 'enemy move delay'
+                    self.warpath = False
 
         elif self.state == 'animating':
             self.screen.blit(self.map_img, (-self.cam.posx,-self.cam.posy))
@@ -1270,23 +1432,8 @@ class Game:
             self.previews.update(self)
 
             if self.animation == 'player move':
-                if self.move_complete == False:
-                    self.selected_unit.pos = (self.selected_unit.pos[0]+self.dx, self.selected_unit.pos[1]+self.dy)
-
-                    if pg.mixer.get_busy() == False:
-                        step = random.randint(0,3)
-                        pg.mixer.Sound.play(self.steps[step])
-
-                    self.move_complete = True
-                    if self.dx > 0 and self.selected_unit.pos[0] < self.end_pos[0]:
-                        self.move_complete = False
-                    elif self.dx < 0 and self.selected_unit.pos[0] > self.end_pos[0]:
-                        self.move_complete = False
-                    elif self.dy > 0 and self.selected_unit.pos[1] < self.end_pos[1]:
-                        self.move_complete = False
-                    elif self.dy < 0 and self.selected_unit.pos[1] > self.end_pos[1]:
-                        self.move_complete = False
-                    time.sleep(MOVE_TIME)
+                if not self.move_complete:
+                    move(self.selected_unit, self.end_pos)
 
                 else:
                     self.selected_unit.pos = self.end_pos
@@ -1311,29 +1458,15 @@ class Game:
                         self.selected_unit.set_img(g)
                         self.selected_unit = None
 
+
             elif self.animation == 'enemy move':
-                if self.move_complete == False:
-                    self.moving.pos = (self.moving.pos[0]+self.dx, self.moving.pos[1]+self.dy)
-
-                    if pg.mixer.get_busy() == False:
-                        step = random.randint(0,3)
-                        pg.mixer.Sound.play(self.steps[step])
-
-                    self.move_complete = True
-                    if self.dx > 0 and self.moving.pos[0] < self.end_pos[0]:
-                        self.move_complete = False
-                    elif self.dx < 0 and self.moving.pos[0] > self.end_pos[0]:
-                        self.move_complete = False
-                    elif self.dy > 0 and self.moving.pos[1] < self.end_pos[1]:
-                        self.move_complete = False
-                    elif self.dy < 0 and self.moving.pos[1] > self.end_pos[1]:
-                        self.move_complete = False
-                    time.sleep(MOVE_TIME)
+                if not self.move_complete:
+                    move(self.moving, self.end_pos)
 
                 else:
                     self.moving.pos = self.end_pos
                     self.state = 'enemy turn'
-                    self.stage = 'attacker attack'
+                    self.stage = 'act'
 
             elif self.animation == 'heal':
                 self.attacker.pos = (self.attacker.pos[0]+self.dx, self.attacker.pos[1]+self.dy)
@@ -1416,11 +1549,17 @@ class Game:
                         self.state = 'combat'
                     self.stage = 'end'
 
-            elif self.animation == 'enemy move delay':
+            elif self.animation == 'enemy set inactive':
                 self.frame += 1
                 if self.frame == 10:
+                    self.attacker.active = False
                     self.attacker.set_img(g)
-                if self.frame == 30:
+                    self.frame = 0
+                    self.animation = 'enemy move delay'
+
+            elif self.animation == 'enemy move delay':
+                self.frame += 1
+                if self.frame == 20:
                     self.frame = 0
                     self.state = 'enemy turn'
                     self.stage = 'move'
@@ -1500,6 +1639,7 @@ class Game:
                         self.state = 'turn'
 
         pg.display.update()
+
 
     def start_screen(self):
             # show start screen
@@ -1710,6 +1850,7 @@ class Game:
                     elif event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE and (self.stage == 'choose sp' or self.stage == 'choose mp' or self.stage == 'options'):
                         pg.mixer.Sound.play(self.click)
                         self.stage = 'root'
+
 
     def end_screen(self):
         # show end screen (game over)

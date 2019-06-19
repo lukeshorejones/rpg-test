@@ -1,6 +1,6 @@
 # All built-in playable characters.
 # Images are ID numbers, 1-4. 0: wizard, 1: spearman, 2: spearman 2, 3: royalty, 4: peasant.
-# Weapons are also ID numbers, refer to weapons.yml for reference.
+# Weapons and traits are also ID numbers, refer to weapons.yml and traits.yml for reference.
 
 0:
     name: Gallus
@@ -14,6 +14,7 @@
         dex: 8
         lck: 10
     weapon: 0
+    trait: 0
 
 1:
     name: Aldous
@@ -27,6 +28,7 @@
         dex: 12
         lck: 10
     weapon: 3
+    trait: 1
 
 2:
     name: Eloise
@@ -40,6 +42,7 @@
         dex: 8
         lck: 10
     weapon: 4
+    trait: 2
 
 3:
     name: Xandrilla
@@ -53,19 +56,7 @@
         dex: 10
         lck: 8
     weapon: 2
-
-5:
-    name: Rosalyn
-    gender: Female
-    img: 4
-    stats:
-        str: 14
-        con: 6
-        int: 4
-        res: 8
-        dex: 10
-        lck: 12
-    weapon: 1
+    trait: 3
 
 4:
     name: Tavon
@@ -79,3 +70,18 @@
         dex: 8
         lck: 6
     weapon: 4
+    trait: 4
+
+5:
+    name: Rosalyn
+    gender: Female
+    img: 4
+    stats:
+        str: 14
+        con: 6
+        int: 4
+        res: 8
+        dex: 10
+        lck: 12
+    weapon: 1
+    trait: 5

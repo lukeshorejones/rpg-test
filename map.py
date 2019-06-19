@@ -14,21 +14,23 @@ class Map:
 
     def render(self, surface):
         tileImage = self.tmxdata.get_tile_image_by_gid
+
         for layer in self.tmxdata.visible_layers:
             if isinstance(layer, pytmx.TiledTileLayer):
                 for x, y, gid, in layer:
                     tile = tileImage(gid)
                     if tile:
                         surface.blit(tile, (x*self.tmxdata.tilewidth, y*self.tmxdata.tileheight))
+
         for tile_object in self.tmxdata.objects:
             if tile_object.type == 'blue_cam':
                 self.blue_cam_spawn = (tile_object.x, tile_object.y)
             if tile_object.type == 'red_cam':
                 self.red_cam_spawn = (tile_object.x, tile_object.y)
             if tile_object.type == 'blue_spawn':
-                self.blue_spawns.append((tile_object.x, tile_object.y))
+                self.blue_spawns.append((int(tile_object.name), tile_object.x, tile_object.y))
             if tile_object.type == 'red_spawn':
-                self.red_spawns.append((tile_object.x, tile_object.y))
+                self.red_spawns.append((int(tile_object.name), tile_object.x, tile_object.y))
             elif tile_object.type == 'obstacle':
                 for i in range(int(tile_object.width/WIDTH)):
                     self.matrix[int(tile_object.y/HEIGHT)][int(tile_object.x/WIDTH) + i] = 2

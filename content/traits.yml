@@ -1,0 +1,58 @@
+# All built-in traits.
+# "name", "img" and "desc" are all cosmetic fields you can change as you like.
+# "type" describes what weapon type the trait must be paired with to be useful. This informs the generation of randomised AI enemies (so you won't get an archer with a healer trait like Miracle).
+# "effect" determines what the effect will actually do. Trait effects are hard-coded.
+# The allowed effects are "guardian", "wildfire", "miracle", "birthright", "blessing" and "warpath", named after the default traits in the game.
+# Further fields allow you to customise the tuning of the trait. You can create two traits with the same effect but different names, balancing, etc.
+
+0:
+    name: Guardian
+    img: 0
+    desc: Protects adjacent allies from enemies' attacks.
+    type: none
+    effect: guardian
+    # mod - modifier for damage taken by the user
+    mod: 1
+
+1:
+    name: Wildfire
+    img: 1
+    desc: Slightly damages targets' adjacent allies.
+    type: damage
+    effect: wildfire
+    # mod - modifier for damage dealt to secondary targets
+    mod: 0.2
+
+2:
+    name: Miracle
+    img: 2
+    desc: Critically heals very injured allies.
+    type: healing
+    effect: miracle
+    # health - max percentage of total remaining health for effect to apply
+    health: 0.25
+
+3:
+    name: Battle Cry
+    img: 3
+    desc: Adjacent allies deal increased damage.
+    type: none
+    effect: battle cry
+    # mod - modifier for damage dealt by adjacent allies
+    mod: 1.5
+
+4:
+    name: Blessing
+    img: 4
+    desc: Adjacent allies take reduced damage.
+    type: none
+    effect: blessing
+    # mod - modifier for damage taken by adjacent allies
+    mod: 0.5
+
+5:
+    name: Warpath
+    img: 5
+    desc: Can move again after eliminating an enemy.
+    type: damage
+    effect: warpath

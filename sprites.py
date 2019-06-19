@@ -106,6 +106,7 @@ class Slider():
         self.button.update(g)
         self.text.update(g)
 
+
 class SliderButton(pg.sprite.Sprite):
     def __init__(self, volume_type, default_pos, g):
         super().__init__()
@@ -258,9 +259,12 @@ class HPBar(pg.sprite.Sprite):
 
 
 class HPBarBorder(pg.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, elite):
         super().__init__()
-        self.image = pg.image.load("content/img/hp_bar_border.png")
+        if elite:
+            self.image = pg.image.load("content/img/hp_bar_border_elite.png")
+        else:
+            self.image = pg.image.load("content/img/hp_bar_border.png")
 
 
 class PreviewHPBar(pg.sprite.Sprite):
@@ -295,22 +299,24 @@ class PreviewHPBar(pg.sprite.Sprite):
             g.screen.blit(self.image, (604, g.game_height+114-preview_hp_length))
 
 
-class Blue(pg.sprite.Sprite):
-    def __init__(self, name, gender, img, stats, hp, weapon, pos):
+class Unit(pg.sprite.Sprite):
+    def __init__(self, colour, elite, name, gender, img, stats, hp, weapon, trait, pos):
         super().__init__()
-        self.colour = 'blue'
+        self.colour = colour
+        self.elite = elite
         self.name = name
         self.gender = gender
         self.img = img
         self.stats = stats
         self.hp = hp
         self.weapon = weapon
+        self.trait = trait
         self.pos = pos
         self.grid_pos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
 
-        self.image = pg.image.load('content/img/blue_' + self.gender + '/' + self.img + '.png')
+        self.image = pg.image.load('content/img/' + self.colour + '_' + self.gender + '/' + self.img + '.png')
 
-        self.hp_bar_border = HPBarBorder()
+        self.hp_bar_border = HPBarBorder(elite)
         self.hp_bar = HPBar()
 
         self.hp_fraction = self.hp / MAX_HP
@@ -322,10 +328,10 @@ class Blue(pg.sprite.Sprite):
         self.active = True
 
     def set_img(self, g):
-        if self.active or g.turn % 2 == 0:
-            self.image = pg.image.load('content/img/blue_' + self.gender + '/' + self.img + '.png')
-        if not self.active and g.turn % 2 != 0:
-            self.image = pg.image.load('content/img/blue_' + self.gender + '/' + self.img + '-inactive.png')
+        if (self.colour == 'blue' and (self.active or g.turn % 2 == 0)) or (self.colour == 'red' and (self.active or g.turn % 2 != 0)):
+            self.image = pg.image.load('content/img/' + self.colour + '_' + self.gender + '/' + self.img + '.png')
+        else:
+            self.image = pg.image.load('content/img/' + self.colour + '_' + self.gender + '/' + self.img + '-inactive.png')
 
     def set_hp_img(self, g):
         self.hp_fraction = self.hp / MAX_HP
@@ -360,10 +366,15 @@ class Blue(pg.sprite.Sprite):
         self.move_range = copy.deepcopy(g.map.matrix)
         self.move_range[self.grid_pos[1]][self.grid_pos[0]] = 1
 
+        if self.colour == 'blue':
+            defenders = g.reds
+        else:
+            defenders = g.blues
+
         for y in range(len(self.move_range)):
             for x in range(len(self.move_range[y])):
-                for i in range(len(g.reds)):
-                    if (x, y) == g.reds[i].grid_pos:
+                for i in range(len(defenders)):
+                    if (x, y) == defenders[i].grid_pos:
                         self.move_range[y][x] = 2
 
         self.get_range_loop(self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
@@ -389,102 +400,6 @@ class Blue(pg.sprite.Sprite):
         self.attack_range = copy.deepcopy(g.map.matrix)
 
         self.get_atk_range_loop(g, self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
-
-
-class Red(pg.sprite.Sprite):
-    def __init__(self, name, gender, img, stats, hp, weapon, pos):
-        super().__init__()
-        self.colour = 'red'
-        self.name = name
-        self.gender = gender
-        self.img = img
-        self.stats = stats
-        self.hp = hp
-        self.weapon = weapon
-        self.pos = pos
-        self.grid_pos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
-
-        self.image = pg.image.load('content/img/red_' + self.gender + '/' + self.img + '.png')
-
-        self.hp_bar_border = HPBarBorder()
-        self.hp_bar = HPBar()
-
-        self.hp_fraction = self.hp / MAX_HP
-        self.hp_length = math.ceil(self.hp_fraction * HEALTH_BAR_LENGTH)
-
-        self.hp_bar.image = pg.Surface((self.hp_length, 2))
-        self.hp_bar.image.fill(hp_colour(self))
-
-        self.active = False
-
-    def set_img(self, g):
-        if self.active or g.turn % 2 != 0:
-            self.image = pg.image.load('content/img/red_' + self.gender + '/' + self.img + '.png')
-        if not self.active and g.turn % 2 == 0:
-            self.image = pg.image.load('content/img/red_' + self.gender + '/' + self.img + '-inactive.png')
-
-    def set_hp_img(self, g):
-        self.hp_fraction = self.hp / MAX_HP
-        self.hp_length = math.ceil(self.hp_fraction * HEALTH_BAR_LENGTH)
-
-        self.hp_bar.image = pg.Surface((self.hp_length, 2))
-        self.hp_bar.image.fill(hp_colour(self))
-
-    def update(self, g):
-        self.grid_pos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
-        g.screen.blit(self.image, (self.pos[0] - g.cam.posx, self.pos[1] - g.cam.posy))
-        g.screen.blit(self.hp_bar_border.image, (self.pos[0] - g.cam.posx, self.pos[1] - g.cam.posy))
-        g.screen.blit(self.hp_bar.image, (self.pos[0] - g.cam.posx + 16, self.pos[1] - g.cam.posy + 46))
-
-    def get_range_loop(self, posy, posx, adjacent_tiles):
-        for i in range(4):
-            if self.distance < MAX_DISTANCE and self.move_range[adjacent_tiles[i][0]][adjacent_tiles[i][1]] != 2:
-                self.distance += 1
-                posx, posy = adjacent_tiles[i][1], adjacent_tiles[i][0]
-                self.move_range[posy][posx] = 1
-
-                self.get_range_loop(posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
-
-            elif self.distance == MAX_DISTANCE:
-                self.distance -= 1
-                return
-
-        self.distance -= 1
-
-    def get_range(self, g):
-        self.distance = 0
-        self.move_range = copy.deepcopy(g.map.matrix)
-        self.move_range[self.grid_pos[1]][self.grid_pos[0]] = 1
-
-        for y in range(len(self.move_range)):
-            for x in range(len(self.move_range[y])):
-                for i in range(len(g.blues)):
-                    if (x, y) == g.blues[i].grid_pos:
-                        self.move_range[y][x] = 2
-
-        self.get_range_loop(self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
-
-    def get_atk_range_loop(self, g, posy, posx, adjacent_tiles):
-            weapon_range = self.weapon.get('range')
-            for i in range(4):
-                if self.distance < weapon_range and self.attack_range[adjacent_tiles[i][0]][adjacent_tiles[i][1]] != 2:
-                    self.distance += 1
-                    posx, posy = adjacent_tiles[i][1], adjacent_tiles[i][0]
-                    self.attack_range[posy][posx] = 1
-
-                    self.get_atk_range_loop(g, posy, posx, [[posy, posx+1], [posy-1, posx], [posy, posx-1], [posy+1, posx]])
-
-                elif self.distance == weapon_range:
-                    self.distance -= 1
-                    return
-
-            self.distance -= 1
-
-    def get_atk_range(self, g):
-            self.distance = 0
-            self.attack_range = copy.deepcopy(g.map.matrix)
-
-            self.get_atk_range_loop(g, self.grid_pos[1], self.grid_pos[0], [[self.grid_pos[1], self.grid_pos[0]+1], [self.grid_pos[1]-1, self.grid_pos[0]], [self.grid_pos[1], self.grid_pos[0]-1], [self.grid_pos[1]+1, self.grid_pos[0]]])
 
 
 class PreMoveTile(pg.sprite.Sprite):
@@ -573,7 +488,7 @@ class Text(pg.sprite.Sprite):
 
     def update(self, g):
         g.screen.blit(self.image, self.pos)
-        #pg.draw.rect(g.screen, WHITE, self.image.get_rect(topleft=self.pos), 1)
+        # pg.draw.rect(g.screen, WHITE, self.image.get_rect(topleft=self.pos), 1)
 
 
 class MultiLineText(pg.sprite.Sprite):
@@ -715,3 +630,19 @@ class PreviewWeaponImg(pg.sprite.Sprite):
             self.img = g.preview_two.weapon.get('img')
             self.image = pg.image.load('content/img/weapons/' + str(self.img) + '.png')
             g.screen.blit(self.image, (736, g.game_height+16))
+
+class PreviewTraitImg(pg.sprite.Sprite):
+    def __init__(self, num):
+        super().__init__()
+        self.num = num
+
+    def update(self, g):
+        if self.num == 1 and g.preview_one is not None and g.preview_one.trait != {}:
+            self.img = g.preview_one.trait.get('img')
+            self.image = pg.image.load('content/img/traits/' + str(self.img) + '.png')
+            g.screen.blit(self.image, (366, g.game_height+16))
+
+        elif self.num == 2 and g.preview_two is not None and g.preview_two.trait != {}:
+            self.img = g.preview_two.trait.get('img')
+            self.image = pg.image.load('content/img/traits/' + str(self.img) + '.png')
+            g.screen.blit(self.image, (844, g.game_height+16))
