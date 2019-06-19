@@ -1,2 +1,7 @@
 description: Marauders advance on a desert town - push them back!
 creator: RPG Test
+
+elites:
+ - 14
+ - 15
+ - 16

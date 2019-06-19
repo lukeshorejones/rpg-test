@@ -6,5 +6,13 @@ master volume: 100
 music: 100
 sfx: 100
 
+# DIFFICULTY LEVELS
+# Options: easy, normal, hard
+# Increasing the difficulty increases the stats of enemy units in single player
+# In easy mode, no enemy units will have traits
+# In normal mode, elite enemy units will have traits
+# In hard mode, all enemy units will have traits
+difficulty: normal
+
 blue party: [0, 1, 2]
 red party: [3, 4, 5]
