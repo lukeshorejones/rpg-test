@@ -10,6 +10,13 @@ Finally, you can simply run run.bat to play the game (or run ``pipenv run python
 
 # v2.4 Changelog (WIP)
  - Started using a virtual environment like a real programmer.
+ - Added new "ranged damage" trait type for random unit generation.
+ - Added a new trait: Pierce (with ID 5 - Warpath now has ID 6).
+ - Changed the default trait of the default unit Rosalyn to Pierce.
+ - Added a new unit to units.yml with the Warpath trait.
+
+# v2.4 Bugfixes (WIP):
+ - Wildfire did not activate during counterattacks.
 
 # What Did I Learn?
  - How games work!

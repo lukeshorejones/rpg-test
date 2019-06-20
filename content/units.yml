@@ -85,3 +85,17 @@
         lck: 12
     weapon: 1
     trait: 5
+
+6:
+    name: Natalie
+    gender: Female
+    img: 1
+    stats:
+        str: 14
+        con: 10
+        int: 4
+        res: 6
+        dex: 8
+        lck: 12
+    weapon: 0
+    trait: 6

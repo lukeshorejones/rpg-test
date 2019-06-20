@@ -341,7 +341,6 @@ class Unit(pg.sprite.Sprite):
         self.hp_bar.image.fill(hp_colour(self))
 
     def update(self, g):
-        self.grid_pos = (int(self.pos[0]/WIDTH), int(self.pos[1]/HEIGHT))
         g.screen.blit(self.image, (self.pos[0] - g.cam.posx, self.pos[1] - g.cam.posy))
         g.screen.blit(self.hp_bar_border.image, (self.pos[0] - g.cam.posx, self.pos[1] - g.cam.posy))
         g.screen.blit(self.hp_bar.image, (self.pos[0] - g.cam.posx + 16, self.pos[1] - g.cam.posy + 46))

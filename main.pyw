@@ -158,6 +158,9 @@ def random_unit(pos, elite, team):
             elif g.trait_dict.get(t).get('type') == 'damage' and weapon.get('power') != 0:
                 trait = g.trait_dict.get(t)
                 break
+            elif g.trait_dict.get(t).get('type') == 'ranged damage' and weapon.get('power') != 0 and weapon.get('range') > 1:
+                trait = g.trait_dict.get(t)
+                break
             elif g.trait_dict.get(t).get('type') == 'healing' and weapon.get('healing') != 0:
                 trait = g.trait_dict.get(t)
                 break
@@ -297,8 +300,8 @@ def click_heal_tile(tile):
 
 def get_adjacent_trait(trait, defender, defenders):
     for d in defenders:
-        distances = (d.grid_pos[0] - defender.grid_pos[0], d.grid_pos[1] - defender.grid_pos[1])
-        adjacent = (abs(distances[0]) == 0 and abs(distances[1]) == 1) or (abs(distances[0]) == 1 and abs(distances[1]) == 0)
+        distance = (d.grid_pos[0] - defender.grid_pos[0], d.grid_pos[1] - defender.grid_pos[1])
+        adjacent = (abs(distance[0]) == 0 and abs(distance[1]) == 1) or (abs(distance[0]) == 1 and abs(distance[1]) == 0)
         if adjacent and d.trait.get('effect') == trait:
             return d
 
@@ -479,6 +482,43 @@ def heal_return():
     g.animation = 'heal return'
 
 
+def wildfire(attacker, defender, defenders):
+    count = 0
+    for d in defenders:
+        distance = (d.grid_pos[0] - defender.grid_pos[0], d.grid_pos[1] - g.defender.grid_pos[1])
+        if (abs(distance[0]) == 0 and abs(distance[1]) == 1) or (abs(distance[0]) == 1 and abs(distance[1]) == 0):
+            count += 1
+            (attacker_base_dmg, attacker_dmg, attacker_hit, defender_base_dmg, defender_dmg, defender_hit) = damage_calc(attacker, d, d, attacker)
+            dmg = max(math.floor(attacker_dmg * attacker.trait.get('mod')), 1)
+            if d.hp <= dmg:
+                defenders.remove(d)
+            else:
+                d.hp -= dmg
+                d.set_hp_img(g)
+            if count == 4:
+                break
+
+
+def pierce(attacker, defender, defenders):
+    target_angle = math.atan2(defender.grid_pos[1] - attacker.grid_pos[1], defender.grid_pos[0] - attacker.grid_pos[0])
+    target_distance = math.sqrt((defender.grid_pos[0] - attacker.grid_pos[0])**2 + (defender.grid_pos[1] - attacker.grid_pos[1])**2)
+    count = 0
+    for d in defenders:
+        angle = math.atan2(d.grid_pos[1] - attacker.grid_pos[1], d.grid_pos[0] - attacker.grid_pos[0])
+        distance = math.sqrt((d.grid_pos[0] - attacker.grid_pos[0])**2 + (d.grid_pos[1] - attacker.grid_pos[1])**2)
+        if angle == target_angle and distance < target_distance:
+            count += 1
+            (attacker_base_dmg, attacker_dmg, attacker_hit, defender_base_dmg, defender_dmg, defender_hit) = damage_calc(attacker, d, d, attacker)
+            dmg = max(math.floor(attacker_dmg * attacker.trait.get('mod')), 1)
+            if d.hp <= dmg:
+                defenders.remove(d)
+            else:
+                d.hp -= dmg
+                d.set_hp_img(g)
+            if count == attacker.weapon.get('range') - 1:
+                break
+
+
 def attacker_return(defenders):
     if g.attacker_hit == 'hit':
         pg.mixer.Sound.play(g.hit)
@@ -488,22 +528,9 @@ def attacker_return(defenders):
         pg.mixer.Sound.play(g.miss)
 
     if g.attacker.trait.get('effect') == 'wildfire':
-        count = 0
-        for d in defenders:
-            distances = (d.grid_pos[0] - g.defender.grid_pos[0], d.grid_pos[1] - g.defender.grid_pos[1])
-            if (abs(distances[0]) == 0 and abs(distances[1]) == 1) or (abs(distances[0]) == 1 and abs(distances[1]) == 0):
-                count += 1
-                (attacker_base_dmg, attacker_dmg, attacker_hit, defender_base_dmg, defender_dmg, defender_hit) = damage_calc(g.attacker, d, d, g.attacker)
-                dmg = max(math.floor(attacker_dmg * g.attacker.trait.get('mod')), 1)
-                if d.hp <= dmg:
-                    defenders.remove(d)
-                    if g.attacker.trait.get('effect') == 'warpath':
-                        g.warpath = True
-                else:
-                    d.hp -= dmg
-                    d.set_hp_img(g)
-                if count == 4:
-                    break
+        wildfire(g.attacker, g.defender, defenders)
+    elif g.attacker.trait.get('effect') == 'pierce':
+        pierce(g.attacker, g.defender, defenders)
 
     if g.defender_guardian is None:
         defender = g.defender
@@ -530,6 +557,11 @@ def defender_return(attackers):
         pg.mixer.Sound.play(g.crit)
     else:
         pg.mixer.Sound.play(g.miss)
+
+    if g.defender.trait.get('effect') == 'wildfire':
+        wildfire(g.defender, g.attacker, attackers)
+    elif g.defender.trait.get('effect') == 'pierce':
+        pierce(g.defender, g.attacker, attackers)
 
     if g.attacker_guardian is None:
         attacker = g.attacker
@@ -1437,6 +1469,7 @@ class Game:
 
                 else:
                     self.selected_unit.pos = self.end_pos
+                    self.selected_unit.grid_pos = (int(self.selected_unit.pos[0]/WIDTH), int(self.selected_unit.pos[1]/HEIGHT))
                     self.move_tiles = []
                     self.heal_tiles = []
 
@@ -1465,6 +1498,7 @@ class Game:
 
                 else:
                     self.moving.pos = self.end_pos
+                    self.moving.grid_pos = (int(self.moving.pos[0]/WIDTH), int(self.moving.pos[1]/HEIGHT))
                     self.state = 'enemy turn'
                     self.stage = 'act'
 

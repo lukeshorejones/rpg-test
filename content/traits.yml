@@ -1,8 +1,9 @@
 # All built-in traits.
 # "name", "img" and "desc" are all cosmetic fields you can change as you like.
-# "type" describes what weapon type the trait must be paired with to be useful. This informs the generation of randomised AI enemies (so you won't get an archer with a healer trait like Miracle).
+# "type" describes what weapon types the trait should be paired with when generating random units.
+# Type options: "none" (any weapons), "damage" (melee or ranged damaging weapons), "ranged damage", "healing".
 # "effect" determines what the effect will actually do. Trait effects are hard-coded.
-# The allowed effects are "guardian", "wildfire", "miracle", "birthright", "blessing" and "warpath", named after the default traits in the game.
+# Effect options: are "guardian", "wildfire", "miracle", "birthright", "blessing" and "warpath", named after the default traits in the game.
 # Further fields allow you to customise the tuning of the trait. You can create two traits with the same effect but different names, balancing, etc.
 
 0:
@@ -51,8 +52,17 @@
     mod: 0.5
 
 5:
-    name: Warpath
+    name: Pierce
     img: 5
+    desc: Damages enemies between self and targets.
+    type: ranged damage
+    effect: pierce
+    # mod - modifier for damage dealt to secondary targets
+    mod: 1.0
+
+6:
+    name: Warpath
+    img: 6
     desc: Can move again after eliminating an enemy.
     type: damage
     effect: warpath
