@@ -14,7 +14,7 @@
         dex: 8
         lck: 10
     weapon: 0
-    trait: 0
+    trait: 7
 
 1:
     name: Aldous
@@ -99,3 +99,59 @@
         lck: 12
     weapon: 0
     trait: 6
+
+7:
+    name: Hagar
+    gender: Male
+    img: 4
+    stats:
+        str: 14
+        con: 12
+        int: 4
+        res: 10
+        dex: 6
+        lck: 8
+    weapon: 0
+    trait: 7
+
+8:
+    name: Azura
+    gender: Female
+    img: 4
+    stats:
+        str: 4
+        con: 10
+        int: 14
+        res: 12
+        dex: 8
+        lck: 6
+    weapon: 2
+    trait: 8
+
+9:
+    name: Alwyn
+    gender: Male
+    img: 4
+    stats:
+        str: 10
+        con: 6
+        int: 4
+        res: 8
+        dex: 14
+        lck: 12
+    weapon: 1
+    trait: 9
+
+10:
+    name: Giselle
+    gender: Female
+    img: 0
+    stats:
+        str: 4
+        con: 8
+        int: 10
+        res: 6
+        dex: 12
+        lck: 14
+    weapon: 3
+    trait: 10

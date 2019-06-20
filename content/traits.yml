@@ -66,3 +66,45 @@
     desc: Can move again after eliminating an enemy.
     type: damage
     effect: warpath
+
+7:
+    name: Berserk
+    img: 7
+    desc: Deals more and takes less damage at low health.
+    type: damage
+    effect: berserk
+    # health - max percentage of total remaining health for effect to apply
+    health: 0.25
+    # atk mod - modifier for damage dealt
+    atk mod: 2.0
+    # def mod - modifier for damage taken
+    def mod: 0.25
+
+8:
+    name: Execute
+    img: 8
+    desc: Critically hits very injured targets.
+    type: damage
+    effect: execute
+    # health - max percentage of total remaining health for effect to apply
+    health: 0.25
+
+9:
+    name: Rush
+    img: 9
+    desc: More likely to avoid attacks at low health.
+    type: none
+    effect: rush
+    # health - max percentage of total remaining health for effect to apply
+    health: 0.25
+    # mod - modifier for dodge chance
+    mod: 3.0
+
+10:
+    name: Alchemy
+    img: 10
+    desc: Restores health after taking actions.
+    type: none
+    effect: alchemy
+    # heal - percentage of max health to heal
+    heal: 0.1

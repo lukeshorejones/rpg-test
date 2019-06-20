@@ -246,7 +246,7 @@ def mouse_down(button):
         if g.attack_tiles != [] or g.heal_tiles != []:
             g.attack_tiles = []
             g.heal_tiles = []
-            g.selected_unit.active = False
+            set_inactive(g.selected_unit)
             g.selected_unit.set_img(g)
             g.selected_unit = None
 
@@ -309,7 +309,7 @@ def get_adjacent_trait(trait, defender, defenders):
 
 
 def damage_calc(attacker, defender, attacker_2, defender_2):
-    dex_roll = random.randint(1,100)
+    dodge_roll = random.randint(1,100)
     crit_roll = random.randint(1,100)
     dmg = attacker.stats[attacker.weapon.get('stat')] * attacker.weapon.get('power')
     defence_stat = attacker.weapon.get('stat') + 1
@@ -317,7 +317,11 @@ def damage_calc(attacker, defender, attacker_2, defender_2):
     attacker_base_dmg = max(math.floor(dmg / defender.stats[defence_stat]), 1)
     attacker_dmg = random.randint(attacker_base_dmg-1, attacker_base_dmg+1)
 
-    if dex_roll <= 1.5 * defender.stats[4]:
+    dodge_threshold = 1.5 * defender.stats[4]
+    if defender.trait.get('effect') == 'rush' and (defender.hp / MAX_HP) <= defender.trait.get('health'):
+        dodge_threshold *= defender.trait.get('mod')
+
+    if dodge_roll <= dodge_threshold:
         attacker_dmg = 0
         attacker_hit = 'miss'
     else:
@@ -327,7 +331,7 @@ def damage_calc(attacker, defender, attacker_2, defender_2):
             attacker_dmg *= 2
             attacker_hit = 'crit'
 
-    dex_roll = random.randint(1,100)
+    dodge_roll = random.randint(1,100)
     crit_roll = random.randint(1,100)
     dmg = attacker_2.stats[attacker_2.weapon.get('stat')] * attacker_2.weapon.get('power')
     defence_stat = attacker_2.weapon.get('stat') + 1
@@ -335,7 +339,11 @@ def damage_calc(attacker, defender, attacker_2, defender_2):
     defender_base_dmg = math.floor(dmg / defender_2.stats[defence_stat])
     defender_dmg = max(random.randint(defender_base_dmg-1, defender_base_dmg+1), 1)
 
-    if dex_roll <= 1.5 * defender_2.stats[4]:
+    dodge_threshold = 1.5 * defender_2.stats[4]
+    if attacker.trait.get('effect') == 'rush' and (defender_2.hp / MAX_HP) <= defender_2.trait.get('health'):
+        dodge_threshold *= defender_2.trait.get('mod')
+
+    if dodge_roll <= dodge_threshold:
         defender_dmg = 0
         defender_hit = 'miss'
     else:
@@ -447,12 +455,21 @@ def set_damage(attackers, defenders):
         else:
             (g.attacker_base_dmg, g.attacker_dmg, g.attacker_hit, g.defender_base_dmg, g.defender_dmg, g.defender_hit) = damage_calc(g.attacker, g.defender, g.defender, g.attacker)
 
-    g.attacker_birthright = get_adjacent_trait('battle cry', g.attacker, attackers)
-    g.defender_birthright = get_adjacent_trait('battle cry', g.defender, defenders)
-    if g.attacker_birthright is not None:
-        g.attacker_dmg *= g.attacker_birthright.trait.get('mod')
-    if g.defender_birthright is not None:
-        g.defender_dmg *= g.defender_birthright.trait.get('mod')
+    if g.attacker.trait.get('effect') == 'berserk' and (g.attacker.hp / MAX_HP) <= g.attacker.trait.get('health'):
+        g.attacker_dmg *= g.attacker.trait.get('atk mod')
+
+    elif g.attacker.trait.get('effect') == 'execute' and (g.defender.hp / MAX_HP) <= g.attacker.trait.get('health'):
+        g.attacker_hit = 'crit'
+
+    g.attacker_battle_cry = get_adjacent_trait('battle cry', g.attacker, attackers)
+    g.defender_battle_cry = get_adjacent_trait('battle cry', g.defender, defenders)
+    if g.attacker_battle_cry is not None:
+        g.attacker_dmg *= g.attacker_battle_cry.trait.get('mod')
+    if g.defender_battle_cry is not None:
+        g.defender_dmg *= g.defender_battle_cry.trait.get('mod')
+
+    if g.defender.trait.get('effect') == 'berserk' and (g.defender.hp / MAX_HP) <= g.defender.trait.get('health'):
+        g.attacker_dmg *= g.defender.trait.get('def mod')
 
     g.defender_blessing = get_adjacent_trait('blessing', g.defender, defenders)
     g.attacker_blessing = get_adjacent_trait('blessing', g.attacker, attackers)
@@ -578,6 +595,13 @@ def defender_return(attackers):
 
     g.state = 'animating'
     g.animation = 'defender return'
+
+
+def set_inactive(unit):
+    unit.active = False
+    if unit.trait.get('effect') == 'alchemy':
+        unit.hp = min(unit.hp + MAX_HP * unit.trait.get('heal'), MAX_HP)
+        unit.set_hp_img(g)
 
 
 class Game:
@@ -1238,7 +1262,7 @@ class Game:
                 self.heal_tiles = []
 
                 if not self.warpath:
-                    self.attacker.active = False
+                    set_inactive(self.attacker)
                     self.attacker.set_img(g)
                 else:
                     self.warpath = False
@@ -1487,7 +1511,7 @@ class Game:
 
                     self.state = 'turn'
                     if self.attack_tiles == [] and self.heal_tiles == []:
-                        self.selected_unit.active = False
+                        set_inactive(self.selected_unit)
                         self.selected_unit.set_img(g)
                         self.selected_unit = None
 
@@ -1586,7 +1610,7 @@ class Game:
             elif self.animation == 'enemy set inactive':
                 self.frame += 1
                 if self.frame == 10:
-                    self.attacker.active = False
+                    set_inactive(self.attacker)
                     self.attacker.set_img(g)
                     self.frame = 0
                     self.animation = 'enemy move delay'
