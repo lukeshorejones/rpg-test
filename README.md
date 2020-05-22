@@ -2,11 +2,13 @@
 A tactical RPG made with Python and Pygame, based on games like Fire Emblem. The player controls a group of units on a variety of maps, the goal being to defeat all of the enemy units. You can play singleplayer against an AI opponent, or multiplayer against a friend. The game also supports the implementation of custom units, weapons and maps without any coding knowledge required.
 
 # User Guide
-This project requires Python 3 and pipenv. Once Python is installed (and added to PATH), install pipenv by running ``pip install pipenv``.
+Download and unzip the zip file in Releases, and run RPG Test.exe to play.
 
-Once Python and pipenv are installed, you can navigate to the game files and run ``pipenv install`` there to automatically install all other dependencies.  
-
-Finally, you can simply run run.bat to play the game (or run ``pipenv run python main.pyw`` directly). You can edit the files in the content folder to change some configuration options, change graphics and sounds, and add your own custom content such as new units, weapons and maps.
+If you want to run the source code instead, you'll need Python 3 and these packages:
+ - numpy
+ - pygame
+ - pytmx
+ - ruamel.yaml
 
 # v2.5 Changelog
  - Removed included virtual environment.
