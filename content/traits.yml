@@ -34,7 +34,7 @@
     health: 0.25
 
 3:
-    name: Battle Cry
+    name: War Cry
     img: 3
     desc: Adjacent allies deal increased damage.
     type: none

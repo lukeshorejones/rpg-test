@@ -652,9 +652,9 @@ class Game:
         self.options_done = MenuOption(self, 'Done', 25, WHITE,((DISPLAY_WIDTH - 414) / 2, (self.game_height + 164) / 2), 5, False)
 
         self.options_text = []
-        self.options_text.append(Text('Master Volume', ((DISPLAY_WIDTH - 414) / 2, (self.game_height - 126) / 2), 25, WHITE))
-        self.options_text.append(Text('SFX', ((DISPLAY_WIDTH - 414) / 2, (self.game_height - 46) / 2), 25, WHITE))
-        self.options_text.append(Text('Music', ((DISPLAY_WIDTH - 414) / 2, (self.game_height + 34) / 2), 25, WHITE))
+        self.options_text.append(Text('Master Volume', ((DISPLAY_WIDTH - 414) / 2, (self.game_height - 125) / 2), 23, WHITE))
+        self.options_text.append(Text('SFX', ((DISPLAY_WIDTH - 414) / 2, (self.game_height - 45) / 2), 23, WHITE))
+        self.options_text.append(Text('Music', ((DISPLAY_WIDTH - 414) / 2, (self.game_height + 33) / 2), 23, WHITE))
 
         self.sliders = []
         self.sliders.append(Slider((200, 5), ((DISPLAY_WIDTH - 66) / 2, (self.game_height - 101) / 2), self.settings, 'master volume', DIMGREY, LIGHTGREY, WHITE, self))
@@ -705,33 +705,33 @@ class Game:
         self.preview_one_hp_bar = PreviewHPBar(1)
         self.preview_two_hp_bar = PreviewHPBar(2)
 
-        self.preview_one_name = Text("", (148, self.game_height+15), 19, WHITE)
-        self.preview_one_str = Text("", (173, self.game_height+41), 19, WHITE)
-        self.preview_one_con = Text("", (224, self.game_height+41), 19, WHITE)
-        self.preview_one_int = Text("", (173, self.game_height+67), 19, WHITE)
-        self.preview_one_wis = Text("", (224, self.game_height+67), 19, WHITE)
-        self.preview_one_dex = Text("", (173, self.game_height+93), 19, WHITE)
-        self.preview_one_lck = Text("", (224, self.game_height+93), 19, WHITE)
+        self.preview_one_name = Text("", (150, self.game_height+16), 17, WHITE)
+        self.preview_one_str = Text("", (175, self.game_height+42), 17, WHITE)
+        self.preview_one_con = Text("", (226, self.game_height+42), 17, WHITE)
+        self.preview_one_int = Text("", (175, self.game_height+68), 17, WHITE)
+        self.preview_one_wis = Text("", (226, self.game_height+68), 17, WHITE)
+        self.preview_one_dex = Text("", (175, self.game_height+94), 17, WHITE)
+        self.preview_one_lck = Text("", (226, self.game_height+94), 17, WHITE)
 
-        self.preview_one_weapon_name = Text("", (281, self.game_height+15), 19, WHITE)
-        self.preview_one_weapon_text = MultiLineText([], (259, self.game_height+39), 17, WHITE)
+        self.preview_one_weapon_name = Text("", (282, self.game_height+16), 17, WHITE)
+        self.preview_one_weapon_text = MultiLineText([], (259, self.game_height+40), 15, WHITE)
 
-        self.preview_one_trait_name = Text("", (389, self.game_height+15), 19, WHITE)
-        self.preview_one_trait_text = MultiLineText([], (367, self.game_height+39), 15, WHITE)
+        self.preview_one_trait_name = Text("", (390, self.game_height+16), 17, WHITE)
+        self.preview_one_trait_text = MultiLineText([], (367, self.game_height+40), 13, WHITE)
 
-        self.preview_two_name = Text("", (626, self.game_height+15), 19, WHITE)
-        self.preview_two_str = Text("", (651, self.game_height+41), 19, WHITE)
-        self.preview_two_con = Text("", (702, self.game_height+41), 19, WHITE)
-        self.preview_two_int = Text("", (651, self.game_height+67), 19, WHITE)
-        self.preview_two_wis = Text("", (702, self.game_height+67), 19, WHITE)
-        self.preview_two_dex = Text("", (651, self.game_height+93), 19, WHITE)
-        self.preview_two_lck = Text("", (702, self.game_height+93), 19, WHITE)
+        self.preview_two_name = Text("", (628, self.game_height+16), 17, WHITE)
+        self.preview_two_str = Text("", (653, self.game_height+42), 17, WHITE)
+        self.preview_two_con = Text("", (704, self.game_height+42), 17, WHITE)
+        self.preview_two_int = Text("", (653, self.game_height+68), 17, WHITE)
+        self.preview_two_wis = Text("", (704, self.game_height+68), 17, WHITE)
+        self.preview_two_dex = Text("", (653, self.game_height+94), 17, WHITE)
+        self.preview_two_lck = Text("", (704, self.game_height+94), 17, WHITE)
 
-        self.preview_two_weapon_name = Text("", (759, self.game_height+15), 19, WHITE)
-        self.preview_two_weapon_text = MultiLineText([], (736, self.game_height+39), 17, WHITE)
+        self.preview_two_weapon_name = Text("", (760, self.game_height+16), 17, WHITE)
+        self.preview_two_weapon_text = MultiLineText([], (736, self.game_height+40), 15, WHITE)
 
-        self.preview_two_trait_name = Text("", (867, self.game_height+15), 19, WHITE)
-        self.preview_two_trait_text = MultiLineText([], (845, self.game_height+39), 15, WHITE)
+        self.preview_two_trait_name = Text("", (868, self.game_height+16), 17, WHITE)
+        self.preview_two_trait_text = MultiLineText([], (845, self.game_height+40), 13, WHITE)
 
         self.previews.add(self.preview_one_hp_bar)
         self.previews.add(self.preview_two_hp_bar)
@@ -765,7 +765,7 @@ class Game:
         self.previews.add(self.preview_two_trait_text)
 
         self.turn_dialogue = DialogueBox((180, 32), (6, self.game_height-38))
-        self.turn_text = Text("", (12, self.game_height-36), 20, WHITE)
+        self.turn_text = Text("", (12, self.game_height-35), 20, WHITE)
 
         self.turn_change_dialogue = DialogueBox((DISPLAY_WIDTH, 80), (0, (self.game_height-10)/2))
         self.turn_change_text = CenterText("", (DISPLAY_WIDTH/2, (self.game_height+70)/2), 70, WHITE)
@@ -773,7 +773,7 @@ class Game:
         self.end_screen_dialogue = DialogueBox((256, 128), ((DISPLAY_WIDTH-256)/2, (self.game_height-128)/2))
 
         self.pause_dialogue = DialogueBox((256, 256), ((DISPLAY_WIDTH-256)/2, (self.game_height-256)/2))
-        self.pause_title = CenterText("Game Paused", (DISPLAY_WIDTH/2, (self.game_height-186)/2), 40, WHITE)
+        self.pause_title = CenterText("Paused", (DISPLAY_WIDTH/2, (self.game_height-186)/2), 40, WHITE)
 
         self.pause_options = []
         self.pause_options.append(MenuOption(self, 'Resume', 25, WHITE, ((DISPLAY_WIDTH - 206) / 2, (self.game_height - 126) / 2), 5, False))
@@ -1973,4 +1973,3 @@ while g.running:
     g.end_screen()
 
 pg.quit()
-quit()

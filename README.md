@@ -8,15 +8,14 @@ Once Python and pipenv are installed, you can navigate to the game files and run
 
 Finally, you can simply run run.bat to play the game (or run ``pipenv run python main.pyw`` directly). You can edit the files in the content folder to change some configuration options, change graphics and sounds, and add your own custom content such as new units, weapons and maps.
 
-# v2.4 Changelog (WIP)
- - Started using a virtual environment like a real programmer.
- - Added new "ranged damage" trait type for random unit generation.
- - Added new traits (and moved some trait IDs around).
- - Changed the default trait of the default unit Rosalyn to Pierce.
- - Added new units to units.yml to showcase every trait.
+# v2.5 Changelog
+ - Removed included virtual environment.
+ - Added an executable release version!
+ - Moved and resized some text elements slightly.
+ - Renamed "Battle Cry" trait to "War Cry".
 
-# v2.4 Bugfixes (WIP):
- - Wildfire did not activate during counterattacks.
+# v2.5 Bugfixes:
+ - Some text was overlapping with other elements.
 
 # What Did I Learn?
  - How games work!
